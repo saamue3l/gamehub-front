@@ -1,14 +1,10 @@
-<script setup lang="ts">
-
-import MediumContent from '@/components/layout/main/MediumContent.vue'
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <MediumContent>
-    <div>
-      <h1>Where is home ?</h1>
-    </div>
-  </MediumContent>
+  <section class="w-3/5">
+    <p class="text-custom-white text-2xl font-bold mt-14 mb-4">Titre</p>
+    <div class="flex"></div>
+  </section>
 </template>
 
 <style scoped>

@@ -1,47 +1,24 @@
-<script setup lang="ts">
-
-import { routes } from '@/router/index.js'
-</script>
-
 <template>
-  <header>
-    <!--  Quick header  -->
-    <ul>
-      <li v-for="route in routes">
-        <router-link :to="route.path">{{ route.name }}</router-link>
-      </li>
-    </ul>
+  <header class="flex justify-center items-center px-4 py-2 bg-custom-background-dark text-custom-white">
+    <div class="w-3/5 flex justify-between items-center">
+      <div class="flex items-center">
+        <a href="/" class="mr-5">
+          <img src="@/assets/logoBlue.png" alt="Logo" class="h-6">
+        </a>
+        <NavLinks />
+      </div>
+      <div class="flex items-center space-x-2">
+        <ProfileMenu />
+        <AlertMenu />
+      </div>
+    </div>
   </header>
 </template>
 
-<style scoped>
-header {
-  width: 100%;
-  padding: 13px;
-  background-color: #262626;
-  line-height: 1.5;
+<script setup lang="ts">
+import NavLinks from '@/components/layout/header/NavLinks.vue'
+import ProfileMenu from '@/components/layout/header/ProfileMenu.vue'
+import AlertMenu from '@/components/layout/header/AlertMenu.vue'
+</script>
 
-  ul {
-    display: flex;
-    gap: 13px;
-    list-style-type: none;
-
-    li {
-      padding: 3px;
-      background-color: #3d3d3d;
-    }
-  }
-}
-
-a.router-link-active {
-  color: aquamarine;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-}
-</style>
+<style scoped></style>
