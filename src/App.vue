@@ -1,16 +1,10 @@
 <script setup lang="ts">
 import { routes } from '@/router/index.js'
+import Header from '@/components/layout/header/Header.vue'
 </script>
 
 <template>
-  <header>
-    <!--  Quick header  -->
-    <ul>
-      <li v-for="route in routes">
-        <router-link :to="route.path">{{ route.name }}</router-link>
-      </li>
-    </ul>
-  </header>
+  <Header></Header>
 
   <main>
     <router-view v-slot="{ Component }">
@@ -22,35 +16,6 @@ import { routes } from '@/router/index.js'
 </template>
 
 <style scoped>
-header {
-  width: 100%;
-  padding: 13px;
-  background-color: #262626;
-  line-height: 1.5;
-
-  ul {
-    display: flex;
-    gap: 13px;
-    list-style-type: none;
-
-    li {
-      padding: 3px;
-      background-color: #3d3d3d;
-    }
-  }
-}
-
-a.router-link-active {
-  color: aquamarine;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-}
 /* Transition */
 .fade-enter-active,
 .fade-leave-active {

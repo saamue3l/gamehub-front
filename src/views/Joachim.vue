@@ -1,11 +1,14 @@
 <script setup lang="ts">
 
+import MediumContent from '@/components/layout/main/MediumContent.vue'
 </script>
 
 <template>
-  <div>
-    <img src="@/assets/joachim.jpg" />
-  </div>
+  <MediumContent>
+    <div>
+      <img src="@/assets/joachim.jpg" />
+    </div>
+  </MediumContent>
 </template>
 
 <style scoped>

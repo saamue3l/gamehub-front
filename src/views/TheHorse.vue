@@ -6,11 +6,17 @@ import MediumContent from '@/components/layout/main/MediumContent.vue'
 <template>
   <MediumContent>
     <div>
-      <h1>Where are the events ?</h1>
+      <img src="@/assets/theHorse.jpeg" />
     </div>
   </MediumContent>
 </template>
 
 <style scoped>
-
+div {
+  display: flex;
+  justify-content: center;
+  img {
+    max-height: 100vh;
+  }
+}
 </style>
