@@ -1,12 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import BasePage from '@/components/layout/BasePage.vue';
+</script>
 
 <template>
-  <section class="w-3/5">
-    <p class="text-custom-white text-2xl font-bold mt-14 mb-4">Titre</p>
-    <div class="flex"></div>
-  </section>
+  <BasePage title="Titre">
+  </BasePage>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

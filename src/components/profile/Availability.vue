@@ -1,11 +1,10 @@
-<!-- src/components/profile/Availability.vue -->
 <template>
-  <div>
-    <p class="text-custom-white text-sm font-bold pb-1 pl-2 uppercase">Disponibilité</p>
-    <div class="border border-custom-white h-32 rounded-lg"></div>
-  </div>
+  <TitleContainer title="Disponibilité">
+  </TitleContainer>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import TitleContainer from '@/components/profile/TitleContainer.vue';
+</script>
 
 <style scoped></style>
