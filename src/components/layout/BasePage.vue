@@ -1,6 +1,6 @@
 <template>
   <section class="w-3/5">
-    <p class="text-custom-white text-2xl font-bold mt-14 mb-4">{{ title }}</p>
+    <p class="text-custom-white text-2xl font-bold mt-14 mb-4">{{ title.toUpperCase() }}</p>
     <div class="flex justify-between">
       <slot></slot>
     </div>
@@ -8,11 +8,11 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
+import { defineProps } from 'vue'
 
 const props = defineProps<{
-  title: string;
-}>();
+  title: string
+}>()
 </script>
 
 <style scoped></style>
