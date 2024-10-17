@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import TitledMediumContent from '@/components/layout/main/TitledMediumContent.vue'
 import Layer from '@/components/test/layer.vue'
 import SearchBar from '@/components/ui/inputs/searchbar/SearchBar.vue'
+import BasePage from '@/components/layout/BasePage.vue'
 </script>
 
 <template>
-  <Layer image-path="src/assets/evenements.png" />
-  <TitledMediumContent title="Évènements">
+  <!--  <Layer image-path="src/assets/evenements.png" />-->
+  <BasePage title="Évènements">
     <section>
       <header>
         <SearchBar></SearchBar>
       </header>
     </section>
-  </TitledMediumContent>
+  </BasePage>
 </template>
 
 <style scoped></style>
