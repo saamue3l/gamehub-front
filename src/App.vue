@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { routes } from '@/router/index.js'
 import Header from '@/components/layout/header/Header.vue'
 </script>
 
