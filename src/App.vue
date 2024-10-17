@@ -5,9 +5,7 @@ import MainLayout from '@/components/layout/MainLayout.vue'
 <template>
   <MainLayout>
     <router-view v-slot="{ Component }">
-      <transition name="fade" mode="out-in">
-        <component :is="Component" />
-      </transition>
+      <component :is="Component" />
     </router-view>
   </MainLayout>
 </template>
