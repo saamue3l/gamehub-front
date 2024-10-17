@@ -8,7 +8,7 @@ import { routes } from '@/router/index.js'
       <li v-for="(route, index) in routes.filter((r) => r.inNav)" class="mr-2" :key="index">
         <router-link
           :to="route.path"
-          class="text-custom-white text-sm font-medium hover:bg-custom-secondary hover:rounded-3xl px-2 py-0.5"
+          class="text-custom-white text-sm font-medium rounded-3xl hover:bg-custom-secondary [&.router-link-active]:bg-custom-secondary px-2 py-0.5 transition"
           >{{ route.name.toUpperCase() }}</router-link
         >
       </li>
