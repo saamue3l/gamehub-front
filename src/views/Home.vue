@@ -1,16 +1,10 @@
 <script setup lang="ts">
-
-import MediumContent from '@/components/layout/main/MediumContent.vue'
+import BasePage from '@/components/layout/BasePage.vue';
 </script>
 
 <template>
-  <MediumContent>
-    <div>
-      <h1>Where is home ?</h1>
-    </div>
-  </MediumContent>
+  <BasePage title="Titre">
+  </BasePage>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
