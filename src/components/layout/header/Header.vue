@@ -1,5 +1,5 @@
 <template>
-  <header class="flex justify-center items-center px-4 py-2 bg-custom-background-dark text-custom-white">
+  <header class="flex justify-center items-center px-4 py-2 text-custom-white">
     <div class="w-full md:w-3/5 flex justify-between items-center">
 
       <!-- logo + links(if not mobile) -->
@@ -11,7 +11,7 @@
       </div>
 
       <!-- profile et alerts(if not mobile) -->
-      <div class="hidden md:flex items-center justify-end space-x-4">
+      <div class="hidden md:flex items-center justify-end space-x-2">
         <ProfileMenu />
         <AlertMenu />
       </div>

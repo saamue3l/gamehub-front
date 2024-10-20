@@ -8,10 +8,10 @@ import BasePage from '@/components/layout/BasePage.vue'
 
 <template>
   <BasePage title="Profil">
-    <div class="w-3/5 flex flex-col">
+    <div class="flex flex-col flex-1 pr-8 min-w-96">
       <FavoriteGames />
     </div>
-    <div class="w-1/3 flex flex-col space-y-8">
+    <div class="min-w-64 max-w-64 flex flex-col space-y-8">
       <Alias />
       <Availability />
       <Achievements />
