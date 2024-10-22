@@ -13,15 +13,16 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "url-loader": "^4.1.1",
     "@vee-validate/zod": "^4.14.3",
     "@vueuse/core": "^11.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "dotenv": "^16.4.5",
     "lucide-vue-next": "^0.453.0",
     "radix-vue": "^1.9.7",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
+    "url-loader": "^4.1.1",
     "vee-validate": "^4.14.3",
     "vue": "^3.4.29",
     "vue-router": "4",
