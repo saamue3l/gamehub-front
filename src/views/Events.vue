@@ -11,6 +11,7 @@ import DatePicker from '@/components/ui/inputs/datePicker/DatePicker.vue'
     <section>
       <header class="flex gap-3">
         <SearchBar placeholder="Rechercher par jeu"></SearchBar>
+        <DatePicker></DatePicker>
       </header>
     </section>
   </BasePage>

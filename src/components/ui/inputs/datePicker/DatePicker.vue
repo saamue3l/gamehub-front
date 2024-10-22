@@ -12,11 +12,11 @@
 -->
 
 <script setup lang="ts">
-import { Button } from '@/components/ui/button/Button.vue'
+import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { cn } from '@/utils'
+import { cn } from '@/lib/utils'
 import { DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date'
 import { Calendar as CalendarIcon } from 'lucide-vue-next'
 import { ref } from 'vue'
@@ -38,7 +38,7 @@ const value = ref<DateValue>()
         "
       >
         <CalendarIcon class="mr-2 h-4 w-4" />
-        {{ value ? df.format(value.toDate(getLocalTimeZone())) : 'Pick a date' }}
+        {{ value ? df.format(value.toDate(getLocalTimeZone())) : 'Sélectionnez une date' }}
       </Button>
     </PopoverTrigger>
     <PopoverContent class="w-auto p-0">
