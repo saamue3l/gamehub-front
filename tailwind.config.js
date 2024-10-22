@@ -5,7 +5,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Poppins'],
+        sans: ['Poppins']
       },
       colors: {
         'custom-primary': '#3B82F6',
@@ -13,9 +13,9 @@ export default {
         'custom-background': '#020818',
         'custom-background-dark': '#01050E',
         'custom-white': '#fafafe',
+        'custom-gray': '#9ca3af'
       }
-    },
+    }
   },
-  plugins: [],
+  plugins: []
 }
-
