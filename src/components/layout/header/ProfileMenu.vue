@@ -1,56 +1,59 @@
 <template>
-  <div class="relative">
-    <button @click="toggleProfileMenu" class="focus:outline-none flex items-center hover:bg-custom-secondary hover:rounded-3xl p-0.5" ref="profileButton">
-      <img src="@/assets/joachim.jpg" alt="Profile Picture" class="h-8 w-8 rounded-full mr-2">
-      <span class="mr-2 text-sm font-medium">Pseudo</span>
-    </button>
-    <div v-if="isProfileMenuOpen" class="absolute right-0 mt-2 w-48 bg-custom-white rounded-md shadow-lg py-1 text-gray-700">
-      <a href="/profil" class="px-4 py-2 hover:bg-gray-100 flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 mr-2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-        </svg>
-        <span class="text-sm">Mon profil</span>
-      </a>
-      <a href="#" class="px-4 py-2 hover:bg-gray-100 flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 mr-2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-        </svg>
-        <span class="text-sm">Paramètres</span>
-      </a>
-      <a href="#" class="px-4 py-2 hover:bg-gray-100 flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" class="size-5 mr-2">
-          <path fill-rule="evenodd" d="M16.5 3.75a1.5 1.5 0 0 1 1.5 1.5v13.5a1.5 1.5 0 0 1-1.5 1.5h-6a1.5 1.5 0 0 1-1.5-1.5V15a.75.75 0 0 0-1.5 0v3.75a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V5.25a3 3 0 0 0-3-3h-6a3 3 0 0 0-3 3V9A.75.75 0 1 0 9 9V5.25a1.5 1.5 0 0 1 1.5-1.5h6ZM5.78 8.47a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 0 0 0 1.06l3 3a.75.75 0 0 0 1.06-1.06l-1.72-1.72H15a.75.75 0 0 0 0-1.5H4.06l1.72-1.72a.75.75 0 0 0 0-1.06Z" clip-rule="evenodd" />
-        </svg>
-        <span class="text-sm">Déconnexion</span>
-      </a>
-    </div>
-  </div>
+  <DropdownMenu v-slot="{ open }">
+    <DropdownMenuTrigger as-child>
+      <div :class="['flex items-center cursor-pointer hover:bg-secondary hover:rounded-3xl p-0.5', { 'pointer-events-none': open }]">
+        <div class="flex items-center">
+          <Avatar class="size-8">
+            <AvatarImage src="src/assets/joachim.jpg" alt="@shadcn" />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+          <span class="ml-1 mr-1 text-sm font-medium">Pseudo</span>
+        </div>
+      </div>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent class="w-36">
+      <DropdownMenuItem @click="goToProfile">
+        <User class="mr-2 h-4 w-4" />
+        <span>Profile</span>
+      </DropdownMenuItem>
+      <DropdownMenuItem>
+        <Settings class="mr-2 h-4 w-4" />
+        <span>Settings</span>
+      </DropdownMenuItem>
+      <DropdownMenuItem>
+        <LogOut class="mr-2 h-4 w-4" />
+        <span>Log out</span>
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 
-const isProfileMenuOpen = ref(false)
-const profileButton = ref(null)
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import {
+  LogOut,
+  Settings,
+  User,
+} from 'lucide-vue-next'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 
-const toggleProfileMenu = () => {
-  isProfileMenuOpen.value = !isProfileMenuOpen.value
+const router = useRouter()
+
+const goToProfile = () => {
+  router.push({ name: 'Profil' })
 }
-
-const closeMenus = (event) => {
-  if (!profileButton.value.contains(event.target)) {
-    isProfileMenuOpen.value = false
-  }
-}
-
-onMounted(() => {
-  document.addEventListener('click', closeMenus)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('click', closeMenus)
-})
 </script>
 
-<style scoped></style>
+<style scoped>
+.flex.items-center {
+  display: flex !important;
+  align-items: center !important;
+}
+</style>
