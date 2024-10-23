@@ -7,7 +7,7 @@
             <AvatarImage src="src/assets/joachim.jpg" alt="@shadcn" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <span class="ml-1 mr-1 text-sm font-medium">Pseudo</span>
+          <span class="ml-1 mr-1 text-sm font-medium">{{ username }}</span> <!-- Utilisation de username -->
         </div>
       </div>
     </DropdownMenuTrigger>
@@ -29,25 +29,31 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@/components/ui/dropdown-menu';
 import {
   LogOut,
   Settings,
   User,
-} from 'lucide-vue-next'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+} from 'lucide-vue-next';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
-const router = useRouter()
+const router = useRouter();
+const username = ref('');
+
+onMounted(() => {
+  // Récupérer le pseudo depuis sessionStorage
+  username.value = sessionStorage.getItem('username') || 'Invité';
+});
 
 const goToProfile = () => {
-  router.push({ name: 'Profil' })
+  router.push({ name: 'Profil' });
 }
 </script>
 
