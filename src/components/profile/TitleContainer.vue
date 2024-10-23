@@ -1,7 +1,7 @@
 <template>
   <div>
     <p class="text-custom-white text-sm font-bold pb-1 pl-2 uppercase">{{ title }}</p>
-    <div class="border border-custom-white h-32 rounded-lg">
+    <div class="border border-custom-white rounded-lg">
       <slot></slot>
     </div>
   </div>

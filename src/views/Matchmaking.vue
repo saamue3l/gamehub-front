@@ -68,7 +68,7 @@ import AddGameFilterMatchmakingModal from '@/components/matchmaking/AddFilterMat
 import BasePage from '@/components/layout/BasePage.vue' // Import du modal
 
 export default {
-  name: 'MatchmakingPage',
+  name: 'Matchmaking',
   components: {
     BasePage,
     AddGameFilterMatchmakingModal
