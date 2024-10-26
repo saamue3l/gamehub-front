@@ -7,7 +7,7 @@
             <AvatarImage src="src/assets/joachim.jpg" alt="@shadcn" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <span class="ml-1 mr-1 text-sm font-medium">{{ username }}</span> <!-- Utilisation de username -->
+          <span class="ml-1 mr-1 text-sm font-medium">{{ userStore.username }}</span> <!-- Utilisation de username -->
         </div>
       </div>
     </DropdownMenuTrigger>
@@ -43,14 +43,10 @@ import {
   User,
 } from 'lucide-vue-next';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { UserStore } from '@/store/userStore'
 
 const router = useRouter();
-const username = ref('');
-
-onMounted(() => {
-  // Récupérer le pseudo depuis sessionStorage
-  username.value = sessionStorage.getItem('username') || 'Invité';
-});
+const userStore = UserStore();
 
 const goToProfile = () => {
   router.push({ name: 'Profil' });
