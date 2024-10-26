@@ -4,9 +4,9 @@
 
       <!-- logo + links(if not mobile) -->
       <div class="flex items-center">
-        <a href="/" class="mr-5">
-          <img src="@/assets/logoBlue.png" alt="Logo" class="h-6">
-        </a>
+        <router-link to="/" class="mr-5">
+          <img src="@/assets/logoBlue.png" alt="Logo" class="h-6" />
+        </router-link>
         <NavLinks class="hidden md:flex" />
       </div>
 
