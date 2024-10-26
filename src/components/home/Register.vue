@@ -46,7 +46,7 @@ const onSubmit = handleSubmit(async (values) => {
       <FormItem>
         <FormLabel>Adresse email</FormLabel>
         <FormControl>
-          <Input type="text" placeholder="Votre addresse email" v-bind="componentField" />
+          <Input type="text" placeholder="Votre addresse email" v-bind="componentField" :validate-on-blur="false" />
         </FormControl>
         <FormMessage />
       </FormItem>
@@ -56,7 +56,7 @@ const onSubmit = handleSubmit(async (values) => {
       <FormItem>
         <FormLabel>Pseudo</FormLabel>
         <FormControl>
-          <Input type="text" placeholder="Votre nom d'utilisateur" v-bind="componentField" />
+          <Input type="text" placeholder="Votre nom d'utilisateur" v-bind="componentField" :validate-on-blur="false" />
         </FormControl>
         <FormMessage />
       </FormItem>
@@ -66,7 +66,7 @@ const onSubmit = handleSubmit(async (values) => {
       <FormItem>
         <FormLabel>Mot de passe</FormLabel>
         <FormControl>
-          <Input type="password" placeholder="Votre mot de passe" v-bind="componentField" />
+          <Input type="password" placeholder="Votre mot de passe" v-bind="componentField" :validate-on-blur="false" />
         </FormControl>
         <FormMessage />
       </FormItem>

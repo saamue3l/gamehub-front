@@ -2,68 +2,45 @@
 import { Button } from '@/components/ui/button'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { toTypedSchema } from '@vee-validate/zod'
+import { loginPostSchema } from '@/types/index.ts'
 import { useForm } from 'vee-validate'
-import * as z from 'zod'
+import { getCsrfCookie } from '@/api/getCsrfCookie'
+import { useRouter } from 'vue-router'
+import { toTypedSchema } from '@vee-validate/zod'
+import { fetchLoginPost } from '@/api/fetchLoginPost'
+import { UserStore } from '@/store/userStore'
+import { useToast } from '@/components/ui/toast'
+import { ToastAction } from 'radix-vue'
+import { h } from 'vue'
 
-const formSchema = toTypedSchema(
-  z.object({
-    email: z.string().email('Email invalide'),
-    password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères')
-  })
-)
+const router = useRouter()
+const userStore = UserStore()
+const { toast } = useToast()
+
+const validationSchema = toTypedSchema(loginPostSchema)
 
 const { handleSubmit } = useForm({
-  validationSchema: formSchema
+  validationSchema
 })
-
-async function getCsrfCookie() {
-  await fetch('http://127.0.0.1:8000/sanctum/csrf-cookie', {
-    method: 'GET',
-    credentials: 'include',
-    headers: {
-      Accept: 'application/json',
-      'X-Requested-With': 'XMLHttpRequest'
-    }
-  })
-}
 
 const onSubmit = handleSubmit(async (values) => {
   try {
-    await getCsrfCookie()
-
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-      body: JSON.stringify(values),
-      credentials: 'include'
-    }
-
-    const response = await fetch('http://127.0.0.1:8000/api/login', requestOptions)
-
-    if (!response.ok) {
-      const errorResponse = await response.json()
-      throw new Error(errorResponse.message || 'Échec de la connexion.')
-    }
-
-    const data = await response.json()
-
-    sessionStorage.setItem('token', data.token)
-    sessionStorage.setItem('username', data.user.username)
-    window.location.href = '/'
+    await fetchLoginPost(values)
+    userStore.setUsername()
+    await router.push({ name: 'Profil' })
   } catch (error) {
-    //toast d'erreur
+    toast({
+      title: 'Uh oh! Something went wrong.',
+      description: 'There was a problem with your request.',
+      variant: 'destructive'
+    })
   }
 })
 </script>
 
 <template>
   <form class="space-y-6" @submit="onSubmit">
-    <FormField v-slot="{ componentField }" name="email">
+    <FormField v-slot="{ componentField }" name="email" :validate-on-blur="false">
       <FormItem>
         <FormLabel>Email</FormLabel>
         <FormControl>
@@ -73,7 +50,7 @@ const onSubmit = handleSubmit(async (values) => {
       </FormItem>
     </FormField>
 
-    <FormField v-slot="{ componentField }" name="password">
+    <FormField v-slot="{ componentField }" name="password" :validate-on-blur="false">
       <FormItem>
         <FormLabel>Mot de passe</FormLabel>
         <FormControl>

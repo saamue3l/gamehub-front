@@ -3,9 +3,7 @@
     <!-- Dialog pour Connexion -->
     <Dialog>
       <DialogTrigger as-child>
-        <Button variant="default" size="none" class="text-sm py-1.5 min-w-44">
-          Connexion
-        </Button>
+        <Button variant="default" size="none" class="text-sm py-1.5 min-w-44"> Connexion </Button>
       </DialogTrigger>
       <DialogScrollContent class="sm:max-w-[425px]">
         <Login />
@@ -15,7 +13,13 @@
     <!-- Dialog pour Inscription -->
     <Dialog>
       <DialogTrigger as-child>
-        <Button variant="secondary" size="none" class="text-sm py-1.5 min-w-44" @click="isRegisterOpen = true">Inscription</Button>
+        <Button
+          variant="secondary"
+          size="none"
+          class="text-sm py-1.5 min-w-44"
+          @click="isRegisterOpen = true"
+          >Inscription</Button
+        >
       </DialogTrigger>
       <DialogScrollContent class="sm:max-w-[425px]">
         <Register />
@@ -25,17 +29,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import Button from '@/components/ui/button/Button.vue'
-import {
-  Dialog,
-  DialogScrollContent,
-  DialogTrigger,
-  DialogClose,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog'
+import { Dialog, DialogScrollContent, DialogTrigger } from '@/components/ui/dialog'
 import Login from '@/components/home/Login.vue'
 import Register from '@/components/home/Register.vue'
 </script>
