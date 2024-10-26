@@ -5,6 +5,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+/**
+ * TODO : Implémenter les token d'authentification
+ * @param path 
+ * @param method 
+ * @param body 
+ * @returns 
+ */
 export async function httpBackend<T>(
   path: string,
   method: 'GET' | 'POST' = 'GET',
