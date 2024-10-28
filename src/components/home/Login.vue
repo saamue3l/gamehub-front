@@ -1,17 +1,14 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button'
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { loginPostSchema } from '@/types/index.ts'
 import { useForm } from 'vee-validate'
-import { getCsrfCookie } from '@/api/getCsrfCookie'
 import { useRouter } from 'vue-router'
 import { toTypedSchema } from '@vee-validate/zod'
 import { fetchLoginPost } from '@/api/fetchLoginPost'
 import { UserStore } from '@/store/userStore'
 import { useToast } from '@/components/ui/toast'
-import { ToastAction } from 'radix-vue'
-import { h } from 'vue'
 
 const router = useRouter()
 const userStore = UserStore()
@@ -40,23 +37,37 @@ const onSubmit = handleSubmit(async (values) => {
 
 <template>
   <form class="space-y-6" @submit="onSubmit">
-    <FormField v-slot="{ componentField }" name="email" :validate-on-blur="false">
+    <FormField
+      v-slot="{ componentField }"
+      name="email"
+      :validate-on-change="false"
+      :validate-on-input="false"
+      :validate-on-blur="false"
+      :validate-on-mount="false"
+      :validate-on-model-update="false"
+    >
       <FormItem>
         <FormLabel>Email</FormLabel>
         <FormControl>
           <Input type="email" placeholder="Votre email" v-bind="componentField" />
         </FormControl>
-        <FormMessage />
       </FormItem>
     </FormField>
 
-    <FormField v-slot="{ componentField }" name="password" :validate-on-blur="false">
+    <FormField
+      v-slot="{ componentField }"
+      name="password"
+      :validate-on-change="false"
+      :validate-on-input="false"
+      :validate-on-blur="false"
+      :validate-on-mount="false"
+      :validate-on-model-update="false"
+    >
       <FormItem>
         <FormLabel>Mot de passe</FormLabel>
         <FormControl>
           <Input type="password" placeholder="Votre mot de passe" v-bind="componentField" />
         </FormControl>
-        <FormMessage />
       </FormItem>
     </FormField>
 
