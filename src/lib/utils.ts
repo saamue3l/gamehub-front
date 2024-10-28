@@ -7,10 +7,10 @@ export function cn(...inputs: ClassValue[]) {
 
 /**
  * TODO : Implémenter les token d'authentification
- * @param path 
- * @param method 
- * @param body 
- * @returns 
+ * @param path
+ * @param method
+ * @param body
+ * @returns
  */
 export async function httpBackend<T>(
   path: string,

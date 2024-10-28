@@ -7,7 +7,11 @@ import type { Game } from '@/types/Game'
 import LoadingSpinner from '@/components/ui/feedback/spinner/LoadingSpinner.vue'
 import GameCard from '@/components/layout/games/gameCard/GameCard.vue'
 import { nativeEnum } from 'zod'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { ScrollAreaViewport } from 'radix-vue'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
+import { rand } from '@vueuse/core'
 
 const emit = defineEmits<{
   (e: 'select-game', game: Game | null): void // Game when the user selects a game and null when he deselects a game
@@ -69,40 +73,43 @@ function setGame(game: Game) {
 </script>
 
 <template>
-  <section id="searchGame">
-    <header>
+  <Popover>
+    <PopoverTrigger>
       <SearchBar
         placeholder="Rechercher un jeu"
         v-model="gameSearch"
         @input="searchGame"
       ></SearchBar>
-    </header>
-    <section
-      ref="gamePreviewContainer"
-      class="flex justify-start overflow-auto gap-3 flex-grow flex-shrink basis-0 py-3"
-    >
-      <!-- while fetching -->
-      <Skeleton
-        v-if="isLoading"
-        class="w-[150px] min-w-[150px] h-[243px]"
-        v-for="i in Math.floor(Math.random() * 3) + 2"
-      ></Skeleton>
+    </PopoverTrigger>
+    <PopoverContent>
+      <section
+        ref="gamePreviewContainer"
+        class="flex flex-col justify-start overflow-auto gap-3 flex-grow max-h-[50vh]"
+      >
+        <!-- while fetching -->
+        <Skeleton
+          v-if="isLoading"
+          class="w-full h-[70px]"
+          v-for="i in Math.floor(Math.random() * 3) + 2"
+        ></Skeleton>
 
-      <!-- If error while fetching -->
-      <div v-else-if="error" class="text-red-500 text-center">
-        <p>{{ error }}</p>
-      </div>
+        <!-- If error while fetching -->
+        <div v-else-if="error" class="text-red-500 text-center">
+          <p>{{ error }}</p>
+        </div>
 
-      <GameCard
-        v-else
-        v-for="game in games"
-        v-key="game.id"
-        :game="game"
-        :is-selected="selectedGame?.id === game.id"
-        @click="setGame(game)"
-      ></GameCard>
-    </section>
-  </section>
+        <GameCard
+          v-else
+          v-for="game in games"
+          v-key="game.id"
+          :game="game"
+          :is-selected="selectedGame?.id === game.id"
+          @click="setGame(game)"
+          direction="horizontal"
+        ></GameCard>
+      </section>
+    </PopoverContent>
+  </Popover>
 </template>
 
 <style scoped></style>
