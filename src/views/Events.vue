@@ -7,6 +7,9 @@ import EventCard from '@/components/layout/events/EventCard.vue'
 import { httpBackend } from '@/lib/utils'
 import { ref, onMounted } from 'vue'
 import LoadingSpinner from '@/components/ui/feedback/spinner/LoadingSpinner.vue'
+import SearchGamePopover from '@/components/layout/games/SearchGamePopover.vue'
+import SearchGame from '@/components/layout/games/SearchGame.vue'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const events = ref<Event[]>([])
 const isLoading = ref(true)
@@ -28,9 +31,9 @@ onMounted(async () => {
 
 <template>
   <BasePage title="Évènements">
-    <header class="w-full flex justify-between">
-      <article class="flex gap-3 float-left">
-        <SearchBar placeholder="Rechercher par jeu"></SearchBar>
+    <header class="w-full flex justify-between flex-wrap gap-3 max-w-full">
+      <article class="flex gap-3 float-left flex-wrap">
+        <SearchGamePopover></SearchGamePopover>
         <DatePicker></DatePicker>
       </article>
       <article class="flex gap-3 float-right">
@@ -39,12 +42,15 @@ onMounted(async () => {
     </header>
 
     <!-- Liste des évènements -->
-
-    <section class="w-full border">
+    <section
+      class="w-full border p-6 grid gap-3 justify-around items-start lg:grid-cols-[repeat(auto-fill,minmax(400px,1fr))] grid-cols-[repeat(auto-fill,1fr)]"
+    >
       <!-- while fetching -->
-      <div v-if="isLoading" class="w-full flex justify-center">
-        <LoadingSpinner size="xl"></LoadingSpinner>
-      </div>
+      <Skeleton
+        v-if="isLoading"
+        class="self-start h-[300px] w-[50%]]"
+        v-for="i in (Math.floor(Math.random() * 3) + 1) * 2"
+      ></Skeleton>
 
       <!-- If error while fetching -->
       <div v-else-if="error" class="text-red-500 text-center">

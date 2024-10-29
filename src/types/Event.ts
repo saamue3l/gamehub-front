@@ -7,7 +7,7 @@ export type Event = {
   description: string
   eventDate: Date
   maxPlayers: number
-  players: User[]
+  participants: User[]
   creator: User
   game: Game
 }
