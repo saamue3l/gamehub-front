@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button'
 import { FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { loginPostSchema } from '@/types/index.ts'
+import { loginPostSchema } from '@/types/Login.ts'
 import { useForm } from 'vee-validate'
 import { useRouter } from 'vue-router'
 import { toTypedSchema } from '@vee-validate/zod'

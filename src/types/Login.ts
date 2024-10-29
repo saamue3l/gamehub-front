@@ -5,9 +5,9 @@ export const loginPostSchema = z.object({
   password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères')
 })
 
-export type loginPost = z.infer<typeof loginPostSchema>
+export type LoginPost = z.infer<typeof loginPostSchema>
 
-export type loginResponse = {
+export type LoginResponse = {
   username: string
   roleId: number
   statusId: number

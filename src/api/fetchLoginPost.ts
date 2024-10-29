@@ -1,7 +1,7 @@
 import { getCsrfCookie } from '@/api/getCsrfCookie'
-import type { loginPost, loginResponse } from '@/types'
+import type { LoginPost, LoginResponse } from '@/types/Login'
 
-export async function fetchLoginPost(values: loginPost): Promise<loginResponse> {
+export async function fetchLoginPost(values: LoginPost): Promise<LoginResponse> {
   await getCsrfCookie()
   return fetch(`${import.meta.env.VITE_BACKEND_HOST}/api/login`, {
     method: 'POST',
