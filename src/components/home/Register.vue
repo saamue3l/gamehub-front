@@ -1,52 +1,60 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button'
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { toast } from '@/components/ui/toast'
-
+import { useToast } from '@/components/ui/toast'
 import { toTypedSchema } from '@vee-validate/zod'
-import { Form, useForm } from 'vee-validate'
-import { h } from 'vue'
-import * as z from 'zod'
+import { useForm } from 'vee-validate'
+import { fetchRegisterPost } from '@/api/fetchRegisterPost'
+import { registerPostSchema } from '@/types/Register'
+import router from '@/router/index.js'
+import { UserStore } from '@/store/userStore'
 
-const formSchema = toTypedSchema(z.object({
-  email: z.string().email('Adresse email invalide').min(6),
-  username: z.string().min(2).max(50),
-  password: z.string().min(6),
-  passwordConfirm: z.string().min(6)
-}));
+const validationSchema = toTypedSchema(registerPostSchema)
 
-const { handleSubmit, validate } = useForm({
-  validationSchema: formSchema,
-});
+const { handleSubmit } = useForm({
+  validationSchema
+})
 
+const userStore = UserStore()
+
+const { toast } = useToast()
 const onSubmit = handleSubmit(async (values) => {
-  // Effectuer la validation lors de la soumission
-  const isValid = await validate();
-  if (isValid) {
+  try {
+    const response = await fetchRegisterPost(values)
+    console.log(response)
     toast({
-      title: 'You submitted the following values:',
-      description: h('pre', { class: 'mt-2 w-[340px] rounded-md bg-slate-950 p-4' }, h('code', { class: 'text-white' }, JSON.stringify(values, null, 2))),
-    });
+      title: 'Succès !',
+      description: response.message,
+      variant: 'default'
+    })
+    userStore.setUsername(values.username)
+    await router.push({ name: 'Profil' })
+  } catch (error) {
+    error.toString()
+    const errorMessage =
+      error.response?.data?.message || 'Il y a eu un problème avec votre requête.'
+    toast({
+      title: 'Oups !',
+      description: errorMessage,
+      variant: 'destructive'
+    })
   }
-});
+})
 </script>
 
 <template>
   <form class="space-y-6" @submit="onSubmit">
-
     <FormField v-slot="{ componentField }" name="email">
       <FormItem>
         <FormLabel>Adresse email</FormLabel>
         <FormControl>
-          <Input type="text" placeholder="Votre addresse email" v-bind="componentField" :validate-on-blur="false" />
+          <Input
+            type="text"
+            placeholder="Votre addresse email"
+            v-bind="componentField"
+            :validate-on-blur="false"
+          />
         </FormControl>
         <FormMessage />
       </FormItem>
@@ -56,7 +64,12 @@ const onSubmit = handleSubmit(async (values) => {
       <FormItem>
         <FormLabel>Pseudo</FormLabel>
         <FormControl>
-          <Input type="text" placeholder="Votre nom d'utilisateur" v-bind="componentField" :validate-on-blur="false" />
+          <Input
+            type="text"
+            placeholder="Votre nom d'utilisateur"
+            v-bind="componentField"
+            :validate-on-blur="false"
+          />
         </FormControl>
         <FormMessage />
       </FormItem>
@@ -66,7 +79,12 @@ const onSubmit = handleSubmit(async (values) => {
       <FormItem>
         <FormLabel>Mot de passe</FormLabel>
         <FormControl>
-          <Input type="password" placeholder="Votre mot de passe" v-bind="componentField" :validate-on-blur="false" />
+          <Input
+            type="password"
+            placeholder="Votre mot de passe"
+            v-bind="componentField"
+            :validate-on-blur="false"
+          />
         </FormControl>
         <FormMessage />
       </FormItem>
@@ -82,12 +100,8 @@ const onSubmit = handleSubmit(async (values) => {
       </FormItem>
     </FormField>
 
-    <Button type="submit" size="form">
-      S'inscrire
-    </Button>
+    <Button type="submit" size="form"> S'inscrire </Button>
   </form>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
