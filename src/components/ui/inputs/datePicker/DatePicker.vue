@@ -1,31 +1,16 @@
-<!--
-<script setup lang="ts"></script>
-
-<template>
-  <input
-    type="date"
-    class="rounded-md p-1.5 bg-custom-background border border-custom-white focus-within:border-custom-primary text-custom-gray focus:text-custom-white focus-visible:outline-none"
-  />
-</template>
-
-<style scoped></style>
--->
-
 <script setup lang="ts">
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 import { DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date'
 import { Calendar as CalendarIcon } from 'lucide-vue-next'
-import { ref } from 'vue'
 
-const df = new DateFormatter('en-US', {
+const df = new DateFormatter('fr-FR', {
   dateStyle: 'long'
 })
 
-const value = ref<DateValue>()
+const value = defineModel<DateValue | null>()
 </script>
 
 <template>
