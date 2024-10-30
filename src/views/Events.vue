@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import SearchBar from '@/components/ui/inputs/searchbar/SearchBar.vue'
 import BasePage from '@/components/layout/BasePage.vue'
 import DatePicker from '@/components/ui/inputs/datePicker/DatePicker.vue'
 import { Button } from '@/components/ui/button'
 import EventCard from '@/components/layout/events/EventCard.vue'
 import { httpBackend } from '@/lib/utils'
 import { ref, onMounted } from 'vue'
-import LoadingSpinner from '@/components/ui/feedback/spinner/LoadingSpinner.vue'
 import SearchGamePopover from '@/components/layout/games/SearchGamePopover.vue'
-import SearchGame from '@/components/layout/games/SearchGame.vue'
 import { Skeleton } from '@/components/ui/skeleton'
 
 const events = ref<Event[]>([])
 const isLoading = ref(true)
+const errorMessage = ref<string | null>(null)
 const error = ref<string | null>(null)
 
 onMounted(async () => {
@@ -20,7 +18,7 @@ onMounted(async () => {
     isLoading.value = true
     events.value = await httpBackend<Event[]>('/api/event/allEvents')
   } catch (error) {
-    error.value =
+    errorMessage.value =
       "Nous n'avons pas réussi a télécharger les évènements. Veuillez réessayer plus tard."
     console.error('Error fetching the events:', error)
   } finally {
@@ -53,8 +51,8 @@ onMounted(async () => {
       ></Skeleton>
 
       <!-- If error while fetching -->
-      <div v-else-if="error" class="text-red-500 text-center">
-        <p>{{ error }}</p>
+      <div v-else-if="errorMessage" class="text-red-500 text-center">
+        <p>{{ errorMessage }}</p>
       </div>
 
       <!-- When fetched -->

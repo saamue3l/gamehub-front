@@ -15,7 +15,7 @@ const emit = defineEmits<{
 
 const games: ref = ref<Game[]>([]) // List of games based on the user's search
 const isLoading: ref = ref(false) // Are we waiting for a response from the back-end ?
-const error: ref = ref<string | null>(null) // Is there an error while fetching the back-end ?
+const errorMessage: ref = ref<string | null>(null) // Is there an error while fetching the back-end ?
 const selectedGame: ref = ref<Game | null>(null) // The game the user selected
 const gameSearch: ref = ref('') // the search the user have made / The input value
 
@@ -42,13 +42,14 @@ async function searchGame() {
     games.value = await httpBackend<Game[]>('/api/game/searchGames', 'POST', { search: search })
     if (games.value.length == 0) {
       // Error message if back-end returned no results
-      error.value = 'Aucun jeu trouvé'
+      errorMessage.value = 'Aucun jeu trouvé'
       return
     } else {
-      error.value = '' // Reset the "error"
+      errorMessage.value = '' // Reset the "error"
     }
   } catch (error) {
-    error.value = "Nous n'avons pas réussi a télécharger les jeux. Veuillez réessayer plus tard."
+    errorMessage.value =
+      "Nous n'avons pas réussi a télécharger les jeux. Veuillez réessayer plus tard."
     console.error('Error fetching the games:', error)
   } finally {
     isLoading.value = false // Stop the loading
@@ -89,8 +90,8 @@ function setGame(game: Game) {
       ></Skeleton>
 
       <!-- If error while fetching -->
-      <div v-else-if="error" class="text-red-500 text-center">
-        <p>{{ error }}</p>
+      <div v-else-if="errorMessage" class="text-red-500 text-center">
+        <p>{{ errorMessage }}</p>
       </div>
 
       <GameCard
