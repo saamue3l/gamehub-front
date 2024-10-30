@@ -1,13 +1,19 @@
 <template>
   <DropdownMenu v-slot="{ open }">
     <DropdownMenuTrigger as-child>
-      <div :class="['flex items-center cursor-pointer hover:bg-secondary hover:rounded-3xl p-0.5', { 'pointer-events-none': open }]">
+      <div
+        :class="[
+          'flex items-center cursor-pointer hover:bg-secondary hover:rounded-3xl p-0.5',
+          { 'pointer-events-none': open }
+        ]"
+      >
         <div class="flex items-center">
-          <Avatar class="size-8">
+          <Avatar v-if="isLoggedIn" class="size-8">
             <AvatarImage src="src/assets/joachim.jpg" alt="@shadcn" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
-          <span class="ml-1 mr-1 text-sm font-medium">Pseudo</span>
+          <span class="ml-1 mr-1 text-sm font-medium">{{ userStore.username }}</span>
+          <!-- Utilisation de username -->
         </div>
       </div>
     </DropdownMenuTrigger>
@@ -29,26 +35,26 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import {
-  LogOut,
-  Settings,
-  User,
-} from 'lucide-vue-next'
+import { LogOut, Settings, User } from 'lucide-vue-next'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { UserStore } from '@/store/userStore'
 
 const router = useRouter()
+const userStore = UserStore()
 
 const goToProfile = () => {
   router.push({ name: 'Profil' })
 }
+
+const isLoggedIn = computed(() => !!userStore.username)
 </script>
 
 <style scoped>
