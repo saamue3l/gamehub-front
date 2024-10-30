@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import BasePage from '@/components/layout/BasePage.vue'
-import DatePicker from '@/components/ui/inputs/datePicker/DatePicker.vue'
-import { Button } from '@/components/ui/button'
 import EventCard from '@/components/layout/events/EventCard.vue'
 import { httpBackend, toNativeDate } from '@/lib/utils'
-import { ref, onMounted, computed, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import SearchGamePopover from '@/components/layout/games/SearchGamePopover.vue'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { Game } from '@/types/Game'
 import DateRangePicker from '@/components/ui/inputs/datePicker/DateRangePicker.vue'
+import CreateEventButton from '@/components/layout/events/CreateEventButton.vue'
+import SearchGame from '@/components/layout/games/SearchGame.vue'
 
 const events = ref<Event[]>([])
 const isLoading = ref(true)
@@ -53,6 +53,7 @@ onMounted(fetchEvents)
 
 <template>
   <BasePage title="Évènements">
+    <SearchGame></SearchGame>
     <header class="w-full flex justify-between flex-wrap gap-3 max-w-full">
       <article class="flex gap-3 float-left flex-wrap">
         <SearchGamePopover
@@ -73,7 +74,7 @@ onMounted(fetchEvents)
         />
       </article>
       <article class="flex gap-3 float-right">
-        <Button>{{ 'Créer un évènement'.toUpperCase() }}</Button>
+        <CreateEventButton @created-event="fetchEvents" />
       </article>
     </header>
 
@@ -98,5 +99,3 @@ onMounted(fetchEvents)
     </section>
   </BasePage>
 </template>
-
-<style scoped></style>
