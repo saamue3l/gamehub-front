@@ -14,10 +14,6 @@ export async function fetchRegisterPost(values: RegisterPost): Promise<RegisterR
     await fetchLoginPost(loginValues)
     return data
   } catch (error) {
-    if (error.status === 422) {
-      console.log('test')
-    }
-    console.log(error.status)
     throw new Error(error instanceof Error ? error.message : "Échec de l'inscription .")
   }
 }
