@@ -11,6 +11,7 @@ export type Event = {
   participants: User[]
   creator: User
   game: Game
+  userJoined?: boolean
 }
 
 /* === CREATE EVENT === */

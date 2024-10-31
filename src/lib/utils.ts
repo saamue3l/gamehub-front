@@ -42,9 +42,14 @@ export async function httpBackend<T>(
     }
   })
 
+  const responseBody = await response.json()
+
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`)
+    let httpCodeError = `HTTP error! status: ${response.status}`
+    console.error(httpCodeError)
+    let errorString = responseBody.message ?? httpCodeError
+    throw new Error(errorString)
   }
 
-  return await response.json()
+  return responseBody
 }

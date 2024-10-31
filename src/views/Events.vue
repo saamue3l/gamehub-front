@@ -8,13 +8,13 @@ import { Skeleton } from '@/components/ui/skeleton'
 import type { Game } from '@/types/Game'
 import DateRangePicker from '@/components/ui/inputs/datePicker/DateRangePicker.vue'
 import CreateEventButton from '@/components/layout/events/CreateEventButton.vue'
-import SearchGame from '@/components/layout/games/SearchGame.vue'
+import type { DateRange } from 'radix-vue'
 
 const events = ref<Event[]>([])
 const isLoading = ref(true)
 const errorMessage = ref<string | null>(null)
 const selectedGame = ref<Game | null>(null)
-const selectedDates = ref<{ start: string; end: string } | null>(null)
+const selectedDates = ref<DateRange | null>(null)
 
 async function fetchEvents() {
   try {
@@ -53,7 +53,6 @@ onMounted(fetchEvents)
 
 <template>
   <BasePage title="Évènements">
-    <SearchGame></SearchGame>
     <header class="w-full flex justify-between flex-wrap gap-3 max-w-full">
       <article class="flex gap-3 float-left flex-wrap">
         <SearchGamePopover
