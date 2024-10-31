@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import BasePage from '@/components/layout/BasePage.vue';
 import SearchGame from '@/components/layout/games/SearchGame.vue';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Dialog, DialogTrigger, DialogTitle, DialogDescription, DialogFooter, DialogHeader, DialogScrollContent } from '@/components/ui/dialog';
 import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
 import { Check, ChevronsUpDown } from 'lucide-vue-next';
-import { cn } from '@/lib/utils';
+import { cn, httpBackend } from '@/lib/utils'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
 
 
 
 const niveaux = [
-  { value: 'debutant', label: 'Débutant' },
-  { value: 'intermediaire', label: 'Intermédiaire' },
-  { value: 'avance', label: 'Avancé' },
+  { value: '1', label: 'Débutant' },
+  { value: '2', label: 'Intermédiaire' },
+  { value: '3', label: 'Avancé' },
 ]
 
 const isDialogOpen = ref(false);
@@ -25,7 +25,9 @@ const selectedLevel = ref('');
 const open = ref(false);
 const gameError = ref(false);
 const levelError = ref(false);
-
+const isLoading = ref(false);
+const errorMessage = ref<string | null>(null);
+const matchResults = ref<any[]>([]);
 
 function handleSelectGame(game: any) {
   selectedGame.value = game;
@@ -53,6 +55,8 @@ function addGame() {
       levelLabel: niveaux.find(n => n.value === selectedLevel.value)?.label || '',
     };
     selectedGames.value.push(gameToAdd);
+    console.log("Appel vers l'API");
+    sendGamesToApi();
   }
 }
 
@@ -75,6 +79,39 @@ function closeDialog() {
   console.log('selectedGame:', selectedGame.value);
   console.log('selectedLevel:', selectedLevel.value);
 }
+
+async function sendGamesToApi() {
+  if (selectedGames.value.length === 0) {
+    return;
+  }
+  try {
+    isLoading.value = true;
+    errorMessage.value = null;
+    console.log("Essai de l'envoi...");
+    console.log(selectedGames);
+    const gamesData = selectedGames.value.map(game => ({
+      gameId: game.id,
+      skillTypeId: game.level,
+    }));
+    console.log(gamesData);
+    const response = await httpBackend('/api/matchmaking', 'POST', gamesData);
+
+    if (response.status !== 'success') {
+      errorMessage.value = "Une erreur s'est produite lors de l'envoi des jeux.";
+    } else {
+      matchResults.value = response.matchResult;
+      console.log('API Response:', response.matchResult);
+    }
+  } catch (error) {
+    console.log("ERROR CATCH...");
+    errorMessage.value = "Nous n'avons pas réussi à envoyer les jeux. Veuillez réessayer plus tard.";
+    console.error('Error sending games to API:', error);
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+onMounted(sendGamesToApi);
 </script>
 
 <template>
@@ -191,6 +228,11 @@ function closeDialog() {
       <!-- Encadré de Résultats -->
       <div class="border border-custom-white rounded-lg p-4">
         <p>Résultats ici...</p>
+        <ul>
+          <li v-for="result in matchResults" :key="result.userId">
+            {{ result.username }}
+          </li>
+        </ul>
       </div>
     </div>
   </BasePage>
