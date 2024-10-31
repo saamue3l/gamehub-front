@@ -14,10 +14,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
-import { UserStore } from '@/store/userStore'
 import { useToast } from '@/components/ui/toast'
-import { fetchRegisterPost } from '@/api/fetchRegisterPost'
-import router from '@/router/index.js'
 import { eventCreateSchema } from '@/types/Event'
 import { httpBackend } from '@/lib/utils'
 import { Textarea } from '@/components/ui/textarea'
@@ -25,7 +22,6 @@ import SearchGame from '@/components/layout/games/SearchGame.vue'
 import DatePicker from '@/components/ui/inputs/datePicker/DatePicker.vue'
 import type { DateValue } from '@internationalized/date'
 import { ref } from 'vue'
-import type { Game } from '@/types/Game'
 
 const modalIsOpened = ref<boolean>()
 
@@ -101,6 +97,16 @@ function handleDateChange(date: DateValue) {
           </FormItem>
         </FormField>
 
+        <FormField name="gameId">
+          <FormItem>
+            <FormLabel>Jeu de l'évènement</FormLabel>
+            <FormControl>
+              <SearchGame @select-game="handleSelectGame"></SearchGame>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        </FormField>
+
         <FormField v-slot="{ componentField }" name="description">
           <FormItem>
             <FormLabel>Description</FormLabel>
@@ -142,16 +148,6 @@ function handleDateChange(date: DateValue) {
                   @update:model-value="handleDateChange"
                 />
               </section>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        </FormField>
-
-        <FormField name="gameId">
-          <FormItem>
-            <FormLabel>Jeu de l'évènement</FormLabel>
-            <FormControl>
-              <SearchGame @select-game="handleSelectGame"></SearchGame>
             </FormControl>
             <FormMessage />
           </FormItem>
