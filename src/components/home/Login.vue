@@ -27,8 +27,8 @@ const onSubmit = handleSubmit(async (values) => {
     await router.push({ name: 'Profil' })
   } catch (error) {
     toast({
-      title: 'Uh oh! Something went wrong.',
-      description: 'There was a problem with your request.',
+      title: "Quelques chose n'a pas fonctionné.",
+      description: error.message,
       variant: 'destructive'
     })
   }
