@@ -1,115 +1,197 @@
+<script setup lang="ts">
+import BasePage from '@/components/layout/BasePage.vue';
+import SearchGame from '@/components/layout/games/SearchGame.vue';
+import { ref } from 'vue';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { Dialog, DialogTrigger, DialogTitle, DialogDescription, DialogFooter, DialogHeader, DialogScrollContent } from '@/components/ui/dialog';
+import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
+import { Check, ChevronsUpDown } from 'lucide-vue-next';
+import { cn } from '@/lib/utils';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Button } from '@/components/ui/button'
+
+
+
+const niveaux = [
+  { value: 'debutant', label: 'Débutant' },
+  { value: 'intermediaire', label: 'Intermédiaire' },
+  { value: 'avance', label: 'Avancé' },
+]
+
+const isDialogOpen = ref(false);
+const selectedGames = ref([]);
+const selectedGame = ref<any>(null);
+const selectedLevel = ref('');
+const open = ref(false);
+const gameError = ref(false);
+const levelError = ref(false);
+
+
+function handleSelectGame(game: any) {
+  selectedGame.value = game;
+  gameError.value = !game;
+}
+
+function confirmAddGame() {
+  // Validate game and level selection
+  gameError.value = !selectedGame.value;
+  levelError.value = !selectedLevel.value;
+
+  if (selectedGame.value && selectedLevel.value) {
+    addGame();
+    isDialogOpen.value = false;
+    selectedGame.value = null;
+    selectedLevel.value = '';
+  }
+}
+
+function addGame() {
+  if (selectedGame.value && selectedLevel.value) {
+    const gameToAdd = {
+      ...selectedGame.value,
+      level: selectedLevel.value,
+      levelLabel: niveaux.find(n => n.value === selectedLevel.value)?.label || '',
+    };
+    selectedGames.value.push(gameToAdd);
+  }
+}
+
+function removeGame(index: number) {
+  selectedGames.value.splice(index, 1);
+}
+
+function selectLevel(level: string) {
+  selectedLevel.value = level;
+  levelError.value = false;
+  open.value = false;
+}
+
+function closeDialog() {
+  isDialogOpen.value = false;
+  levelError.value = false;
+  gameError.value = false;
+  selectedGame.value = null;
+  selectedLevel.value = '';
+  console.log('selectedGame:', selectedGame.value);
+  console.log('selectedLevel:', selectedLevel.value);
+}
+</script>
+
 <template>
-  <base-page title="Filtres">
+  <BasePage title="Filtres">
     <div class="container mx-auto">
-      <!-- Encadré de Filtre -->
+      <!-- Jeux sélectionnés -->
       <div class="border border-custom-white rounded-lg p-4 mb-4">
-        <div class="flex gap-4">
-          <!-- Section des jeux sélectionnés -->
+        <div class="flex flex-row flex-wrap justify-start pl-2">
+          <!-- Liste des jeux sélectionnés -->
           <div
             v-for="(game, index) in selectedGames"
             :key="index"
-            class="relative border border-gray-300 rounded-lg p-2 flex flex-col items-center"
+            class="relative border border-gray-300 rounded-lg p-2 mt-4 flex flex-col items-center w-24 h-32 mx-2"
           >
-            <!-- Image du jeu -->
-            <img src="@/assets/lolCover.png" alt="Game Image" class="w-16 h-24" />
-
-            <!-- Informations du jeu (Nom, Niveau, Plateforme) sous l'image -->
+            <img :src="game.coverUrl" :alt="game.name" class="w-full h-full object-contain" />
             <div class="flex flex-col items-center mt-2">
-              <p class="text-custom-white text-sm font-medium py-1">
-                {{ game.name }}
-              </p>
               <p class="text-custom-white text-xs font-light py-0.5 px-2 bg-custom-secondary rounded-3xl inline-block">
                 {{ game.levelLabel }}
               </p>
-              <p class="text-custom-white text-xs font-light py-0.5 px-2 bg-custom-secondary rounded-3xl inline-block mt-1">
-                {{ game.platformLabel }}
-              </p>
             </div>
-
-            <!-- Bouton "croix" pour retirer le jeu -->
-            <button
+            <Button
               @click="removeGame(index)"
-              class="absolute -top-3 -right-3 text-white text-lg cursor-pointer bg-red-500 rounded-full w-6 h-6 flex justify-center items-center"
+              variant="destructive"
+              class="absolute -top-2 -right-2 text-lg w-6 h-6 flex justify-center items-center rounded-full p-0 leading-none"
             >
               &times;
-            </button>
+            </Button>
           </div>
 
-          <!-- Bouton "+" pour ajouter un jeu -->
-          <!-- Bouton "+" pour ajouter un jeu -->
-          <button
-            class="border border-gray-300 w-16 h-24 flex justify-center items-center text-2xl text-gray-500"
-            @click="openModal"
-          >
-            +
-          </button>
+          <!-- Bouton Ajouter -->
+          <Dialog v-model:open="isDialogOpen" @close="closeDialog" >
+            <DialogTrigger as-child>
+              <div
+                class="relative border border-gray-300 rounded-lg p-2 mt-4 flex flex-col items-center w-24 h-32 mx-2 justify-center cursor-pointer text-gray-500 text-2xl"
+              >
+                +
+              </div>
+            </DialogTrigger>
+            <DialogScrollContent class="flex flex-col gap-6">
+              <DialogHeader>
+                <DialogTitle>Ajouter un jeu</DialogTitle>
+                <DialogDescription>Choisissez un jeu et votre niveau.</DialogDescription>
+              </DialogHeader>
 
+
+                <!-- Recherche du jeu -->
+                <FormField name="gameId">
+                  <FormItem>
+                    <FormLabel>Jeu de l'évènement</FormLabel>
+                    <FormControl>
+                      <SearchGame @select-game="handleSelectGame"></SearchGame>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </FormField>
+
+                <!-- Message d'erreur jeu -->
+                <p v-if="gameError" class="text-red-500 text-sm">Veuillez sélectionner un jeu.</p>
+
+                <!-- Sélection du niveau -->
+                <Popover v-model:open="open">
+                  <PopoverTrigger as-child>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      :aria-expanded="open"
+                      class="w-[200px] flex items-center justify-between"
+                    >
+                      {{
+                          selectedLevel
+                            ? niveaux.find((niveau) => niveau.value === selectedLevel)?.label
+                            : "Votre niveau..."
+                        }}
+                      <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent class="w-[200px] p-0">
+                    <Command>
+                      <CommandList>
+                        <CommandGroup>
+                          <CommandItem
+                            v-for="niveau in niveaux"
+                            :key="niveau.value"
+                            :value="niveau.value"
+                            @click="() => selectLevel(niveau.value)"
+                            class="cursor-pointer"
+                            :class="{
+                              'hover:bg-gray-300': true
+                            }"
+                          >
+                            {{ niveau.label }}
+                            <Check
+                              :class="cn(
+                                'ml-auto h-4 w-4',
+                                selectedLevel === niveau.value ? 'opacity-100' : 'opacity-0'
+                              )"
+                            />
+                          </CommandItem>
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+
+                <!-- Message d'erreur niveau -->
+                <p v-if="levelError" class="text-red-500 text-sm">Veuillez sélectionner un niveau.</p>
+              <DialogFooter>
+                <Button type="button" @click="confirmAddGame">Ajouter</Button>
+              </DialogFooter>
+            </DialogScrollContent>
+          </Dialog>
         </div>
       </div>
-
-      <!-- Encadré de Résultats (Vide pour l'instant) -->
+      <!-- Encadré de Résultats -->
       <div class="border border-custom-white rounded-lg p-4">
         <p>Résultats ici...</p>
       </div>
-
-      <!-- Modal pour ajouter un jeu -->
-      <AddGameFilterMatchmakingModal
-        v-if="isModalVisible"
-        @close="closeModal"
-        @add-game="addGame"
-      />
     </div>
-  </base-page>
+  </BasePage>
 </template>
-
-
-<script>
-import AddGameFilterMatchmakingModal from '@/components/matchmaking/AddFilterMatchmakingModal.vue'
-import BasePage from '@/components/layout/BasePage.vue' // Import du modal
-
-export default {
-  name: 'Matchmaking',
-  components: {
-    BasePage,
-    AddGameFilterMatchmakingModal
-  },
-  data() {
-    return {
-      isModalVisible: false, // Gérer l'affichage du modal
-      selectedGames: [], // Liste des jeux sélectionnés
-      platforms: [ // Définir les plateformes
-        { id: 1, name: 'PC' },
-        { id: 2, name: 'PlayStation' },
-        { id: 3, name: 'Xbox' }
-      ]
-    };
-  },
-  methods: {
-    openModal() {
-      this.isModalVisible = true
-    },
-    closeModal() {
-      this.isModalVisible = false
-    },
-    addGame(gameData) {
-      // Rechercher le nom de la plateforme à partir de l'ID sélectionné
-      const selectedPlatform = this.platforms.find(platform => platform.id === gameData.platform);
-
-      // Ajoute un jeu à la liste des jeux sélectionnés
-      this.selectedGames.push({
-        ...gameData,
-        imageUrl: '@/assets/lolCover.png', // Image de test pour chaque jeu ajouté
-        levelLabel:
-          gameData.level === '1' ? 'Débutant' :
-            gameData.level === '2' ? 'Intermédiaire' :
-              'Avancé', // Affiche le libellé correct pour le niveau
-        platformLabel: selectedPlatform ? selectedPlatform.name : '', // Affiche le nom de la plateforme
-      });
-    },
-    removeGame(index) {
-      // Retire le jeu de la liste des jeux sélectionnés
-      this.selectedGames.splice(index, 1)
-    }
-  }
-}
-</script>
