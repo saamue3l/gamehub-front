@@ -33,22 +33,26 @@ export async function httpBackend<T>(
 ): Promise<T> {
   const token = sessionStorage.getItem('token')
 
+  const headers: { [name: string]: string } = {
+    'Content-Type': 'application/json'
+  }
+
+  if (auth) {
+    headers.Authorization = `Bearer ${token}`
+  }
+
   const response = await fetch(import.meta.env.VITE_BACKEND_HOST + path, {
     method,
     body: body ? JSON.stringify(body) : undefined,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    }
+    headers: headers
   })
 
   const responseBody = await response.json()
 
   if (!response.ok) {
-    let httpCodeError = `HTTP error! status: ${response.status}`
+    const httpCodeError = `HTTP error! status: ${response.status}`
     console.error(httpCodeError)
-    let errorString = responseBody.message ?? httpCodeError
-    console.log(errorString)
+    const errorString = responseBody.message ?? httpCodeError
     throw new Error(errorString)
   }
 
