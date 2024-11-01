@@ -51,7 +51,7 @@ const router = useRouter()
 const userStore = UserStore()
 
 const goToProfile = () => {
-  router.push({ name: 'Profil' })
+  router.push({ name: 'Profil', params: { username: userStore.username } })
 }
 
 const isLoggedIn = computed(() => !!userStore.username)
