@@ -33,7 +33,8 @@ export async function httpBackend<T>(
     method,
     body: body ? JSON.stringify(body) : undefined,
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${sessionStorage.getItem('token')}`
     }
   })
 
