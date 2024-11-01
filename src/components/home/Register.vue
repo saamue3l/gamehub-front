@@ -32,8 +32,7 @@ const onSubmit = handleSubmit(async (values) => {
     await router.push({ name: 'Profil' })
   } catch (error) {
     error.toString()
-    const errorMessage =
-      error.response?.data?.message || 'Il y a eu un problème avec votre requête.'
+    const errorMessage = error.message
     toast({
       title: 'Oups !',
       description: errorMessage,

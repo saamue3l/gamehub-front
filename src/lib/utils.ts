@@ -19,28 +19,42 @@ export function toNativeDate(dateValue: CalendarDate): Date | null {
 
 /**
  * TODO : Implémenter les token d'authentification
- * @param path
- * @param method
- * @param body
+ * @param path The path for the url
+ * @param method The method to for the request
+ * @param body An array representing the body of the request
+ * @param auth Does the request need authentification with token ?
  * @returns
  */
 export async function httpBackend<T>(
   path: string,
   method: 'GET' | 'POST' = 'GET',
-  body?: any[]
+  body?: any[],
+  auth: boolean = true
 ): Promise<T> {
+  const token = sessionStorage.getItem('token')
+
+  const headers: { [name: string]: string } = {
+    'Content-Type': 'application/json'
+  }
+
+  if (auth) {
+    headers.Authorization = `Bearer ${token}`
+  }
+
   const response = await fetch(import.meta.env.VITE_BACKEND_HOST + path, {
     method,
     body: body ? JSON.stringify(body) : undefined,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${sessionStorage.getItem('token')}`
-    }
+    headers: headers
   })
 
+  const responseBody = await response.json()
+
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`)
+    const httpCodeError = `HTTP error! status: ${response.status}`
+    console.error(httpCodeError)
+    const errorString = responseBody.message ?? httpCodeError
+    throw new Error(errorString)
   }
 
-  return await response.json()
+  return responseBody
 }

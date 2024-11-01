@@ -32,15 +32,15 @@ const todaysCalendarDate = new CalendarDate(
 )
 
 const value = ref({
-  start: todaysCalendarDate,
-  end: todaysCalendarDate.add({ days: 20 })
+  start: undefined,
+  end: undefined
 }) as Ref<DateRange>
 
 const locale = ref('fr-FR')
 const formatter = useDateFormatter(locale.value)
 
-const placeholder = ref(value.value.start) as Ref<DateValue>
-const secondMonthPlaceholder = ref(value.value.end) as Ref<DateValue>
+const placeholder = ref(todaysCalendarDate.add({ days: 30 })) as Ref<DateValue>
+const secondMonthPlaceholder = ref(todaysCalendarDate.add({ days: 50 })) as Ref<DateValue>
 
 const firstMonth = ref(
   createMonth({

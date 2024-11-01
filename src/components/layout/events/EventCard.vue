@@ -1,7 +1,7 @@
 <!-- Petite carte présentant les informations principale d'un évènement de jeu-->
 
 <script setup lang="ts">
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Event } from '@/types/Event'
 import GameCover from '@/components/layout/games/GameCover.vue'
 import { IGDBImageSizes } from '@/lib/igdbImages'
@@ -9,6 +9,7 @@ import { onMounted, ref } from 'vue'
 import UsersIcon from '@/components/icons/usersIcon.vue'
 import EventInfo from '@/components/layout/events/EventInfo.vue'
 import { Calendar as CalendarIcon } from 'lucide-vue-next'
+import JoinEventButton from '@/components/layout/events/JoinEventButton.vue'
 
 const imageSize = ref<IGDBImageSizes>(IGDBImageSizes.COVER_BIG)
 
@@ -37,11 +38,11 @@ defineProps<{
       </section>
 
       <!--   Event info   -->
-      <section class="row-span-3">
+      <section class="row-span-3 flex flex-col">
         <CardHeader>
           <CardTitle>{{ event.name }}</CardTitle>
         </CardHeader>
-        <CardContent class="flex flex-col justify-start items-start gap-1.5">
+        <CardContent class="flex flex-col justify-start items-start gap-1.5 flex-1">
           <!--     Event infos     -->
           <section class="flex justify-start gap-5 flex-wrap">
             <EventInfo :text="`${event.participants.length} / ${event.maxPlayers}`">
@@ -58,6 +59,10 @@ defineProps<{
             {{ event.description }}
           </p>
         </CardContent>
+
+        <CardFooter class="flex justify-end">
+          <JoinEventButton :event="event" />
+        </CardFooter>
       </section>
     </div>
   </Card>
