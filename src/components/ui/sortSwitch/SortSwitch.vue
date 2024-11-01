@@ -17,7 +17,7 @@ withDefaults(defineProps<Props>(), {
 <template>
   <Button :variant="buttonVariant" @click="() => (model = !model)">
     {{ placeholder }}
-    <ChevronDownIcon :class="{ 'ml-2 h-4 w-4 transition': true, 'rotate-180': model }" />
+    <ChevronDownIcon :class="{ 'ml-2 h-4 w-4 transition': true, 'rotate-180': !model }" />
   </Button>
 </template>
 

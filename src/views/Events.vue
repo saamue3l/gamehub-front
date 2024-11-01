@@ -12,6 +12,7 @@ import type { DateRange } from 'radix-vue'
 import { ArrowUpDown } from 'lucide-vue-next'
 import ChevronDownIcon from '@/components/icons/chevronDownIcon.vue'
 import SortSwitch from '@/components/ui/sortSwitch/SortSwitch.vue'
+import { Checkbox } from '@/components/ui/checkbox'
 
 const events = ref<Event[]>([])
 const isLoading = ref(true)
@@ -19,15 +20,13 @@ const errorMessage = ref<string | null>(null)
 const selectedGame = ref<Game | null>(null)
 const selectedDates = ref<DateRange | null>(null)
 const descSort = ref<boolean>()
+const joinedFilter = ref<boolean>(false)
 
 function sortEvents(): void {
   events.value.sort((a, b) => {
     if (descSort.value) {
-      console.log(new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime())
       return new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime()
     } else {
-      console.log(new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime())
-
       return new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime()
     }
   })
@@ -68,12 +67,14 @@ async function fetchEvents() {
 
 onMounted(fetchEvents)
 watch(descSort, sortEvents)
+watch(joinedFilter, console.log)
 </script>
 
 <template>
   <BasePage title="Évènements">
     <header class="w-full flex justify-between flex-wrap gap-3 max-w-full">
       <article class="flex gap-3 float-left flex-wrap">
+        <!--    Game filter    -->
         <SearchGamePopover
           @select-game="
             (game) => {
@@ -82,6 +83,7 @@ watch(descSort, sortEvents)
             }
           "
         />
+        <!--    Date range filter    -->
         <DateRangePicker
           @select-dates="
             (dates) => {
@@ -90,6 +92,16 @@ watch(descSort, sortEvents)
             }
           "
         />
+        <!--    Filter joined    -->
+        <div class="flex items-center space-x-2">
+          <Checkbox id="joinedFilter" @click="joinedFilter = !joinedFilter" />
+          <label
+            for="joinedFilter"
+            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 select-none cursor-pointer"
+          >
+            Uniquement les<br />évènement rejoints
+          </label>
+        </div>
         <!--    Sort by Date    -->
         <SortSwitch v-model="descSort" placeholder="Trier par date" button-variant="outline" />
       </article>
@@ -115,7 +127,12 @@ watch(descSort, sortEvents)
       </div>
 
       <!-- When fetched -->
-      <EventCard v-else v-for="event in events" :event="event" :key="event.id"></EventCard>
+      <EventCard
+        v-for="event in events"
+        v-show="!joinedFilter || event.userJoined"
+        :event="event"
+        :key="event.id"
+      ></EventCard>
     </section>
   </BasePage>
 </template>
