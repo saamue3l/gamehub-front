@@ -124,29 +124,29 @@ onMounted(sendGamesToApi);
         <div
           v-for="(game, index) in selectedGames"
           :key="index"
-          class="relative border border-white rounded-lg mt-4 flex flex-row items-center bg-gray-800 mr-2"
+          class="relative border border-white rounded-full mt-2 flex flex-row items-center mr-2"
           style="padding: 0.25rem; font-size: 0.75rem;"
         >
           <button
             @click="removeGame(index)"
-            class="text-white font-bold mr-2"
+            class="relative text-white font-bold mx-1 enlarge-clickable-area"
             style="font-size: 0.75rem; line-height: 1rem;"
           >
             &times;
           </button>
           <div class="text-white font-bold mr-2">{{ game.name }}</div>
-          <div class="text-gray-400 italic">{{ game.levelLabel }}</div>
+          <div class="text-gray-400 italic mr-1">{{ game.levelLabel }}</div>
         </div>
 
         <!-- Bouton Ajouter -->
         <Dialog v-model:open="isDialogOpen" @close="closeDialog">
           <DialogTrigger as-child>
             <div
-              class="relative border border-white rounded-lg p-2 mt-4 flex flex-row items-center justify-center cursor-pointer bg-blue-600 text-white font-bold"
+              class="relative border border-white rounded-full p-2 mt-2 flex flex-row items-center justify-center cursor-pointer bg-blue-600 text-white font-bold"
               style="padding: 0.25rem; font-size: 0.75rem;"
             >
-              <span class="mr-1">+</span>
-              <span>Ajouter un jeu</span>
+              <span class="mx-1">+</span>
+              <span class="mr-1">Ajouter un jeu</span>
             </div>
           </DialogTrigger>
           <DialogScrollContent class="flex flex-col gap-6">
@@ -234,3 +234,14 @@ onMounted(sendGamesToApi);
     </div>
   </BasePage>
 </template>
+
+<style scoped>
+.enlarge-clickable-area::before {
+  content: '';
+  position: absolute;
+  top: -0.5rem;
+  bottom: -0.5rem;
+  left: -0.5rem;
+  right: -0.5rem;
+}
+</style>
