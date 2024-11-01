@@ -2,7 +2,7 @@
   <div>
     <p class="text-custom-white text-sm font-bold pb-1 pl-2 uppercase">Jeux favoris</p>
     <div class="flex-col space-y-3 border border-custom-white rounded-lg p-3">
-      <AddFavoriteGameDialog v-if="profileStore.isOwnProfile" />
+      <AddFavoriteGameDialog v-if="profileStore.isOwnProfile && !isLoading" />
 
       <div v-if="isLoading" class="w-full flex justify-center">
         <LoadingSpinner size="xl"></LoadingSpinner>
