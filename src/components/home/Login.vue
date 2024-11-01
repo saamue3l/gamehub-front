@@ -24,11 +24,11 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     await fetchLoginPost(values)
     userStore.setUsername()
-    await router.push({ name: 'Profil' })
+    await router.push({ name: 'Profil', params: { username: userStore.username } })
   } catch (error) {
     toast({
-      title: 'Uh oh! Something went wrong.',
-      description: 'There was a problem with your request.',
+      title: "Quelques chose n'a pas fonctionné.",
+      description: error.message,
       variant: 'destructive'
     })
   }

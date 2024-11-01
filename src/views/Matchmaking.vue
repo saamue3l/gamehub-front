@@ -115,125 +115,122 @@ onMounted(sendGamesToApi);
 </script>
 
 <template>
-  <BasePage title="Filtres">
-    <div class="container mx-auto">
+  <BasePage title="Matchmaking">
+    <header class="w-full flex justify-between flex-wrap gap-3 max-w-full">
+      <h2 class="text-left">Sélectionnez vos jeux préférés et indiquez votre niveau pour chaque jeu. Plus vous ajoutez de jeux, plus vos chances de trouver des correspondances adéquates augmentent.</h2>
       <!-- Jeux sélectionnés -->
-      <div class="border border-custom-white rounded-lg p-4 mb-4">
-        <div class="flex flex-row flex-wrap justify-start pl-2">
-          <!-- Liste des jeux sélectionnés -->
-          <div
-            v-for="(game, index) in selectedGames"
-            :key="index"
-            class="relative border border-gray-300 rounded-lg p-2 mt-4 flex flex-col items-center w-24 h-32 mx-2"
+      <div class="flex flex-row flex-wrap justify-start">
+        <!-- Liste des jeux sélectionnés -->
+        <div
+          v-for="(game, index) in selectedGames"
+          :key="index"
+          class="relative border border-white rounded-lg mt-4 flex flex-row items-center bg-gray-800 mr-2"
+          style="padding: 0.25rem; font-size: 0.75rem;"
+        >
+          <button
+            @click="removeGame(index)"
+            class="text-white font-bold mr-2"
+            style="font-size: 0.75rem; line-height: 1rem;"
           >
-            <img :src="game.coverUrl" :alt="game.name" class="w-full h-full object-contain" />
-            <div class="flex flex-col items-center mt-2">
-              <p class="text-custom-white text-xs font-light py-0.5 px-2 bg-custom-secondary rounded-3xl inline-block">
-                {{ game.levelLabel }}
-              </p>
-            </div>
-            <Button
-              @click="removeGame(index)"
-              variant="destructive"
-              class="absolute -top-2 -right-2 text-lg w-6 h-6 flex justify-center items-center rounded-full p-0 leading-none"
-            >
-              &times;
-            </Button>
-          </div>
-
-          <!-- Bouton Ajouter -->
-          <Dialog v-model:open="isDialogOpen" @close="closeDialog" >
-            <DialogTrigger as-child>
-              <div
-                class="relative border border-gray-300 rounded-lg p-2 mt-4 flex flex-col items-center w-24 h-32 mx-2 justify-center cursor-pointer text-gray-500 text-2xl"
-              >
-                +
-              </div>
-            </DialogTrigger>
-            <DialogScrollContent class="flex flex-col gap-6">
-              <DialogHeader>
-                <DialogTitle>Ajouter un jeu</DialogTitle>
-                <DialogDescription>Choisissez un jeu et votre niveau.</DialogDescription>
-              </DialogHeader>
-
-
-                <!-- Recherche du jeu -->
-                <FormField name="gameId">
-                  <FormItem>
-                    <FormLabel>Jeu de l'évènement</FormLabel>
-                    <FormControl>
-                      <SearchGame @select-game="handleSelectGame"></SearchGame>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                </FormField>
-
-                <!-- Message d'erreur jeu -->
-                <p v-if="gameError" class="text-red-500 text-sm">Veuillez sélectionner un jeu.</p>
-
-                <!-- Sélection du niveau -->
-                <Popover v-model:open="open">
-                  <PopoverTrigger as-child>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      :aria-expanded="open"
-                      class="w-[200px] flex items-center justify-between"
-                    >
-                      {{
-                          selectedLevel
-                            ? niveaux.find((niveau) => niveau.value === selectedLevel)?.label
-                            : "Votre niveau..."
-                        }}
-                      <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent class="w-[200px] p-0">
-                    <Command>
-                      <CommandList>
-                        <CommandGroup>
-                          <CommandItem
-                            v-for="niveau in niveaux"
-                            :key="niveau.value"
-                            :value="niveau.value"
-                            @click="() => selectLevel(niveau.value)"
-                            class="cursor-pointer"
-                            :class="{
-                              'hover:bg-gray-300': true
-                            }"
-                          >
-                            {{ niveau.label }}
-                            <Check
-                              :class="cn(
-                                'ml-auto h-4 w-4',
-                                selectedLevel === niveau.value ? 'opacity-100' : 'opacity-0'
-                              )"
-                            />
-                          </CommandItem>
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-
-                <!-- Message d'erreur niveau -->
-                <p v-if="levelError" class="text-red-500 text-sm">Veuillez sélectionner un niveau.</p>
-              <DialogFooter>
-                <Button type="button" @click="confirmAddGame">Ajouter</Button>
-              </DialogFooter>
-            </DialogScrollContent>
-          </Dialog>
+            &times;
+          </button>
+          <div class="text-white font-bold mr-2">{{ game.name }}</div>
+          <div class="text-gray-400 italic">{{ game.levelLabel }}</div>
         </div>
+
+        <!-- Bouton Ajouter -->
+        <Dialog v-model:open="isDialogOpen" @close="closeDialog">
+          <DialogTrigger as-child>
+            <div
+              class="relative border border-white rounded-lg p-2 mt-4 flex flex-row items-center justify-center cursor-pointer bg-blue-600 text-white font-bold"
+              style="padding: 0.25rem; font-size: 0.75rem;"
+            >
+              <span class="mr-1">+</span>
+              <span>Ajouter un jeu</span>
+            </div>
+          </DialogTrigger>
+          <DialogScrollContent class="flex flex-col gap-6">
+            <DialogHeader>
+              <DialogTitle>Ajouter un jeu</DialogTitle>
+              <DialogDescription>Choisissez un jeu et votre niveau.</DialogDescription>
+            </DialogHeader>
+
+            <!-- Recherche du jeu -->
+            <FormField name="gameId">
+              <FormItem>
+                <FormLabel>Jeu de l'évènement</FormLabel>
+                <FormControl>
+                  <SearchGame @select-game="handleSelectGame"></SearchGame>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
+
+            <!-- Message d'erreur jeu -->
+            <p v-if="gameError" class="text-red-500 text-sm">Veuillez sélectionner un jeu.</p>
+
+            <!-- Sélection du niveau -->
+            <Popover v-model:open="open">
+              <PopoverTrigger as-child>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  :aria-expanded="open"
+                  class="w-[200px] flex items-center justify-between"
+                >
+                  {{
+                    selectedLevel
+                      ? niveaux.find((niveau) => niveau.value === selectedLevel)?.label
+                      : "Votre niveau..."
+                  }}
+                  <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent class="w-[200px] p-0">
+                <Command>
+                  <CommandList>
+                    <CommandGroup>
+                      <CommandItem
+                        v-for="niveau in niveaux"
+                        :key="niveau.value"
+                        :value="niveau.value"
+                        @click="() => selectLevel(niveau.value)"
+                        class="cursor-pointer"
+                        :class="{
+                          'hover:bg-gray-300': true
+                        }"
+                      >
+                        {{ niveau.label }}
+                        <Check
+                          :class="cn(
+                            'ml-auto h-4 w-4',
+                            selectedLevel === niveau.value ? 'opacity-100' : 'opacity-0'
+                          )"
+                        />
+                      </CommandItem>
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+
+            <!-- Message d'erreur niveau -->
+            <p v-if="levelError" class="text-red-500 text-sm">Veuillez sélectionner un niveau.</p>
+            <DialogFooter>
+              <Button type="button" @click="confirmAddGame">Ajouter</Button>
+            </DialogFooter>
+          </DialogScrollContent>
+        </Dialog>
       </div>
-      <!-- Encadré de Résultats -->
-      <div class="border border-custom-white rounded-lg p-4">
-        <p>Résultats ici...</p>
-        <ul>
-          <li v-for="result in matchResults" :key="result.userId">
-            {{ result.username }}
-          </li>
-        </ul>
-      </div>
+    </header>
+    <!-- Encadré de Résultats -->
+    <div class="border border-custom-white rounded-lg p-4 ">
+      <p>Résultats ici...</p>
+      <ul>
+        <li v-for="result in matchResults" :key="result.userId">
+          {{ result.username }}
+        </li>
+      </ul>
     </div>
   </BasePage>
 </template>

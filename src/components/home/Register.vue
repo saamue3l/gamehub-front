@@ -29,11 +29,10 @@ const onSubmit = handleSubmit(async (values) => {
       variant: 'default'
     })
     userStore.setUsername(values.username)
-    await router.push({ name: 'Profil' })
+    await router.push({ name: 'Profil', params: { username: userStore.username } })
   } catch (error) {
     error.toString()
-    const errorMessage =
-      error.response?.data?.message || 'Il y a eu un problème avec votre requête.'
+    const errorMessage = error.message
     toast({
       title: 'Oups !',
       description: errorMessage,
