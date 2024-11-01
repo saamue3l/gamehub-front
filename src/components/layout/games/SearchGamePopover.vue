@@ -2,7 +2,7 @@
 import Header from '@/components/layout/header/Header.vue'
 import SearchBar from '@/components/ui/inputs/searchbar/SearchBar.vue'
 import { httpBackend } from '@/lib/utils'
-import { ref, useTemplateRef } from 'vue'
+import { computed, ref, useTemplateRef, watch } from 'vue'
 import type { Game } from '@/types/Game'
 import LoadingSpinner from '@/components/ui/feedback/spinner/LoadingSpinner.vue'
 import GameCard from '@/components/layout/games/gameCard/GameCard.vue'
@@ -12,6 +12,12 @@ import { ScrollAreaViewport } from 'radix-vue'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import { rand } from '@vueuse/core'
+
+const props = defineProps<{
+  excludeFavorites?: boolean
+}>()
+
+const excludeFavorites = computed(() => props.excludeFavorites ?? false)
 
 const emit = defineEmits<{
   (e: 'select-game', game: Game | null): void // Game when the user selects a game and null when he deselects a game
@@ -30,33 +36,33 @@ async function searchGame() {
   let search = gameSearch.value
 
   if (selectedGame.value != null) {
-    // If we sent a selected game right before, we send that the user unselected a game
     emit('select-game', null)
   }
   selectedGame.value = null
 
   if (search == '') {
-    // Reset if the user erased his search
     games.value = []
     return
   }
 
   try {
     isLoading.value = true
-    games.value = await httpBackend<Game[]>('/api/game/searchGames', 'POST', { search: search })
+    const endpoint = excludeFavorites.value
+      ? '/api/game/searchGamesWithoutFavorites'
+      : '/api/game/searchGames'
+    games.value = await httpBackend<Game[]>(endpoint, 'POST', { search: search })
     if (games.value.length == 0) {
-      // Error message if back-end returned no results
       errorMessage.value = 'Aucun jeu trouvé'
       return
     } else {
-      errorMessage.value = '' // Reset the "error"
+      errorMessage.value = ''
     }
   } catch (error) {
     errorMessage.value =
       "Nous n'avons pas réussi a télécharger les jeux. Veuillez réessayer plus tard."
     console.error('Error fetching the games:', error)
   } finally {
-    isLoading.value = false // Stop the loading
+    isLoading.value = false
   }
 }
 

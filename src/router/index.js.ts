@@ -17,9 +17,9 @@ const routes: Route[] = [
   { path: '/', name: 'Accueil', component: Home, inNav: true },
   { path: '/events', name: 'Évènements', component: Events, inNav: true },
   { path: '/joachim', name: 'Love', component: () => import('@/views/Joachim.vue') },
-  { path: '/profil', name: 'Profil', component: Profile },
+  { path: '/profil/:username', name: 'Profil', component: Profile },
   { path: '/login', name: 'Connexion', component: Login },
-  { path: '/register', name: 'Register', component: Register },
+  { path: '/register', name: 'Register', component: Register }
 ]
 
 const router = createRouter({

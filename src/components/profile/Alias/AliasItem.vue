@@ -7,7 +7,7 @@
     ]"
     @click="copyable ? copyToClipboard() : undefined"
   >
-    <img :src="iconUrl" :alt="username" class="h-6" />
+    <img :src="props.iconUrl" :alt="username" class="h-6" />
     <p class="whitespace-nowrap text-custom-white text-xs font-medium ml-1 mr-1">{{ username }}</p>
     <span
       v-if="isCopied"
