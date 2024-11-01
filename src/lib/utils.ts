@@ -48,6 +48,7 @@ export async function httpBackend<T>(
     let httpCodeError = `HTTP error! status: ${response.status}`
     console.error(httpCodeError)
     let errorString = responseBody.message ?? httpCodeError
+    console.log(errorString)
     throw new Error(errorString)
   }
 
