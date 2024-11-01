@@ -6,7 +6,7 @@ import { loginPostSchema } from '@/types/Login.ts'
 import { useForm } from 'vee-validate'
 import { useRouter } from 'vue-router'
 import { toTypedSchema } from '@vee-validate/zod'
-import { fetchLoginPost } from '@/api/fetchLoginPost'
+import { postLogin } from '@/api/postLogin'
 import { UserStore } from '@/store/userStore'
 import { useToast } from '@/components/ui/toast'
 
@@ -22,7 +22,7 @@ const { handleSubmit } = useForm({
 
 const onSubmit = handleSubmit(async (values) => {
   try {
-    await fetchLoginPost(values)
+    await postLogin(values)
     userStore.setUsername()
     await router.push({ name: 'Profil' })
   } catch (error) {

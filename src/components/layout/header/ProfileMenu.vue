@@ -26,7 +26,7 @@
         <Settings class="mr-2 h-4 w-4" />
         <span>Settings</span>
       </DropdownMenuItem>
-      <DropdownMenuItem>
+      <DropdownMenuItem @click="logout">
         <LogOut class="mr-2 h-4 w-4" />
         <span>Log out</span>
       </DropdownMenuItem>
@@ -46,12 +46,30 @@ import {
 import { LogOut, Settings, User } from 'lucide-vue-next'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { UserStore } from '@/store/userStore'
+import { postLogout } from '@/api/postLogout'
+import { toast } from '@/components/ui/toast'
 
 const router = useRouter()
 const userStore = UserStore()
 
 const goToProfile = () => {
   router.push({ name: 'Profil' })
+}
+
+const logout = () => {
+  try {
+    postLogout()
+    userStore.resetUsername()
+    router.push({ path: '/' })
+  } catch (error) {
+    toast(
+      toast({
+        title: "Quelques chose n'a pas fonctionné.",
+        description: error.message,
+        variant: 'destructive'
+      })
+    )
+  }
 }
 
 const isLoggedIn = computed(() => !!userStore.username)
