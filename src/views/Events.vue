@@ -2,19 +2,36 @@
 import BasePage from '@/components/layout/BasePage.vue'
 import EventCard from '@/components/layout/events/EventCard.vue'
 import { httpBackend, toNativeDate } from '@/lib/utils'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import SearchGamePopover from '@/components/layout/games/SearchGamePopover.vue'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { Game } from '@/types/Game'
 import DateRangePicker from '@/components/ui/inputs/datePicker/DateRangePicker.vue'
 import CreateEventButton from '@/components/layout/events/CreateEventButton.vue'
 import type { DateRange } from 'radix-vue'
+import { ArrowUpDown } from 'lucide-vue-next'
+import ChevronDownIcon from '@/components/icons/chevronDownIcon.vue'
+import SortSwitch from '@/components/ui/sortSwitch/SortSwitch.vue'
 
 const events = ref<Event[]>([])
 const isLoading = ref(true)
 const errorMessage = ref<string | null>(null)
 const selectedGame = ref<Game | null>(null)
 const selectedDates = ref<DateRange | null>(null)
+const descSort = ref<boolean>()
+
+function sortEvents(): void {
+  events.value.sort((a, b) => {
+    if (descSort.value) {
+      console.log(new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime())
+      return new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime()
+    } else {
+      console.log(new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime())
+
+      return new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime()
+    }
+  })
+}
 
 async function fetchEvents() {
   try {
@@ -36,6 +53,7 @@ async function fetchEvents() {
     }
 
     events.value = await httpBackend('/api/event/allEvents', 'POST', parameters)
+    sortEvents()
     if (events.value.length == 0) {
       errorMessage.value = "Aucun évènement n'as été trouvé avec les paramètres donnés"
     }
@@ -49,6 +67,7 @@ async function fetchEvents() {
 }
 
 onMounted(fetchEvents)
+watch(descSort, sortEvents)
 </script>
 
 <template>
@@ -71,6 +90,8 @@ onMounted(fetchEvents)
             }
           "
         />
+        <!--    Sort by Date    -->
+        <SortSwitch v-model="descSort" placeholder="Trier par date" button-variant="outline" />
       </article>
       <article class="flex gap-3 float-right">
         <CreateEventButton @created-event="fetchEvents" />
@@ -98,3 +119,13 @@ onMounted(fetchEvents)
     </section>
   </BasePage>
 </template>
+
+<style scoped>
+.grid-item {
+  transition: all 500ms ease;
+}
+
+.grid-move {
+  transform: scale(0.9);
+}
+</style>
