@@ -44,6 +44,8 @@ export async function httpBackend<T>(
 
   const responseBody = await response.json()
 
+  const responseBody = await response.json()
+
   if (!response.ok) {
     let httpCodeError = `HTTP error! status: ${response.status}`
     console.error(httpCodeError)
@@ -51,5 +53,6 @@ export async function httpBackend<T>(
     throw new Error(errorString)
   }
 
+  return responseBody
   return responseBody
 }
