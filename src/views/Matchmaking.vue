@@ -55,13 +55,13 @@ function addGame() {
       levelLabel: niveaux.find(n => n.value === selectedLevel.value)?.label || '',
     };
     selectedGames.value.push(gameToAdd);
-    console.log("Appel vers l'API");
     sendGamesToApi();
   }
 }
 
 function removeGame(index: number) {
   selectedGames.value.splice(index, 1);
+  sendGamesToApi();
 }
 
 function selectLevel(level: string) {
@@ -76,19 +76,16 @@ function closeDialog() {
   gameError.value = false;
   selectedGame.value = null;
   selectedLevel.value = '';
-  console.log('selectedGame:', selectedGame.value);
-  console.log('selectedLevel:', selectedLevel.value);
 }
 
 async function sendGamesToApi() {
   if (selectedGames.value.length === 0) {
+    matchResults.value = [];
     return;
   }
   try {
     isLoading.value = true;
     errorMessage.value = null;
-    console.log("Essai de l'envoi...");
-    console.log(selectedGames);
     const gamesData = selectedGames.value.map(game => ({
       gameId: game.id,
       skillTypeId: game.level,
@@ -100,18 +97,13 @@ async function sendGamesToApi() {
       errorMessage.value = "Une erreur s'est produite lors de l'envoi des jeux.";
     } else {
       matchResults.value = response.matchResult;
-      console.log('API Response:', response.matchResult);
     }
   } catch (error) {
-    console.log("ERROR CATCH...");
     errorMessage.value = "Nous n'avons pas réussi à envoyer les jeux. Veuillez réessayer plus tard.";
-    console.error('Error sending games to API:', error);
   } finally {
     isLoading.value = false;
   }
 }
-
-onMounted(sendGamesToApi);
 </script>
 
 <template>
@@ -224,18 +216,69 @@ onMounted(sendGamesToApi);
       </div>
     </header>
     <!-- Encadré de Résultats -->
-    <div class="border border-custom-white rounded-lg p-4 ">
+    <div class="border border-custom-white rounded-lg p-4">
       <p>Résultats ici...</p>
-      <ul>
-        <li v-for="result in matchResults" :key="result.userId">
-          {{ result.username }}
-        </li>
-      </ul>
+      <div class="results-container flex flex-wrap justify-start">
+        <router-link
+          v-for="result in matchResults"
+          :key="result.userId"
+          :to="`/profil/${result.username}`"
+          class="profile-card border border-gray-300 rounded-lg p-4 m-2 text-center w-48"
+        >
+          <img src="@/assets/joachim.jpg" alt="Jojo" class="profile-image mx-auto mb-2" />
+          <p class="username truncate">{{ result.username }}</p>
+          <p>Correspondance :</p>
+          <div class="progress-bar bg-gray-700 rounded-full h-2 mt-2">
+            <div
+              class="progress bg-blue-500 h-full rounded-full"
+              :style="{ width: (result.gamesQtyFound / selectedGames.length) * 100 + '%' }"
+            ></div>
+          </div>
+        </router-link>
+      </div>
     </div>
   </BasePage>
 </template>
 
 <style scoped>
+.profile-card {
+  width: 12rem; /* Adjust the width as needed */
+}
+
+.profile-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.username {
+  font-weight: bold;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.progress-bar {
+  width: 100%;
+  background-color: #2d3748; /* Dark gray background */
+  border-radius: 4px;
+  overflow: hidden;
+  height: 0.5rem;
+  margin-top: 8px;
+}
+
+.progress {
+  height: 100%;
+  background-color: #4299e1; /* Blue color */
+}
+
+.results-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
 .enlarge-clickable-area::before {
   content: '';
   position: absolute;
