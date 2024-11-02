@@ -9,7 +9,10 @@
         <p>{{ error }}</p>
       </div>
 
-      <div v-else-if="!userAlias.length" class="text-center py-4 text-custom-white">
+      <div
+        v-else-if="!userAlias.length"
+        class="flex justify-center items-center text-center pr-2 pb-2 text-custom-white"
+      >
         <p>Aucun pseudo ajouté</p>
       </div>
 
