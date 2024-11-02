@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/toast'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useForm } from 'vee-validate'
-import { fetchRegisterPost } from '@/api/fetchRegisterPost'
+import { postRegister } from '@/api/postRegister'
 import { registerPostSchema } from '@/types/Register'
 import router from '@/router/index.js'
 import { UserStore } from '@/store/userStore'
@@ -21,7 +21,7 @@ const userStore = UserStore()
 const { toast } = useToast()
 const onSubmit = handleSubmit(async (values) => {
   try {
-    const response = await fetchRegisterPost(values)
+    const response = await postRegister(values)
     console.log(response)
     toast({
       title: 'Succès !',
