@@ -5,6 +5,7 @@ import Profile from '@/views/Profile.vue'
 import type { Component } from 'vue'
 import Login from '@/components/home/Login.vue'
 import Register from '@/components/home/Register.vue'
+import Matchmaking from '@/views/Matchmaking.vue'
 
 type Route = {
   path: string
@@ -17,9 +18,10 @@ const routes: Route[] = [
   { path: '/', name: 'Accueil', component: Home, inNav: true },
   { path: '/events', name: 'Évènements', component: Events, inNav: true },
   { path: '/joachim', name: 'Love', component: () => import('@/views/Joachim.vue') },
-  { path: '/profil', name: 'Profil', component: Profile },
+  { path: '/profil/:username', name: 'Profil', component: Profile },
+  { path: '/matchmaking', name: 'Matchmaking', component: Matchmaking, inNav: true},
   { path: '/login', name: 'Connexion', component: Login },
-  { path: '/register', name: 'Register', component: Register },
+  { path: '/register', name: 'Register', component: Register }
 ]
 
 const router = createRouter({

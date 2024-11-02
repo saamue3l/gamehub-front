@@ -29,7 +29,7 @@ const onSubmit = handleSubmit(async (values) => {
       variant: 'default'
     })
     userStore.setUsername(values.username)
-    await router.push({ name: 'Profil' })
+    await router.push({ name: 'Profil', params: { username: userStore.username } })
   } catch (error) {
     error.toString()
     const errorMessage = error.message
