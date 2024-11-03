@@ -10,6 +10,7 @@ import UsersIcon from '@/components/icons/usersIcon.vue'
 import EventInfo from '@/components/layout/events/EventInfo.vue'
 import { Calendar as CalendarIcon } from 'lucide-vue-next'
 import JoinEventButton from '@/components/layout/events/JoinEventButton.vue'
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
 
 const imageSize = ref<IGDBImageSizes>(IGDBImageSizes.COVER_BIG)
 
@@ -49,9 +50,18 @@ defineProps<{
               <UsersIcon class="h-4 w-4" />
             </EventInfo>
 
-            <EventInfo :text="new Date(Date.parse(event.eventDate)).toLocaleDateString('fr-FR')">
-              <CalendarIcon class="h-4 w-4" />
-            </EventInfo>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger as-child>
+                  <EventInfo :text="new Date(Date.parse(event.eventDate)).toLocaleDateString()">
+                    <CalendarIcon class="h-4 w-4" />
+                  </EventInfo>
+                </TooltipTrigger>
+                <TooltipContent align="center" side="top"
+                  ><p>{{ new Date(Date.parse(event.eventDate)).toDateString() }}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </section>
 
           <!--     Event description     -->

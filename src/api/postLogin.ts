@@ -2,7 +2,7 @@ import { getCsrfCookie } from '@/api/getCsrfCookie'
 import type { LoginPost, LoginResponse } from '@/types/Login'
 import { httpBackend } from '@/lib/utils'
 
-export async function fetchLoginPost(values: LoginPost): Promise<LoginResponse> {
+export async function postLogin(values: LoginPost): Promise<LoginResponse> {
   await getCsrfCookie()
 
   try {

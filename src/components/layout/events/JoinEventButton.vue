@@ -25,7 +25,8 @@ const buttonVariant = computed<ButtonVariants['variant']>(() => {
 const buttonDisabled = computed<boolean>(() => {
   return (
     isLoading.value ||
-    (props.event.participants.length >= props.event.maxPlayers && !props.event.userJoined)
+    (props.event.participants.length >= props.event.maxPlayers && !props.event.userJoined) ||
+    (new Date(props.event.eventDate) < new Date() && !props.event.userJoined)
   )
 })
 
