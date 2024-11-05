@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { routes } from '@/router/index.js'
+import { computed } from 'vue'
+import { UserStore } from '@/store/userStore'
+
+const userStore = UserStore()
+const isLoggedIn = computed(() => !!userStore.username)
 </script>
 
 <template>
   <nav>
-    <ul class="flex">
+    <ul class="flex" v-if="isLoggedIn">
       <li v-for="(route, index) in routes.filter((r) => r.inNav)" class="mr-2" :key="index">
         <router-link
           :to="route.path"
