@@ -15,10 +15,12 @@ import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/comp
 const imageSize = ref<IGDBImageSizes>(IGDBImageSizes.COVER_BIG)
 
 onMounted(() => {
-  window.addEventListener('resize', () => {
+  function setImageSize() {
     imageSize.value =
       window.innerWidth > 1024 ? IGDBImageSizes.COVER_BIG : IGDBImageSizes.SCREENSHOT_MEDIUM
-  })
+  }
+  window.addEventListener('resize', setImageSize)
+  setImageSize()
 })
 
 defineProps<{

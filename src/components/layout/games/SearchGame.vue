@@ -74,6 +74,7 @@ function setGame(game: Game) {
     <header>
       <SearchBar
         placeholder="Rechercher un jeu"
+        :autocomplete="false"
         v-model="gameSearch"
         @input="searchGame"
       ></SearchBar>

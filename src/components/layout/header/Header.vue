@@ -1,7 +1,6 @@
 <template>
   <header class="flex justify-center items-center px-4 py-2 text-custom-white">
     <div class="w-full md:w-3/5 flex justify-between items-center">
-
       <!-- logo + links(if not mobile) -->
       <div class="flex items-center">
         <router-link to="/" class="mr-5">
@@ -19,13 +18,16 @@
       <!-- if mobile, display a burger -->
       <div class="md:hidden">
         <button @click="toggleMenu" class="focus:outline-none">
-          <BurgerMenu/>
+          <BurgerMenu />
         </button>
       </div>
     </div>
 
     <!-- if the menu is open (burger button cliqued) on affiche le composant -->
-    <div v-if="isMenuOpen" class="absolute right-0 top-16 w-48 bg-custom-background-dark text-white rounded-lg shadow-lg p-4 md:hidden z-50">
+    <div
+      v-if="isMenuOpen"
+      class="absolute right-0 top-16 w-48 bg-background text-white rounded-lg shadow-lg p-4 md:hidden z-50"
+    >
       <MobileMenu />
     </div>
   </header>

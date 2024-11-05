@@ -9,10 +9,12 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { postLogin } from '@/api/postLogin'
 import { UserStore } from '@/store/userStore'
 import { useToast } from '@/components/ui/toast'
+import { ref } from 'vue'
 
 const router = useRouter()
 const userStore = UserStore()
 const { toast } = useToast()
+const isLoading = ref(false)
 
 const validationSchema = toTypedSchema(loginPostSchema)
 
@@ -22,7 +24,10 @@ const { handleSubmit } = useForm({
 
 const onSubmit = handleSubmit(async (values) => {
   try {
+    isLoading.value = true
+
     await postLogin(values)
+
     userStore.setUsername()
     await router.push({ name: 'Profil', params: { username: userStore.username } })
   } catch (error) {
@@ -31,6 +36,8 @@ const onSubmit = handleSubmit(async (values) => {
       description: error.message,
       variant: 'destructive'
     })
+  } finally {
+    isLoading.value = false
   }
 })
 </script>
@@ -71,6 +78,8 @@ const onSubmit = handleSubmit(async (values) => {
       </FormItem>
     </FormField>
 
-    <Button type="submit" size="form"> Se connecter </Button>
+    <Button type="submit" size="form" :disabled="isLoading">
+      {{ isLoading ? 'Connexion en cours...' : 'Se connecter ' }}
+    </Button>
   </form>
 </template>

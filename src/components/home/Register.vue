@@ -9,6 +9,7 @@ import { postRegister } from '@/api/postRegister'
 import { registerPostSchema } from '@/types/Register'
 import router from '@/router/index.js'
 import { UserStore } from '@/store/userStore'
+import { ref } from 'vue'
 
 const validationSchema = toTypedSchema(registerPostSchema)
 
@@ -18,9 +19,12 @@ const { handleSubmit } = useForm({
 
 const userStore = UserStore()
 
+const isLoading = ref(false)
+
 const { toast } = useToast()
 const onSubmit = handleSubmit(async (values) => {
   try {
+    isLoading.value = true
     const response = await postRegister(values)
     console.log(response)
     toast({
@@ -38,6 +42,8 @@ const onSubmit = handleSubmit(async (values) => {
       description: errorMessage,
       variant: 'destructive'
     })
+  } finally {
+    isLoading.value = false
   }
 })
 </script>
@@ -99,7 +105,9 @@ const onSubmit = handleSubmit(async (values) => {
       </FormItem>
     </FormField>
 
-    <Button type="submit" size="form"> S'inscrire </Button>
+    <Button type="submit" size="form" :disabled="isLoading">
+      {{ isLoading ? 'Inscription en cours...' : "S'inscrire" }}
+    </Button>
   </form>
 </template>
 

@@ -84,6 +84,7 @@ function setGame(game: Game) {
     <PopoverTrigger>
       <SearchBar
         placeholder="Rechercher un jeu"
+        :autocomplete="false"
         v-model="gameSearch"
         @input="searchGame"
       ></SearchBar>
