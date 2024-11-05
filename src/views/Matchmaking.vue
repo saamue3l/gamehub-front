@@ -2,7 +2,7 @@
 import BasePage from '@/components/layout/BasePage.vue';
 import SearchGame from '@/components/layout/games/SearchGame.vue';
 import SkillsCombobox from '@/components/layout/skills/SkillsCombobox.vue';
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { Dialog, DialogTrigger, DialogTitle, DialogDescription, DialogFooter, DialogHeader, DialogScrollContent } from '@/components/ui/dialog';
 import { httpBackend } from '@/lib/utils'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
@@ -26,6 +26,24 @@ function handleSelectGame(game: any) {
 function handleSelectLevel(level: any) {
   selectedLevel.value = level;
   levelError.value = false;
+}
+
+function saveGamesFilterToLocalStorage() {
+  localStorage.setItem('selectedGames', JSON.stringify(selectedGames.value));
+
+}
+
+function saveMatchResultsToLocalStorage() {
+  localStorage.setItem('matchResults', JSON.stringify(matchResults.value));
+}
+
+function loadSavedGamesFromLocalStorage() {
+  const savedGames = localStorage.getItem('selectedGames');
+  const savedResults = localStorage.getItem('matchResults');
+  if (savedGames) {
+    selectedGames.value = JSON.parse(savedGames);
+    matchResults.value = JSON.parse(savedResults);
+  }
 }
 
 function handleSubmit() {
@@ -55,6 +73,7 @@ function addGame() {
     };
     selectedGames.value.push(gameToAdd);
     sendGamesToApi();
+    saveGamesFilterToLocalStorage();
   }
 }
 
@@ -67,6 +86,7 @@ function isGameAlreadyAdded(game: any, level: any) {
 function removeGame(index: number) {
   selectedGames.value.splice(index, 1);
   sendGamesToApi();
+  saveGamesFilterToLocalStorage();
 }
 
 function closeDialog() {
@@ -99,6 +119,7 @@ async function sendGamesToApi() {
       errorMessage.value = "Une erreur s'est produite lors de l'envoi des jeux.";
     } else {
       matchResults.value = response.matchResult;
+      saveMatchResultsToLocalStorage()
     }
   } catch (error) {
     errorMessage.value = "Nous n'avons pas réussi à envoyer les jeux. Veuillez réessayer plus tard.";
@@ -112,6 +133,9 @@ watch(isDialogOpen, (newVal) => {
     resetDialog();
   }
 });
+
+onMounted(loadSavedGamesFromLocalStorage);
+
 </script>
 
 <template>
