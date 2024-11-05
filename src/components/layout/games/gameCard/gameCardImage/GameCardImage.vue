@@ -15,7 +15,7 @@ const props = defineProps<{
   direction?: GameCardImageVariants['direction']
 }>()
 
-const imageSize: ref = ref<IGDBImageSizes>(
+const imageSize = ref<IGDBImageSizes>(
   props.direction == 'horizontal' ? IGDBImageSizes.THUMBNAIL : IGDBImageSizes.COVER_BIG
 )
 </script>
