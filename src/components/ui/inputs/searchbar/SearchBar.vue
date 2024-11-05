@@ -8,6 +8,7 @@ const input: ref = useTemplateRef('input')
 
 interface InputProps {
   placeholder?: string
+  autocomplete?: boolean
 }
 
 function onInput(event: Event) {
@@ -16,7 +17,8 @@ function onInput(event: Event) {
 }
 
 withDefaults(defineProps<InputProps>(), {
-  placeholder: 'Rechercher...'
+  placeholder: 'Rechercher...',
+  autocomplete: true
 })
 </script>
 
@@ -26,6 +28,7 @@ withDefaults(defineProps<InputProps>(), {
       id="search"
       type="text"
       :placeholder="placeholder"
+      :autocomplete="autocomplete"
       class="pl-10"
       @input="onInput"
       ref="input"
