@@ -6,6 +6,7 @@ import type { Component } from 'vue'
 import Login from '@/components/home/Login.vue'
 import Register from '@/components/home/Register.vue'
 import Matchmaking from '@/views/Matchmaking.vue'
+import Messages from '@/views/Messages.vue'
 import { UserStore } from '@/store/userStore'
 
 type Route = {
@@ -35,6 +36,13 @@ const routes: Route[] = [
     path: '/matchmaking',
     name: 'Matchmaking',
     component: Matchmaking,
+    inNav: true,
+    beforeEnter: requireAuth
+  },
+  {
+    path: '/messages',
+    name: 'Mes messages',
+    component: Messages,
     inNav: true,
     beforeEnter: requireAuth
   },
