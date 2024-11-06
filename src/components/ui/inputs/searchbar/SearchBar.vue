@@ -28,7 +28,7 @@ withDefaults(defineProps<InputProps>(), {
       id="search"
       type="text"
       :placeholder="placeholder"
-      :autocomplete="autocomplete"
+      :autocomplete="!autocomplete ? 'off' : ''"
       class="pl-10"
       @input="onInput"
       ref="input"
