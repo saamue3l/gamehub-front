@@ -127,22 +127,25 @@ watch(joinedFilter, console.log)
       </div>
 
       <!-- When fetched -->
-      <EventCard
-        v-for="event in events"
-        v-show="!joinedFilter || event.userJoined"
-        :event="event"
-        :key="event.id"
-      ></EventCard>
+      <TransitionGroup name="list">
+        <EventCard
+          v-for="event in events"
+          v-show="!joinedFilter || event.userJoined"
+          :event="event"
+          :key="event.id"
+        ></EventCard>
+      </TransitionGroup>
     </section>
   </BasePage>
 </template>
 
 <style scoped>
-.grid-item {
-  transition: all 500ms ease;
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
 }
-
-.grid-move {
-  transform: scale(0.9);
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
 }
 </style>
