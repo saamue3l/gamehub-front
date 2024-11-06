@@ -28,7 +28,7 @@ export function toNativeDate(dateValue: CalendarDate): Date | null {
 export async function httpBackend<T>(
   path: string,
   method: 'GET' | 'POST' = 'GET',
-  body?: any[],
+  body?: any,
   auth: boolean = true
 ): Promise<T> {
   const token = sessionStorage.getItem('token')
