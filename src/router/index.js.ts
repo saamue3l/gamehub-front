@@ -13,6 +13,7 @@ type Route = {
   name: string
   component: Component
   inNav?: boolean
+  beforeEnter?: (to: any, from: any, next: any) => void
 }
 
 const routes: Route[] = [
