@@ -28,18 +28,18 @@ function handleSelectLevel(level: any) {
   levelError.value = false;
 }
 
-function saveGamesFilterToLocalStorage() {
-  localStorage.setItem('selectedGames', JSON.stringify(selectedGames.value));
+function saveGamesFilterToSessionStorage() {
+  sessionStorage.setItem('selectedGames', JSON.stringify(selectedGames.value));
 
 }
 
-function saveMatchResultsToLocalStorage() {
-  localStorage.setItem('matchResults', JSON.stringify(matchResults.value));
+function saveMatchResultsToSessionStorage() {
+  sessionStorage.setItem('matchResults', JSON.stringify(matchResults.value));
 }
 
-function loadSavedGamesFromLocalStorage() {
-  const savedGames = localStorage.getItem('selectedGames');
-  const savedResults = localStorage.getItem('matchResults');
+function loadSavedGamesFromSessionStorage() {
+  const savedGames = sessionStorage.getItem('selectedGames');
+  const savedResults = sessionStorage.getItem('matchResults');
   if (savedGames) {
     selectedGames.value = JSON.parse(savedGames);
     matchResults.value = JSON.parse(savedResults);
@@ -73,7 +73,7 @@ function addGame() {
     };
     selectedGames.value.push(gameToAdd);
     sendGamesToApi();
-    saveGamesFilterToLocalStorage();
+    saveGamesFilterToSessionStorage();
   }
 }
 
@@ -86,7 +86,7 @@ function isGameAlreadyAdded(game: any, level: any) {
 function removeGame(index: number) {
   selectedGames.value.splice(index, 1);
   sendGamesToApi();
-  saveGamesFilterToLocalStorage();
+  saveGamesFilterToSessionStorage();
 }
 
 function closeDialog() {
@@ -119,7 +119,7 @@ async function sendGamesToApi() {
       errorMessage.value = "Une erreur s'est produite lors de l'envoi des jeux.";
     } else {
       matchResults.value = response.matchResult;
-      saveMatchResultsToLocalStorage()
+      saveMatchResultsToSessionStorage()
     }
   } catch (error) {
     errorMessage.value = "Nous n'avons pas réussi à envoyer les jeux. Veuillez réessayer plus tard.";
@@ -134,7 +134,7 @@ watch(isDialogOpen, (newVal) => {
   }
 });
 
-onMounted(loadSavedGamesFromLocalStorage);
+onMounted(loadSavedGamesFromSessionStorage);
 
 </script>
 

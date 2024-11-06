@@ -31,9 +31,14 @@ const onSubmit = handleSubmit(async (values) => {
     userStore.setUsername()
     await router.push({ name: 'Profil', params: { username: userStore.username } })
   } catch (error) {
+    let message = 'Une erreur est survenue, veuillez réessayer plus tard.'
+
+    if (error.message === 'Échec de la connexion, informations incorrectes.') {
+      message = 'Identifiants incorrects. Veuillez vérifier votre email et mot de passe.'
+    }
     toast({
       title: "Quelques chose n'a pas fonctionné.",
-      description: error.message,
+      description: message,
       variant: 'destructive'
     })
   } finally {
