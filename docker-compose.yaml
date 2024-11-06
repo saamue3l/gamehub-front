@@ -1,0 +1,27 @@
+
+services:
+  front:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gamehub-front-server
+    pull_policy: build
+    restart: unless-stopped
+    tty: true
+
+  proxy:
+    image: nginx
+    volumes:
+    - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+    - "80:80"
+    environment:
+    - NGINX_HOST=localhost
+    - NGINX_PORT=80
+    depends_on:
+      - front
+
+networks:
+  default:
+    name: gamehub-default
+    external: true
