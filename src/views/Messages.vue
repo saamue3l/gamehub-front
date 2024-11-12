@@ -111,6 +111,7 @@ function goBackToList() {
             :message="message"
             :selectedUserId="selectedUser.id"
             :currentUserId="2"
+            :v-if="isSentByMe || isReceived"
             class="py-2"
           />
         </div>

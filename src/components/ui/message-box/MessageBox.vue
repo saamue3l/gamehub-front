@@ -1,29 +1,30 @@
 <script setup lang="ts">
-import { defineProps, computed } from 'vue';
+import { defineProps, computed } from 'vue'
 
 const props = defineProps({
   message: {
     type: Object,
-    required: true,
+    required: true
   },
   selectedUserId: {
     type: Number,
-    required: true,
+    required: true
   },
   currentUserId: {
     type: Number,
-    required: true,
-  },
-});
+    required: true
+  }
+})
 
-const isSentByMe = computed(() => props.message.senderId === props.currentUserId);
-const isReceived = computed(() => props.message.senderId === props.selectedUserId);
+const isSentByMe = computed(() => props.message.senderId === props.currentUserId)
+const isReceived = computed(() => !isSentByMe.value) // Si ce n'est pas envoyé par moi, c'est reçu
 </script>
 
 <template>
-  <div :class="['message-box !py-0.5', { 'sent': isSentByMe, 'received': isReceived }]">
+  <div :class="['message-box !py-0.5', { sent: isSentByMe, received: isReceived }]">
     <div class="message-header">
-      <span>{{ message.from }}</span> - <span>{{ new Date(message.created_at).toLocaleString() }}</span>
+      <span>{{ message.from }}</span> -
+      <span>{{ new Date(message.created_at).toLocaleString() }}</span>
     </div>
     <div class="message-content">
       {{ message.content }}
