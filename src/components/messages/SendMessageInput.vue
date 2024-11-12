@@ -7,7 +7,7 @@
       placeholder="Type your message..."
       class="flex-grow border rounded p-2 mr-2 text-black"
     />
-    <Button @click="sendMessage">Send</Button>
+    <Button @click="sendMessage">Envoyer</Button>
   </div>
 </template>
 
