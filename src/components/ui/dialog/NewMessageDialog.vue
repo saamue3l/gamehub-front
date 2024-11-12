@@ -1,38 +1,47 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Dialog, DialogTrigger, DialogScrollContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import UserSearch from '@/components/ui/user-search/UserSearch.vue';
+import { ref } from 'vue'
+import {
+  Dialog,
+  DialogTrigger,
+  DialogScrollContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import UserSearch from '@/components/ui/user-search/UserSearch.vue'
 
-const newUser = ref('');
-const newMessage = ref('');
+const newUser = ref('')
+const newMessage = ref('')
 const users = ref([
   { id: 1, name: 'User 1' },
   { id: 2, name: 'User 2' },
   { id: 3, name: 'User 3' },
-  { id: 4, name: 'User 4' },
+  { id: 4, name: 'User 4' }
   // Add more users as needed
-]);
+])
 
 function sendMessage() {
   // Logic to send the message
-  console.log(`Sending message to ${newUser.value}: ${newMessage.value}`);
-  closeDialog();
+  console.log(`Sending message to ${newUser.value}: ${newMessage.value}`)
+  closeDialog()
 }
 
 function closeDialog() {
-  emit('close');
+  emit('close')
 }
 
 function handleUserSelect(user) {
-  newUser.value = user.name;
+  newUser.value = user.name
 }
 </script>
 
 <template>
   <Dialog v-model:open="isDialogOpen" @close="closeDialog">
     <DialogTrigger as-child>
-      <div class="relative border border-white rounded-full p-2 mt-2 flex flex-row items-center justify-center cursor-pointer bg-blue-600 text-white font-bold text-sm">
+      <div
+        class="relative border border-white rounded-full p-2 mt-2 flex flex-row items-center justify-center cursor-pointer bg-blue-600 text-white font-bold text-sm"
+      >
         <span class="mx-1">+</span>
         <span class="mr-1">Nouveau message</span>
       </div>
@@ -40,14 +49,18 @@ function handleUserSelect(user) {
     <DialogScrollContent class="flex flex-col gap-6">
       <form @submit.prevent="sendMessage">
         <DialogHeader>
-          <DialogTitle>Nouveau message</DialogTitle>
+          <DialogTitle class="pb-6">Nouveau message</DialogTitle>
         </DialogHeader>
 
         <UserSearch :users="users" @select="handleUserSelect" />
 
-        <textarea v-model="newMessage" placeholder="Message" class="w-full mb-4 p-2 border border-gray-300 rounded"></textarea>
+        <textarea
+          v-model="newMessage"
+          placeholder="Message"
+          class="w-full mb-4 p-2 border border-gray-300 rounded text-black"
+        ></textarea>
 
-        <DialogFooter>
+        <DialogFooter class="flex flex-col space-y-4 md:space-y-0 md:flex-row md:space-x-4">
           <Button type="submit">Envoyer</Button>
           <Button type="button" @click="closeDialog">Fermer</Button>
         </DialogFooter>
