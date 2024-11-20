@@ -5,6 +5,8 @@ import List from '@/components/ui/list/List.vue'
 import MessageBox from '@/components/ui/message-box/MessageBox.vue'
 import SendMessageInput from '@/components/messages/SendMessageInput.vue'
 import { httpBackend } from '@/lib/utils'
+import NewMessageDialog from '@/components/ui/dialog/NewMessageDialog.vue'
+import UserList from '@/components/chat/UserList.vue'
 
 const users = ref([])
 const selectedUser = ref(null)
@@ -70,21 +72,13 @@ watch(selectedUser, (newUser) => {
       <div v-show="!showConversation" class="w-full md:w-1/3 md:border-r border-gray-300 p-4">
         <NewMessageDialog v-model:open="isDialogOpen" @close="closeDialog" />
         <div class="mb-4"></div>
-        <div class="max-h-96 overflow-y-auto">
-          <List :items="users" :selectedUser="selectedUser" @click="selectUser">
-            <template #default="{ item }">
-              <!-- Vérifiez que item et item.username existent avant de les afficher -->
-              <div class="my-0.5" v-if="item && item.username">{{ item.username }}</div>
-            </template>
-          </List>
-        </div>
+        <UserList :users="users" :selectedUser="selectedUser" @select-user="selectUser" />
       </div>
 
       <!-- Conversations -->
       <div class="block md:hidden w-full md:w-2/3 p-4">
         <div v-show="showConversation" class="flex items-center space-x-2 mb-4">
           <button @click="goBackToList" class="md:hidden text-blue-500">←</button>
-          <!-- Vérifiez que selectedUser existe avant d'afficher son nom -->
           <h2 class="text-xl font-bold" v-if="selectedUser && selectedUser.username">
             {{ selectedUser.username }}
           </h2>
@@ -104,6 +98,9 @@ watch(selectedUser, (newUser) => {
       </div>
 
       <div class="hidden md:block w-full md:w-2/3 p-4">
+        <h2 class="text-xl font-bold mb-4" v-if="selectedUser && selectedUser.username">
+          {{ selectedUser.username }}
+        </h2>
         <div class="max-h-96 overflow-y-auto">
           <MessageBox
             v-for="message in messages"
@@ -115,8 +112,7 @@ watch(selectedUser, (newUser) => {
             class="py-2"
           />
         </div>
-
-        <SendMessageInput @send-message="handleSendMessage" />
+        <SendMessageInput @send-message="handleSendMessage" v-if="selectedUser" />
       </div>
     </div>
   </BasePage>
