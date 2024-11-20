@@ -22,6 +22,8 @@
     "dotenv": "^16.4.5",
     "lucide-vue-next": "^0.453.0",
     "pinia": "^2.2.4",
+    "pusher": "^5.2.0",
+    "pusher-js": "^8.4.0-rc2",
     "radix-vue": "^1.9.7",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",

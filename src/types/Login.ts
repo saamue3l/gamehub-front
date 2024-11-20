@@ -9,6 +9,7 @@ export type LoginPost = z.infer<typeof loginPostSchema>
 
 export type LoginResponse = {
   username: string
+  userId: number
   roleId: number
   statusId: number
   xp: number

@@ -20,11 +20,30 @@ async function loadConversationUsers() {
   }
 }
 
-async function loadMessagesWithUser(userId) {
+async function loadMessagesWithUser(receiverId) {
   try {
-    messages.value = await httpBackend(`/api/messages/${userId}`, 'GET')
+    messages.value = await httpBackend(`/api/messages/${receiverId}`, 'GET')
   } catch (error) {
     console.error('Erreur lors du chargement des messages:', error)
+  }
+}
+
+async function sendMessageToUser(receiverId, userId, message) {
+  try {
+    console.log(receiverId, userId, message)
+    await httpBackend(`/api/sendMessage`, 'POST', {
+      recipientId: receiverId,
+      userId: userId,
+      content: message
+    })
+  } catch (error) {
+    console.error('Erreur lors du chargement des messages:', error)
+  }
+}
+
+function handleSendMessage(message) {
+  if (selectedUser.value) {
+    sendMessageToUser(selectedUser.value.id, 1, message)
   }
 }
 
@@ -81,8 +100,7 @@ watch(selectedUser, (newUser) => {
             class="py-2"
           />
         </div>
-
-        <SendMessageInput v-show="showConversation" />
+        <SendMessageInput v-show="showConversation" @send-message="handleSendMessage" />
       </div>
 
       <div class="hidden md:block w-full md:w-2/3 p-4">
@@ -98,7 +116,7 @@ watch(selectedUser, (newUser) => {
           />
         </div>
 
-        <SendMessageInput />
+        <SendMessageInput @send-message="handleSendMessage" />
       </div>
     </div>
   </BasePage>
