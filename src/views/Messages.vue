@@ -6,7 +6,7 @@ import MessageBox from '@/components/ui/message-box/MessageBox.vue'
 import SendMessageInput from '@/components/messages/SendMessageInput.vue'
 import { httpBackend } from '@/lib/utils'
 import NewMessageDialog from '@/components/ui/dialog/NewMessageDialog.vue'
-import UserList from '@/components/chat/UserList.vue'
+import UserList from '@/components/messages/UserList.vue'
 
 const users = ref([])
 const selectedUser = ref(null)
