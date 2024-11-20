@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import BasePage from '@/components/layout/BasePage.vue'
-import List from '@/components/ui/list/List.vue'
 import MessageBox from '@/components/ui/message-box/MessageBox.vue'
 import SendMessageInput from '@/components/messages/SendMessageInput.vue'
 import { httpBackend } from '@/lib/utils'
@@ -12,6 +11,18 @@ const users = ref([])
 const selectedUser = ref(null)
 const messages = ref([])
 const showConversation = ref(false)
+
+const currentUserId = ref(null)
+
+async function fetchCurrentUser() {
+  try {
+    currentUserId.value = await httpBackend('/api/currentUser', 'GET')
+  } catch (error) {
+    console.error('Erreur lors du chargement de l’utilisateur:', error)
+  }
+}
+
+onMounted(fetchCurrentUser)
 
 async function loadConversationUsers() {
   try {
@@ -90,7 +101,7 @@ watch(selectedUser, (newUser) => {
             :key="message.content"
             :message="message"
             :selectedUserId="selectedUser.id"
-            :currentUserId="2"
+            :currentUserId="currentUserId"
             class="py-2"
           />
         </div>
@@ -107,8 +118,7 @@ watch(selectedUser, (newUser) => {
             :key="message.content"
             :message="message"
             :selectedUserId="selectedUser.id"
-            :currentUserId="2"
-            :v-if="isSentByMe || isReceived"
+            :currentUserId="currentUserId"
             class="py-2"
           />
         </div>
