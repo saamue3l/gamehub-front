@@ -6,11 +6,11 @@ import { Event } from '@/types/Event'
 import GameCover from '@/components/layout/games/GameCover.vue'
 import { IGDBImageSizes } from '@/lib/igdbImages'
 import { onMounted, ref } from 'vue'
-import UsersIcon from '@/components/icons/usersIcon.vue'
 import EventInfo from '@/components/layout/events/EventInfo.vue'
-import { Calendar as CalendarIcon } from 'lucide-vue-next'
+
 import JoinEventButton from '@/components/layout/events/JoinEventButton.vue'
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
+import EventCardInfos from '@/components/layout/events/EventCardInfos.vue'
 
 const imageSize = ref<IGDBImageSizes>(IGDBImageSizes.COVER_BIG)
 
@@ -47,24 +47,7 @@ defineProps<{
         </CardHeader>
         <CardContent class="flex flex-col justify-start items-start gap-1.5 flex-1">
           <!--     Event infos     -->
-          <section class="flex justify-start gap-5 flex-wrap">
-            <EventInfo :text="`${event.participants.length} / ${event.maxPlayers}`">
-              <UsersIcon class="h-4 w-4" />
-            </EventInfo>
-
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger as-child>
-                  <EventInfo :text="new Date(Date.parse(event.eventDate)).toLocaleDateString()">
-                    <CalendarIcon class="h-4 w-4" />
-                  </EventInfo>
-                </TooltipTrigger>
-                <TooltipContent align="center" side="top"
-                  ><p>{{ new Date(Date.parse(event.eventDate)).toDateString() }}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </section>
+          <EventCardInfos :event="event" />
 
           <!--     Event description     -->
           <p>
