@@ -2,22 +2,20 @@
 import Header from '@/components/layout/header/Header.vue'
 import SearchBar from '@/components/ui/inputs/searchbar/SearchBar.vue'
 import { httpBackend } from '@/lib/utils'
-import { ref, useTemplateRef } from 'vue'
+import { type Ref, ref } from 'vue'
 import type { Game } from '@/types/Game'
-import LoadingSpinner from '@/components/ui/feedback/spinner/LoadingSpinner.vue'
 import GameCard from '@/components/layout/games/gameCard/GameCard.vue'
-import { nativeEnum } from 'zod'
 import { Skeleton } from '@/components/ui/skeleton'
 
 const emit = defineEmits<{
   (e: 'select-game', game: Game | null): void // Game when the user selects a game and null when he deselects a game
 }>()
 
-const games: ref = ref<Game[]>([]) // List of games based on the user's search
-const isLoading: ref = ref(false) // Are we waiting for a response from the back-end ?
-const errorMessage: ref = ref<string | null>(null) // Is there an error while fetching the back-end ?
-const selectedGame: ref = ref<Game | null>(null) // The game the user selected
-const gameSearch: ref = ref('') // the search the user have made / The input value
+const games: Ref = ref<Game[]>([]) // List of games based on the user's search
+const isLoading: Ref = ref(false) // Are we waiting for a response from the back-end ?
+const errorMessage: Ref = ref<string | null>(null) // Is there an error while fetching the back-end ?
+const selectedGame: Ref = ref<Game | null>(null) // The game the user selected
+const gameSearch: Ref = ref('') // the search the user have made / The input value
 
 /**
  * Display the results of a search for a game

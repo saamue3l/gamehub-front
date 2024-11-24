@@ -1,19 +1,18 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import Home from '@/views/Home.vue'
 import Events from '@/views/Events.vue'
 import Profile from '@/views/Profile.vue'
-import type { Component } from 'vue'
 import Login from '@/components/home/Login.vue'
 import Register from '@/components/home/Register.vue'
 import Matchmaking from '@/views/Matchmaking.vue'
 import { UserStore } from '@/store/userStore'
-import Forum from '@/views/Forums.vue'
-import ViewForum from '@/views/ViewForum.vue'
+import Forum from '@/views/Forum.vue'
+import ViewForum from '@/views/forum/ViewForum.vue'
+import ViewTopic from '@/views/forum/ViewTopic.vue'
+import ForumsList from '@/views/forum/ForumsList.vue'
+import SearchForums from '@/views/forum/SearchForums.vue'
 
-type Route = {
-  path: string
-  name: string
-  component: Component
+type Route = RouteRecordRaw & {
   inNav?: boolean
   beforeEnter?: (to: any, from: any, next: any) => void
 }
@@ -29,11 +28,37 @@ const routes: Route[] = [
     beforeEnter: requireAuth
   },
   {
-    path: '/forum',
+    path: '/forums',
     name: 'Forums',
     component: Forum,
     inNav: true,
-    beforeEnter: requireAuth
+    beforeEnter: requireAuth,
+    children: [
+      {
+        path: '',
+        name: 'ForumsList',
+        component: ForumsList,
+        beforeEnter: requireAuth
+      },
+      {
+        path: ':forumId',
+        name: 'ViewForum',
+        component: ViewForum,
+        beforeEnter: requireAuth
+      },
+      {
+        path: ':forumId/:topicId',
+        name: 'ViewTopic',
+        component: ViewTopic,
+        beforeEnter: requireAuth
+      },
+      {
+        path: 'search/:search',
+        name: 'SearchInForums',
+        component: SearchForums,
+        beforeEnter: requireAuth
+      }
+    ]
   },
   {
     path: '/matchmaking',
@@ -50,13 +75,6 @@ const routes: Route[] = [
     path: '/profil/:username',
     name: 'Profil',
     component: Profile,
-    beforeEnter: requireAuth
-  },
-  /* === FORUM === */
-  {
-    path: '/forum/:id',
-    name: 'viewForum',
-    component: ViewForum,
     beforeEnter: requireAuth
   },
   /* === OTHERS === */
