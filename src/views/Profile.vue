@@ -5,12 +5,14 @@ import Availability from '@/components/profile/Availability/Availability.vue'
 import Achievements from '@/components/profile/Achievements/Achievements.vue'
 import BasePage from '@/components/layout/BasePage.vue'
 import UserInfo from '@/components/profile/UserInfo.vue'
+import UpcomingEvents from '@/components/profile/UpcomingEvents/UpcomingEvents.vue'
 
 const components = [
   { component: Alias, order: { mobile: 1, desktop: 2 } },
   { component: FavoriteGames, order: { mobile: 2, desktop: 1 } },
   { component: Availability, order: { mobile: 3, desktop: 3 } },
-  { component: Achievements, order: { mobile: 4, desktop: 4 } }
+  { component: Achievements, order: { mobile: 4, desktop: 4 } },
+  { component: UpcomingEvents, order: { mobile: 5, desktop: 5 } }
 ]
 </script>
 
@@ -25,7 +27,7 @@ const components = [
         </div>
         <div class="flex flex-col space-y-8 w-1/3">
           <component
-            v-for="i in [2, 3, 4]"
+            v-for="i in [2, 3, 4, 5]"
             :key="i"
             :is="components.find((c) => c.order.desktop === i).component"
           />
@@ -34,7 +36,7 @@ const components = [
 
       <div class="flex flex-col space-y-8 md:hidden">
         <component
-          v-for="i in [1, 2, 3, 4]"
+          v-for="i in [1, 2, 3, 4, 5]"
           :key="i"
           :is="components.find((c) => c.order.mobile === i).component"
         />
