@@ -14,5 +14,9 @@ export const UserStore = defineStore('userStore', () => {
     username.value = ''
   }
 
-  return { username, setUsername, resetUsername }
+  function isAdmin(): boolean {
+    return sessionStorage.getItem('roleId') == '1' ?? false
+  }
+
+  return { username, setUsername, resetUsername, isAdmin }
 })
