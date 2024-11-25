@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { Button, type ButtonVariants } from '@/components/ui/button'
 import { useToast } from '@/components/ui/toast'
-import { type Event } from '@/types/Event'
+import { type Event, type JoinEventResponse } from '@/types/Event'
 import { httpBackend } from '@/lib/utils'
 import { computed, ref } from 'vue'
 import { comment } from 'postcss'
 import LoadingSpinner from '@/components/ui/feedback/spinner/LoadingSpinner.vue'
 import type { User } from '@/types/User'
+import { useActionHandler } from '@/services/actionHandler'
+import type { XpAndSuccessResponse } from '@/types/Success'
 
 const emit = defineEmits<{
   (e: 'joined-event', event: Event): void
@@ -39,8 +41,12 @@ async function onClick() {
   let response
   try {
     isLoading.value = true
-    response = (await httpBackend(`/api/event/changeJoinedStatus/${props.event.id}`, 'POST')) as any
+    response = (await httpBackend<JoinEventResponse>(
+      `/api/event/changeJoinedStatus/${props.event.id}`,
+      'POST'
+    )) as any
 
+    console.log('response :', response)
     const userJoined: boolean = response.userJoined
     let toastMessage
     if (userJoined) {
@@ -48,10 +54,12 @@ async function onClick() {
     } else {
       toastMessage = `Vous êtes désinscrit de l'évènement ${props.event.name}`
     }
-    toast({
-      title: 'Succès !',
-      description: toastMessage,
-      variant: 'default'
+
+    const { handleActionResponse } = useActionHandler()
+
+    await handleActionResponse(response, {
+      title: 'Succès',
+      description: toastMessage
     })
 
     props.event.userJoined = userJoined

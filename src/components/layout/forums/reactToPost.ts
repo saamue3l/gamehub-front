@@ -1,7 +1,8 @@
 import { httpBackend } from '@/lib/utils'
 import { type Ref } from 'vue'
-import type { Post } from '@/types/Forum'
+import type { Post, ReactionResponse } from '@/types/Forum'
 import { useToast } from '@/components/ui/toast'
+import { useActionHandler } from '@/services/actionHandler'
 
 export async function reactionToPost(emoji: string, isLoading: Ref<boolean>, post: Post) {
   if (isLoading.value) {
@@ -14,11 +15,16 @@ export async function reactionToPost(emoji: string, isLoading: Ref<boolean>, pos
     const values = {
       emoji: emoji
     }
-    const response = await httpBackend<{ userReacted: boolean }>(
+
+    const response = await httpBackend<ReactionResponse>(
       `/api/forums/react/${post.id}`,
       'POST',
       values
     )
+
+    const { handleActionResponse } = useActionHandler()
+
+    await handleActionResponse(response)
   } catch (error: any) {
     error.toString()
     const errorMessage =

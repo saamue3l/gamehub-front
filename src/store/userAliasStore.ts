@@ -4,6 +4,7 @@ import type { Username } from '@/types/Username'
 import type { UsernameUpdate } from '@/types/Username'
 import { httpBackend } from '@/lib/utils'
 import { usePlatformStore } from '@/store/platformStore'
+import type { XpAndSuccessResponse } from '@/types/Success'
 
 const cleanIconUrl = (url: string): string => {
   const lastSlashIndex = url.lastIndexOf('/')
@@ -48,7 +49,11 @@ export const useUserAliasStore = defineStore('userAlias', () => {
         await platformStore.fetchPlatforms()
       }
 
-      await httpBackend<void>('/api/profile/updateAlias', 'PUT', updates)
+      const response = await httpBackend<XpAndSuccessResponse>(
+        '/api/profile/updateAlias',
+        'PUT',
+        updates
+      )
 
       userAlias.value = updates.map((update) => {
         const platform = platformStore.platforms.find((p) => p.id === update.platformId)
@@ -65,6 +70,8 @@ export const useUserAliasStore = defineStore('userAlias', () => {
           }
         }
       })
+
+      return response
     } catch (err) {
       error.value = 'Erreur lors de la mise à jour des pseudos'
       console.error('Error updating usernames:', err)

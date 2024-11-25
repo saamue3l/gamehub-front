@@ -29,6 +29,7 @@ const onSubmit = handleSubmit(async (values) => {
     await postLogin(values)
 
     userStore.setUsername()
+    userStore.setXp()
     await router.push({ name: 'Profil', params: { username: userStore.username } })
   } catch (error) {
     let message = 'Une erreur est survenue, veuillez réessayer plus tard.'

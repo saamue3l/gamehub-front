@@ -1,5 +1,54 @@
+<script setup lang="ts">
+import { ref, watch, watchEffect } from 'vue'
+import { useRoute } from 'vue-router'
+import { UserStore } from '@/store/userStore'
+import type { UserInfo } from '@/types/UserInfo'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Progress } from '@/components/ui/progress'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { httpBackend } from '@/lib/utils'
+import { useProfileStore } from '@/store/profileStore'
+
+const profileStore = useProfileStore()
+const isLoading = ref(true)
+const errorMessage = ref<string | null>(null)
+const route = useRoute()
+const userInfo = ref<UserInfo | null>(null)
+const userStore = UserStore()
+
+const fetchUserInfo = async () => {
+  try {
+    isLoading.value = true
+    userInfo.value = await httpBackend<UserInfo>(`/api/profile/${route.params.username}/userInfo`)
+  } catch (err) {
+    errorMessage.value =
+      "Erreur lors de la récupération des infos de l'utilisateur. Veuillez réessayer plus tard."
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const xpAnimation = ref()
+
+watch(
+  () => userStore.xp,
+  (newXp, oldXp) => {
+    if (newXp > oldXp) {
+      xpAnimation.value?.showXpGain(newXp - oldXp)
+    }
+  }
+)
+
+watchEffect(() => {
+  if (route.params.username) {
+    fetchUserInfo()
+  }
+})
+</script>
+
 <template>
-  <div v-if="isLoading" class="flex max-md:flex-col max-md:items-center mb-8">
+  <div v-if="isLoading" class="flex max-md:flex-col max-md:items-center mb-4">
     <Skeleton class="h-16 w-16 rounded-full" />
     <div class="flex flex-col justify-center max-md:flex-col max-md:items-center space-y-1 ml-2">
       <div class="flex items-center space-x-2">
@@ -27,54 +76,23 @@
         <div
           class="flex items-center justify-center h-6 w-6 font-bold bg-primary text-white rounded-full text-xs"
         >
-          {{ userInfo.level }}
+          {{ profileStore.isOwnProfile ? userStore.level : userInfo.level }}
         </div>
       </div>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger as-child>
-            <Progress :model-value="Number(userInfo.xp)" :max="100" class="w-40 h-2" />
+            <Progress
+              :model-value="profileStore.isOwnProfile ? userStore.xpInCurrentLevel : userInfo.xp"
+              :max="100"
+              class="w-40 h-2"
+            />
           </TooltipTrigger>
           <TooltipContent side="bottom">
-            <p>{{ userInfo.xp }}/100</p>
+            <p>{{ profileStore.isOwnProfile ? userStore.xpInCurrentLevel : userInfo.xp }}/100</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, watchEffect } from 'vue'
-import { useRoute } from 'vue-router'
-import type { UserInfo } from '@/types/UserInfo'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Progress } from '@/components/ui/progress'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { httpBackend } from '@/lib/utils'
-
-const isLoading = ref(true)
-const errorMessage = ref<string | null>(null)
-const route = useRoute()
-const userInfo = ref<UserInfo | null>(null)
-
-const fetchUserInfo = async () => {
-  try {
-    isLoading.value = true
-    userInfo.value = await httpBackend<UserInfo>(`/api/profile/${route.params.username}/userInfo`)
-  } catch (err) {
-    errorMessage.value =
-      "Erreur lors de la récupération des infos de l'utilisateur. Veuillez réessayer plus tard."
-    console.error('Error fetching user info:', err)
-  } finally {
-    isLoading.value = false
-  }
-}
-
-watchEffect(() => {
-  if (route.params.username) {
-    fetchUserInfo()
-  }
-})
-</script>

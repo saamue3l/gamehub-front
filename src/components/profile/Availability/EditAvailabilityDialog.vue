@@ -1,55 +1,3 @@
-<template>
-  <div class="flex items-end justify-end">
-    <Dialog v-model:open="isOpen" @open="initializeLocalAvailabilities">
-      <DialogTrigger as-child>
-        <Button size="round" class="p-2">
-          <Edit2 class="size-4" />
-        </Button>
-      </DialogTrigger>
-      <DialogContent class="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Disponibilités</DialogTitle>
-          <DialogDescription>
-            Choisissez les plages horaires pour chaque jour de la semaine.
-          </DialogDescription>
-        </DialogHeader>
-
-        <div class="text-xs p-2">
-          <div class="grid grid-cols-[20px_repeat(4,1fr)] gap-2">
-            <span></span>
-            <div
-              v-for="period in periodHeaders"
-              :key="period.key"
-              class="font-bold text-center flex justify-center items-end"
-            >
-              {{ period.label }}
-            </div>
-
-            <template v-for="day in allDays" :key="day">
-              <div class="font-semibold text-center flex justify-end items-center">{{ day }}</div>
-              <template v-for="period in periodHeaders" :key="`${day}-${period.key}`">
-                <div
-                  class="rounded-full cursor-pointer transition-colors"
-                  :class="[
-                    getAvailabilityForDay(day, period.key)
-                      ? 'bg-primary hover:bg-primary/90'
-                      : 'border hover:border-primary'
-                  ]"
-                  @click="toggleAvailability(day, period.key)"
-                ></div>
-              </template>
-            </template>
-          </div>
-        </div>
-
-        <DialogFooter>
-          <Button type="submit" @click="saveChanges" :loading="isSaving"> Enregistrer </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, defineProps, defineEmits, watch } from 'vue'
 import { Button } from '@/components/ui/button'
@@ -130,11 +78,6 @@ const saveChanges = async () => {
 
     emit('update:availabilities', availabilitiesToSave)
     isOpen.value = false
-
-    toast({
-      title: 'Succès',
-      description: 'Vos disponibilités ont été mises à jour'
-    })
   } catch (error) {
     toast({
       title: 'Erreur',
@@ -165,3 +108,55 @@ watch(
   { immediate: true }
 )
 </script>
+
+<template>
+  <div class="flex items-end justify-end">
+    <Dialog v-model:open="isOpen" @open="initializeLocalAvailabilities">
+      <DialogTrigger as-child>
+        <Button size="round" class="p-2">
+          <Edit2 class="size-4" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent class="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Disponibilités</DialogTitle>
+          <DialogDescription>
+            Choisissez les plages horaires pour chaque jour de la semaine.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div class="text-xs p-2">
+          <div class="grid grid-cols-[20px_repeat(4,1fr)] gap-2">
+            <span></span>
+            <div
+              v-for="period in periodHeaders"
+              :key="period.key"
+              class="font-bold text-center flex justify-center items-end"
+            >
+              {{ period.label }}
+            </div>
+
+            <template v-for="day in allDays" :key="day">
+              <div class="font-semibold text-center flex justify-end items-center">{{ day }}</div>
+              <template v-for="period in periodHeaders" :key="`${day}-${period.key}`">
+                <div
+                  class="rounded-full cursor-pointer transition-colors"
+                  :class="[
+                    getAvailabilityForDay(day, period.key)
+                      ? 'bg-primary hover:bg-primary/90'
+                      : 'border hover:border-primary'
+                  ]"
+                  @click="toggleAvailability(day, period.key)"
+                ></div>
+              </template>
+            </template>
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button type="submit" @click="saveChanges" :loading="isSaving"> Enregistrer </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  </div>
+</template>

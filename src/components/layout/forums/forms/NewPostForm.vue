@@ -7,9 +7,11 @@ import { useForm } from 'vee-validate'
 import { useToast } from '@/components/ui/toast'
 import { httpBackend } from '@/lib/utils'
 import ForumChildContainer from '@/components/layout/forums/ForumChildContainer.vue'
-import { type Post, postCreateSchema, type Topic } from '@/types/Forum'
+import { type CreatePostResponse, type Post, postCreateSchema, type Topic } from '@/types/Forum'
 import { UserStore } from '@/store/userStore'
 import type { User } from '@/types/User'
+import { useActionHandler } from '@/services/actionHandler'
+import { ref } from 'vue'
 
 const props = defineProps<{
   topic: Topic
@@ -21,7 +23,7 @@ const emit = defineEmits<{
 
 const userStore = UserStore()
 const user = { username: userStore.username } as User
-
+const isLoading = ref(false)
 const validationSchema = toTypedSchema(postCreateSchema)
 
 const { handleSubmit } = useForm({
@@ -31,15 +33,19 @@ const { handleSubmit } = useForm({
 const { toast } = useToast()
 const onSubmit = handleSubmit(async (values) => {
   try {
-    const response = await httpBackend<{ message: string; postId: number }>(
+    isLoading.value = true
+    const response = await httpBackend<CreatePostResponse>(
       `/api/forums/createPost/${props.topic.id}`,
       'POST',
       values
     )
-    toast({
-      title: 'Succès !',
-      description: response.message ?? 'Le post a été ajouté avec succès',
-      variant: 'default'
+
+    console.log('Response from createPost : ', response)
+    const { handleActionResponse } = useActionHandler()
+
+    await handleActionResponse(response, {
+      title: 'Succès',
+      description: response.message ?? 'Le post a été ajouté avec succès'
     })
 
     const newPost: Post = {
@@ -61,6 +67,8 @@ const onSubmit = handleSubmit(async (values) => {
       description: errorMessage,
       variant: 'destructive'
     })
+  } finally {
+    isLoading.value = false
   }
 })
 </script>
@@ -83,7 +91,9 @@ const onSubmit = handleSubmit(async (values) => {
         </FormItem>
       </FormField>
 
-      <Button type="submit" size="form">Poster</Button>
+      <Button type="submit" size="form" :disabled="isLoading">
+        {{ isLoading ? 'Chargement...' : 'Poster' }}
+      </Button>
     </form>
   </ForumChildContainer>
 </template>

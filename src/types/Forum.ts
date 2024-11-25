@@ -1,5 +1,6 @@
 import type { User } from '@/types/User'
 import { z } from 'zod'
+import type { XpAndSuccessResponse } from '@/types/Success'
 
 export type Forum = {
   id: number
@@ -51,10 +52,21 @@ export class Reaction {
   }
 }
 
+export type ReactionResponse = {
+  userReacted: boolean
+  xpAndSuccessResponse: XpAndSuccessResponse
+}
+
 /* === CREATE POST === */
 export const postCreateSchema = z.object({
   content: z.string().min(1)
 })
+
+export type CreatePostResponse = {
+  message: string
+  topicId: number
+  xpAndSuccessResponse: XpAndSuccessResponse
+}
 
 export type PostCreate = z.infer<typeof postCreateSchema>
 
@@ -64,6 +76,12 @@ export const topicCreateSchema = z.object({
   content: z.string().min(1),
   forumId: z.number().optional() // forumId is added by the application
 })
+
+export type CreateTopicResponse = {
+  message: string
+  topicId: number
+  xpAndSuccessResponse: XpAndSuccessResponse
+}
 
 export type TopicCreate = z.infer<typeof topicCreateSchema>
 
