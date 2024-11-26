@@ -6,12 +6,17 @@ import SendMessageInput from '@/components/messages/SendMessageInput.vue'
 import { httpBackend } from '@/lib/utils'
 import NewMessageDialog from '@/components/ui/dialog/NewMessageDialog.vue'
 import UserList from '@/components/messages/UserList.vue'
+import Skeleton from '@/components/ui/skeleton/Skeleton.vue'
 
 const users = ref([])
 const selectedUser = ref(null)
 const messages = ref([])
-const showConversation = ref(false)
+//const showConversation = ref(false)
 const currentUserId = ref(null)
+
+// Etats pour gérer les chargements
+const isLoadingConversations = ref(true);
+const isLoadingMessages = ref(false);
 
 async function fetchCurrentUser() {
   try {
@@ -24,25 +29,30 @@ async function fetchCurrentUser() {
 onMounted(fetchCurrentUser)
 
 async function loadConversationUsers() {
+  isLoadingConversations.value = true; // Début du chargement
   try {
-    users.value = await httpBackend('/api/userConversations', 'GET')
-    console.log(users.value)
+    users.value = await httpBackend('/api/userConversations', 'GET');
+    console.log(users.value);
   } catch (error) {
-    console.error('Erreur lors du chargement des utilisateurs:', error)
+    console.error('Erreur lors du chargement des utilisateurs:', error);
+  } finally {
+    isLoadingConversations.value = false; // Fin du chargement
   }
 }
 
 async function loadMessagesWithUser(receiverId) {
+  isLoadingMessages.value = true; // Début du chargement
   try {
-    messages.value = await httpBackend(`/api/messages/${receiverId}`, 'GET')
+    messages.value = await httpBackend(`/api/messages/${receiverId}`, 'GET');
   } catch (error) {
-    console.error('Erreur lors du chargement des messages:', error)
+    console.error('Erreur lors du chargement des messages:', error);
+  } finally {
+    isLoadingMessages.value = false; // Fin du chargement
   }
 }
 
 async function sendMessageToUser(receiverId, userId, message) {
   try {
-    console.log(receiverId, userId, message)
     await httpBackend(`/api/sendMessage`, 'POST', {
       recipientId: receiverId,
       userId: userId,
@@ -56,13 +66,19 @@ async function sendMessageToUser(receiverId, userId, message) {
 function handleSendMessage(message) {
   if (selectedUser.value) {
     sendMessageToUser(selectedUser.value.id, 1, message)
+    loadConversationUsers();
+    loadMessagesWithUser(selectedUser.value.id);
   }
 }
 
 function selectUser(user) {
-  selectedUser.value = user
-  showConversation.value = window.innerWidth <= 768
-  loadMessagesWithUser(user.id)
+  if (user !== selectedUser.value) {
+    messages.value = [];
+    selectedUser.value = user
+    //showConversation.value = window.innerWidth <= 768
+    loadMessagesWithUser(user.id)
+  }
+
 }
 
 function newConversationCreated(user) {
@@ -72,10 +88,6 @@ function newConversationCreated(user) {
 
 onMounted(loadConversationUsers)
 
-function goBackToList() {
-  showConversation.value = false
-}
-
 watch(selectedUser, (newUser) => {
   if (newUser) loadMessagesWithUser(newUser.id)
 })
@@ -84,22 +96,32 @@ watch(selectedUser, (newUser) => {
 <template>
   <BasePage title="Mes messages">
     <div class="flex flex-col md:flex-row w-full">
-      <div v-show="!showConversation" class="w-full md:w-1/3 md:border-r border-gray-300 p-4">
+
+      <!-- Liste des conversation -->
+      <div class="w-full md:w-1/3 md:border-r border-gray-300 p-4">
         <NewMessageDialog @message-sent="newConversationCreated"/>
         <div class="mb-4"></div>
-        <UserList :users="users" :selectedUser="selectedUser" @select-user="selectUser" />
+
+        <!-- Skeleton pendant le chargement des conversations -->
+        <UserList :users="users" :selectedUser="selectedUser" :isLoading="isLoadingConversations" @selectUser="selectUser" />
+
       </div>
 
-      <!-- Conversations -->
+      <!-- Affichage des conversations -->
       <div class="block md:hidden w-full md:w-2/3 p-4">
-        <div v-show="showConversation" class="flex items-center space-x-2 mb-4">
-          <button @click="goBackToList" class="md:hidden text-blue-500">←</button>
+        <div class="flex items-center space-x-2 mb-4">
           <h2 class="text-xl font-bold" v-if="selectedUser && selectedUser.username">
             {{ selectedUser.username }}
           </h2>
         </div>
 
-        <div v-show="showConversation" class="max-h-96 overflow-y-auto">
+        <!-- Skeleton pendant le chargement des messages -->
+        <div v-show="isLoadingMessages">
+          <Skeleton class="w-full h-6 mb-4" v-for="i in 5" :key="i" />
+        </div>
+
+        <!-- Affichage des messages -->
+        <div v-show="!isLoadingMessages" class="max-h-96 overflow-y-auto">
           <MessageBox
             v-for="message in messages"
             :key="message.content"
@@ -109,7 +131,7 @@ watch(selectedUser, (newUser) => {
             class="py-2"
           />
         </div>
-        <SendMessageInput v-show="showConversation" @send-message="handleSendMessage" />
+        <SendMessageInput @send-message="handleSendMessage" />
       </div>
 
       <div class="hidden md:block w-full md:w-2/3 p-4">
