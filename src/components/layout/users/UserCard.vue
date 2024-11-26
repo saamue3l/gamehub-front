@@ -32,4 +32,8 @@ const props = defineProps({
 .user-card:hover {
   background-color: #3b82f6; /* Shadcn blue */
 }
+
+.user-card.bg-blue-100 {
+  background-color: #3b82f6; /* Shadcn blue */
+}
 </style>

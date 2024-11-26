@@ -10,21 +10,32 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import UserSearch from '@/components/ui/user-search/UserSearch.vue'
+import { httpBackend } from '@/lib/utils'
 
-const newUser = ref('')
+const selectedUser = ref(null)
+const isDialogOpen = ref(false)
 const newMessage = ref('')
 
-function sendMessage() {
-  console.log(`Sending message to ${newUser.value}: ${newMessage.value}`)
-  closeDialog()
+async function sendMessage() {
+  console.log(selectedUser.value, newMessage.value);
+  try {
+    await httpBackend('/api/sendMessage', 'POST', {
+      recipientId: selectedUser.value.id,
+      content: newMessage.value
+    })
+    closeDialog()
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi du message:', error)
+  }
 }
 
 function closeDialog() {
-  emit('close')
+  isDialogOpen.value = false
 }
 
 function handleUserSelect(user) {
-  newUser.value = user.name
+  console.log(user);
+  selectedUser.value = user
 }
 </script>
 
@@ -44,7 +55,7 @@ function handleUserSelect(user) {
           <DialogTitle class="pb-6">Nouveau message</DialogTitle>
         </DialogHeader>
 
-        <UserSearch :users="users" @select="handleUserSelect" />
+        <UserSearch :users="users" @selected-user="handleUserSelect" />
 
         <textarea
           v-model="newMessage"

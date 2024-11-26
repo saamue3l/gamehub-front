@@ -6,9 +6,10 @@ import UserCard from '@/components/layout/users/UserCard.vue'
 import { Skeleton } from '@/components/ui/skeleton'
 
 // Définir l'événement émis par le composant
-const emit = defineEmits<{
+/*const emit = defineEmits<{
   (e: 'select-user', user: { id: number; username: string; picture: string } | null): void
-}>()
+}>()*/
+const emit = defineEmits(['selected-user'])
 
 // Variables réactives
 const users = ref([])
@@ -54,7 +55,7 @@ const selectUser = (user: { id: number; username: string; picture: string }) => 
   selectedUser.value = user
   userSearch.value = user.username
   users.value = [] // Nettoyer la liste après sélection
-  emit('select-user', user)
+  emit('selected-user', user)
 }
 </script>
 
