@@ -11,7 +11,6 @@ const users = ref([])
 const selectedUser = ref(null)
 const messages = ref([])
 const showConversation = ref(false)
-
 const currentUserId = ref(null)
 
 async function fetchCurrentUser() {
