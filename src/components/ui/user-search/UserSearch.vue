@@ -28,7 +28,7 @@ const searchUsers = async (query: string) => {
   isLoading.value = true
   try {
     // Appel à l'API avec la requête `query` pour correspondance au début du pseudo
-    const result = await httpBackend('/api/user/searchUser', 'GET', { search: query })
+    const result = await httpBackend('/api/user/searchUsers', 'POST', { search: query })
 
     // Vérification supplémentaire côté frontend, si nécessaire
     users.value = (result || []).filter((user: { username: string }) =>
