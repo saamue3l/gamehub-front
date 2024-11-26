@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import {
   Dialog,
   DialogTrigger,
@@ -12,17 +12,21 @@ import { Button } from '@/components/ui/button'
 import UserSearch from '@/components/ui/user-search/UserSearch.vue'
 import { httpBackend } from '@/lib/utils'
 
+const emit = defineEmits(['message-sent']);
+
 const selectedUser = ref(null)
 const isDialogOpen = ref(false)
 const newMessage = ref('')
 
 async function sendMessage() {
-  console.log(selectedUser.value, newMessage.value);
   try {
     await httpBackend('/api/sendMessage', 'POST', {
       recipientId: selectedUser.value.id,
       content: newMessage.value
     })
+
+    // Émettre l'utilisateur sélectionné après l'envoi
+    emit('message-sent', selectedUser.value);
     closeDialog()
   } catch (error) {
     console.error('Erreur lors de l\'envoi du message:', error)
@@ -30,13 +34,24 @@ async function sendMessage() {
 }
 
 function closeDialog() {
-  isDialogOpen.value = false
+  isDialogOpen.value = false;
+  resetDialog();
+}
+
+function resetDialog() {
+  selectedUser.value = null; // Réinitialiser l'utilisateur sélectionné
+  newMessage.value = '';
 }
 
 function handleUserSelect(user) {
-  console.log(user);
   selectedUser.value = user
 }
+
+watch(isDialogOpen, (newVal) => {
+  if (!newVal) {
+    resetDialog();
+  }
+});
 </script>
 
 <template>
@@ -55,7 +70,7 @@ function handleUserSelect(user) {
           <DialogTitle class="pb-6">Nouveau message</DialogTitle>
         </DialogHeader>
 
-        <UserSearch :users="users" @selected-user="handleUserSelect" />
+        <UserSearch @selected-user="handleUserSelect" />
 
         <textarea
           v-model="newMessage"

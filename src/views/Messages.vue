@@ -65,6 +65,11 @@ function selectUser(user) {
   loadMessagesWithUser(user.id)
 }
 
+function newConversationCreated(user) {
+  loadConversationUsers();
+  selectUser(user);
+}
+
 onMounted(loadConversationUsers)
 
 function goBackToList() {
@@ -80,7 +85,7 @@ watch(selectedUser, (newUser) => {
   <BasePage title="Mes messages">
     <div class="flex flex-col md:flex-row w-full">
       <div v-show="!showConversation" class="w-full md:w-1/3 md:border-r border-gray-300 p-4">
-        <NewMessageDialog v-model:open="isDialogOpen" @close="closeDialog" />
+        <NewMessageDialog @message-sent="newConversationCreated"/>
         <div class="mb-4"></div>
         <UserList :users="users" :selectedUser="selectedUser" @select-user="selectUser" />
       </div>
