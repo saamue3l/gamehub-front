@@ -6,10 +6,12 @@ import type { Event } from '@/types/Event'
 import { httpBackend } from '@/lib/utils'
 import SmallEventCard from '@/components/layout/events/SmallEventCard.vue'
 import TextLink from '@/components/ui/link/TextLink.vue'
+import { useProfileStore } from '@/store/profileStore'
+
+const profileStore = useProfileStore()
 
 const isLoading = ref(false)
 const errorMessage = ref<string | null>(null)
-
 const userSubrscibedEvents = ref<Event[] | null>(null)
 const MAX_EVENTS_TO_SHOW = 3
 
@@ -36,7 +38,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <TitleContainer title="Évènements inscrits à venir">
+  <TitleContainer title="Évènements inscrits à venir" v-if="profileStore.isOwnProfile">
     <div v-if="isLoading" class="w-full flex justify-center">
       <LoadingSpinner size="xl"></LoadingSpinner>
     </div>
