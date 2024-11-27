@@ -30,7 +30,7 @@ watchEffect(() => {
       {{ achievementsStore.error }}
     </div>
     <div v-else>
-      <ScrollArea class="h-60">
+      <ScrollArea :class="achievementsStore.achievements.length > 3 ? 'h-60' : ''">
         <div
           v-for="success in achievementsStore.achievements"
           :key="success.id"

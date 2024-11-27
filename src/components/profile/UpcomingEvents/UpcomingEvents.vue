@@ -7,6 +7,7 @@ import { httpBackend } from '@/lib/utils'
 import SmallEventCard from '@/components/layout/events/SmallEventCard.vue'
 import TextLink from '@/components/ui/link/TextLink.vue'
 import { useProfileStore } from '@/store/profileStore'
+import { Button } from '@/components/ui/button'
 
 const profileStore = useProfileStore()
 
@@ -43,8 +44,15 @@ onMounted(() => {
       <LoadingSpinner size="xl"></LoadingSpinner>
     </div>
 
-    <div v-else-if="errorMessage" class="text-red-500 text-center">
-      <p>{{ errorMessage }}</p>
+    <div v-else-if="errorMessage" class="p-2 flex flex-col items-center justify-center gap-2">
+      <div class="flex flex-col flex-1 justify-center">
+        <div class="flex items-center gap-2">
+          <p class="text-foreground font-bold text-sm">Aucun événement à venir</p>
+        </div>
+        <p class="text-foreground text-xs">Vous n'êtes inscrit à aucun événement pour le moment</p>
+      </div>
+
+      <Button class="w-full" variant="secondary">Parcourir les événements</Button>
     </div>
 
     <div v-else-if="userSubrscibedEvents" class="m-2 flex flex-col justify-start gap-1.5">
@@ -53,10 +61,11 @@ onMounted(() => {
         :event="event"
       ></SmallEventCard>
       <router-link to="/events?joinedFilter=true" as-child>
-        <TextLink v-if="userSubrscibedEvents.length > MAX_EVENTS_TO_SHOW">
+        <p v-if="userSubrscibedEvents.length > MAX_EVENTS_TO_SHOW">
           + {{ userSubrscibedEvents.length - MAX_EVENTS_TO_SHOW }} autre(s) évènement(s)...
-        </TextLink>
-        <TextLink v-else>Voir tous les évènements inscrits</TextLink>
+        </p>
+
+        <Button class="w-full mt-1" variant="secondary">Voir tous mes événements</Button>
       </router-link>
     </div>
   </TitleContainer>
