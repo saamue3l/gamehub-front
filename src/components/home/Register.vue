@@ -26,7 +26,6 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     isLoading.value = true
     const response = await postRegister(values)
-    console.log(response)
     toast({
       title: 'Succès !',
       description: response.message,
@@ -35,11 +34,9 @@ const onSubmit = handleSubmit(async (values) => {
     userStore.setUsername(values.username)
     await router.push({ name: 'Profil', params: { username: userStore.username } })
   } catch (error) {
-    error.toString()
-    const errorMessage = error.message
     toast({
-      title: 'Oups !',
-      description: errorMessage,
+      title: "Quelques chose n'a pas fonctionné.",
+      description: 'Une erreur est survenue, veuiller re-essayer plus tard',
       variant: 'destructive'
     })
   } finally {

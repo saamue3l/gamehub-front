@@ -10,7 +10,13 @@ export async function postLogin(values: LoginPost): Promise<LoginResponse> {
     storeSessionData(data)
     return data
   } catch (error) {
-    throw new Error(error instanceof Error ? error.message : 'Échec de la connexion.')
+    console.log(error)
+    const errorMessage =
+      error.message === 'Échec de la connexion, informations incorrectes.'
+        ? error.message
+        : 'Une erreur est survenue, veuillez réessayer plus tard.'
+
+    throw new Error(errorMessage)
   }
 }
 

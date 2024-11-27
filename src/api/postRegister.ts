@@ -11,10 +11,13 @@ export async function postRegister(values: RegisterPost): Promise<RegisterRespon
       email: data.user.email,
       password: values.password
     }
-
     await postLogin(loginValues)
     return data
   } catch (error) {
-    throw new Error(error instanceof Error ? error.message : "Échec de l'inscription .")
+    const errorMessage = error.status.includes('422')
+      ? 'Erreur de validation des données'
+      : 'Veuillez réessayer plus tard'
+
+    throw new Error(errorMessage)
   }
 }
