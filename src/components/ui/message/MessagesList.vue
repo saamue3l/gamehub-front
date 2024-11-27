@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, ref } from 'vue'
+import { defineProps, ref, defineExpose } from 'vue'
 import MessageBox from '@/components/ui/message/MessageBox.vue'
 import Skeleton from '@/components/ui/skeleton/Skeleton.vue'
 
@@ -23,10 +23,16 @@ const props = defineProps({
 })
 
 const skeletonCount = ref(5) // Nombre de skeletons à afficher
+const messagesContainerRef = ref(null)
+
+// Expose the reference to the parent component
+defineExpose({
+  messagesContainerRef
+})
 </script>
 
 <template>
-  <div class="max-h-96 overflow-y-auto">
+  <div ref="messagesContainerRef" class="max-h-96 overflow-y-auto">
     <!-- Skeletons pendant le chargement -->
     <div v-if="isLoading">
       <Skeleton
