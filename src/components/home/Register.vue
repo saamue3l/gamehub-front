@@ -37,11 +37,9 @@ const onSubmit = handleSubmit(async (values) => {
     userStore.setXp(values.xp)
     await router.push({ name: 'Profil', params: { username: userStore.username } })
   } catch (error) {
-    error.toString()
-    const errorMessage = error.message
     toast({
-      title: 'Oups !',
-      description: errorMessage,
+      title: "Quelques chose n'a pas fonctionné.",
+      description: 'Une erreur est survenue, veuiller re-essayer plus tard',
       variant: 'destructive'
     })
   } finally {

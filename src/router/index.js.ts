@@ -5,6 +5,7 @@ import Profile from '@/views/Profile.vue'
 import Login from '@/components/home/Login.vue'
 import Register from '@/components/home/Register.vue'
 import Matchmaking from '@/views/Matchmaking.vue'
+import Messages from '@/views/Messages.vue'
 import { UserStore } from '@/store/userStore'
 import Forum from '@/views/Forum.vue'
 import ViewForum from '@/views/forum/ViewForum.vue'
@@ -65,6 +66,13 @@ const routes: Route[] = [
     path: '/matchmaking',
     name: 'Matchmaking',
     component: Matchmaking,
+    inNav: true,
+    beforeEnter: requireAuth
+  },
+  {
+    path: '/messages',
+    name: 'Mes messages',
+    component: Messages,
     inNav: true,
     beforeEnter: requireAuth
   },
