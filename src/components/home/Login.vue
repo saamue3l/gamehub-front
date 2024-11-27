@@ -29,6 +29,7 @@ const onSubmit = handleSubmit(async (values) => {
     await postLogin(values)
 
     userStore.setUsername()
+    userStore.setProfilePicture()
     userStore.setXp()
     await router.push({ name: 'Profil', params: { username: userStore.username } })
   } catch (error) {

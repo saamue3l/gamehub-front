@@ -6,6 +6,8 @@ export const UserStore = defineStore('userStore', () => {
   const username = ref(storedUsername !== null ? storedUsername : '')
   const storedXp = sessionStorage.getItem('xp')
   const xp = ref(storedXp ? parseInt(storedXp) : 0)
+  const storedProfilePicture = sessionStorage.getItem('picture')
+  const profilePicture = ref(storedProfilePicture || '')
 
   const level = computed(() => Math.floor(xp.value / 100))
   const xpInCurrentLevel = computed(() => xp.value % 100)
@@ -18,8 +20,16 @@ export const UserStore = defineStore('userStore', () => {
     xp.value = parseInt(sessionStorage.getItem('xp'))
   }
 
+  function setProfilePicture() {
+    profilePicture.value = sessionStorage.getItem('picture') || ''
+  }
+
   function resetUsername() {
     username.value = ''
+    sessionStorage.removeItem('username')
+
+    profilePicture.value = ''
+    sessionStorage.removeItem('profilePicture')
   }
 
   function isAdmin(): boolean {
@@ -41,8 +51,10 @@ export const UserStore = defineStore('userStore', () => {
     xp,
     level,
     xpInCurrentLevel,
+    profilePicture,
     setUsername,
     setXp,
+    setProfilePicture,
     resetUsername,
     isAdmin,
     updateXp,

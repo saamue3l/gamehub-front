@@ -15,10 +15,13 @@ export async function postLogin(values: LoginPost): Promise<LoginResponse> {
 }
 
 function storeSessionData(data: LoginResponse) {
+  console.log(data)
   sessionStorage.setItem('token', data.token)
   sessionStorage.setItem('username', data.user.username)
   sessionStorage.setItem('roleId', data.user.roleId.toString())
   sessionStorage.setItem('statusId', data.user.statusId.toString())
   sessionStorage.setItem('xp', data.user.xp.toString())
-  sessionStorage.setItem('picture', data.user.picture)
+  if (data.user.picture) {
+    sessionStorage.setItem('picture', data.user.picture.toString())
+  }
 }

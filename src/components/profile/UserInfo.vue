@@ -9,6 +9,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { httpBackend } from '@/lib/utils'
 import { useProfileStore } from '@/store/profileStore'
+import { Button } from '@/components/ui/button'
+import { Mail } from 'lucide-vue-next'
 
 const profileStore = useProfileStore()
 const isLoading = ref(true)
@@ -63,36 +65,51 @@ watchEffect(() => {
     <p>{{ errorMessage }}</p>
   </div>
 
-  <div v-else class="flex max-md:flex-col max-md:items-center mb-8">
-    <Avatar class="size-16">
-      <AvatarImage v-if="userInfo.picture" :src="userInfo.picture" :alt="userInfo.username" />
-      <AvatarFallback v-else>
-        {{ userInfo.username?.charAt(0).toUpperCase() ?? 'U' }}
-      </AvatarFallback>
-    </Avatar>
-    <div class="flex flex-col justify-center max-md:flex-col max-md:items-center space-y-1 ml-2">
-      <div class="flex items-center space-x-2">
-        <span class="font-medium">{{ userInfo.username }}</span>
-        <div
-          class="flex items-center justify-center h-6 w-6 font-bold bg-primary text-white rounded-full text-xs"
-        >
-          {{ profileStore.isOwnProfile ? userStore.level : userInfo.level }}
+  <div
+    v-else
+    class="mb-4 flex max-md:flex-col md:justify-between items-end max-md:items-center max-md:gap-y-2"
+  >
+    <div class="flex max-md:flex-col max-md:items-center">
+      <Avatar class="size-16">
+        <AvatarImage v-if="userInfo.picture" :src="userInfo.picture" :alt="userInfo.username" />
+        <AvatarFallback v-else>
+          {{ userInfo.username?.charAt(0).toUpperCase() ?? 'U' }}
+        </AvatarFallback>
+      </Avatar>
+      <div class="flex flex-col justify-center max-md:flex-col max-md:items-center space-y-1 ml-2">
+        <div class="flex items-center space-x-2">
+          <span class="font-medium">{{ userInfo.username }}</span>
+          <div
+            class="flex items-center justify-center h-6 w-6 font-bold bg-primary text-white rounded-full text-xs"
+          >
+            {{ profileStore.isOwnProfile ? userStore.level : userInfo.level }}
+          </div>
         </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <Progress
+                :model-value="profileStore.isOwnProfile ? userStore.xpInCurrentLevel : userInfo.xp"
+                :max="100"
+                class="w-40 h-2"
+              />
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>{{ profileStore.isOwnProfile ? userStore.xpInCurrentLevel : userInfo.xp }}/100</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger as-child>
-            <Progress
-              :model-value="profileStore.isOwnProfile ? userStore.xpInCurrentLevel : userInfo.xp"
-              :max="100"
-              class="w-40 h-2"
-            />
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            <p>{{ profileStore.isOwnProfile ? userStore.xpInCurrentLevel : userInfo.xp }}/100</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
     </div>
+    <Button
+      v-if="!profileStore.isOwnProfile"
+      @click="profileStore.editProfile"
+      variant="secondary"
+      class="gap-x-2"
+      size="xs"
+    >
+      <Mail class="h-4 w-4" />
+      <p class="font-normal">Message privé</p>
+    </Button>
   </div>
 </template>

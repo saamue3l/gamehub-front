@@ -22,6 +22,7 @@ export async function reactionToPost(emoji: string, isLoading: Ref<boolean>, pos
       values
     )
 
+    console.log('response:', response)
     const { handleActionResponse } = useActionHandler()
 
     await handleActionResponse(response)
