@@ -34,7 +34,7 @@ defineExpose({
 </script>
 
 <template>
-  <div ref="messagesContainerRef" class="max-h-96 overflow-y-auto">
+  <div ref="messagesContainerRef" class="min-h-96 max-h-96 overflow-y-auto">
     <!-- Skeletons pendant le chargement -->
     <div v-if="isLoading">
       <Skeleton

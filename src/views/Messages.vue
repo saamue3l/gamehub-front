@@ -138,9 +138,6 @@ function newConversationCreated(conversation) {
 
       <!-- Liste des messages -->
       <div class="md:flex flex-col w-full md:w-2/3 p-4">
-        <h2 class="text-xl font-bold mb-4" v-if="selectedConversation && selectedConversation.name">
-          {{ selectedConversation.name }} <!-- Afficher le nom de la conversation -->
-        </h2>
         <div class="flex flex-col flex-grow">
           <MessagesList
             ref="messagesListRef"
