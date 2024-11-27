@@ -12,7 +12,6 @@ export const postLogout = async () => {
 }
 
 function clearAllStorage() {
-  sessionStorage.removeItem('token')
+  localStorage.removeItem('token')
   localStorage.clear()
-  sessionStorage.clear()
 }

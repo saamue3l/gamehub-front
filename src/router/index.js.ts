@@ -12,6 +12,7 @@ import ViewForum from '@/views/forum/ViewForum.vue'
 import ViewTopic from '@/views/forum/ViewTopic.vue'
 import ForumsList from '@/views/forum/ForumsList.vue'
 import SearchForums from '@/views/forum/SearchForums.vue'
+import EditProfileView from '@/views/EditProfileView.vue'
 
 type Route = RouteRecordRaw & {
   inNav?: boolean
@@ -20,7 +21,21 @@ type Route = RouteRecordRaw & {
 
 const routes: Route[] = [
   /* === HEADER NAV === */
-  { path: '/', name: 'Accueil', component: Home, inNav: true },
+  {
+    path: '/',
+    name: 'Accueil',
+    component: Home,
+    inNav: true,
+    beforeEnter: (to, from, next) => {
+      const userStore = UserStore()
+      const username = userStore.username
+      if (username) {
+        next({ name: 'Profil', params: { username } })
+      } else {
+        next()
+      }
+    }
+  },
   {
     path: '/events',
     name: 'Évènements',
@@ -83,6 +98,12 @@ const routes: Route[] = [
     path: '/profil/:username',
     name: 'Profil',
     component: Profile,
+    beforeEnter: requireAuth
+  },
+  {
+    path: '/modifier-profil',
+    name: 'ModificationProfil',
+    component: EditProfileView,
     beforeEnter: requireAuth
   },
   /* === OTHERS === */

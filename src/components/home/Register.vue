@@ -26,12 +26,15 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     isLoading.value = true
     const response = await postRegister(values)
+
     toast({
       title: 'Succès !',
       description: response.message,
       variant: 'default'
     })
+
     userStore.setUsername(values.username)
+    userStore.setXp(values.xp)
     await router.push({ name: 'Profil', params: { username: userStore.username } })
   } catch (error) {
     toast({

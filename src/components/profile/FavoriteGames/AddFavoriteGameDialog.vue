@@ -57,6 +57,7 @@ import { useFavoriteGamesStore } from '@/store/favoriteGamesStore'
 import { useToast } from '@/components/ui/toast'
 import type { SkillType } from '@/types/SkillType'
 import type { FavoriteGame } from '@/types/FavoriteGame'
+import { useActionHandler } from '@/services/actionHandler'
 
 const favoriteGamesStore = useFavoriteGamesStore()
 const { toast } = useToast()
@@ -64,6 +65,7 @@ const { toast } = useToast()
 const isOpen = ref(false)
 const isSubmitting = ref(false)
 
+const response = ref(null)
 const selectedGame = ref<Game | null>(null)
 const selectedSkill = ref<SkillType | null>(null)
 const description = ref('')
@@ -91,16 +93,7 @@ const handleSubmit = async () => {
       } as SkillType
     }
 
-    await favoriteGamesStore.addFavoriteGame(newGame)
-
-    toast({
-      title: 'Succès',
-      description: `${selectedGame.value?.name} a été ajouté à vos jeux favoris avec succès`
-    })
-
-    selectedSkill.value = null
-    selectedGame.value = null
-    description.value = ''
+    response.value = await favoriteGamesStore.addFavoriteGame(newGame)
   } catch (error) {
     console.error("Erreur lors de l'ajout du jeu:", error)
     toast({
@@ -111,6 +104,16 @@ const handleSubmit = async () => {
   } finally {
     isSubmitting.value = false
     isOpen.value = false
+    const { handleActionResponse } = useActionHandler()
+
+    await handleActionResponse(response.value, {
+      title: 'Succès',
+      description: `${selectedGame.value?.name} a été ajouté à vos jeux favoris avec succès`
+    })
+
+    selectedSkill.value = null
+    selectedGame.value = null
+    description.value = ''
   }
 }
 </script>

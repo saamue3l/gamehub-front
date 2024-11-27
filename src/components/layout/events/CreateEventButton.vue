@@ -2,9 +2,6 @@
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogScrollContent,
   DialogTitle,
@@ -22,8 +19,11 @@ import SearchGame from '@/components/layout/games/SearchGame.vue'
 import DatePicker from '@/components/ui/inputs/datePicker/DatePicker.vue'
 import type { DateValue } from '@internationalized/date'
 import { ref } from 'vue'
+import { useActionHandler } from '@/services/actionHandler'
+import type { XpAndSuccessResponse } from '@/types/Success'
 
 const modalIsOpened = ref<boolean>()
+const isLoading = ref(false)
 
 const emit = defineEmits<{
   (e: 'created-event'): void
@@ -38,16 +38,24 @@ const { handleSubmit, setFieldValue } = useForm({
 const { toast } = useToast()
 const onSubmit = handleSubmit(async (values) => {
   try {
-    await httpBackend('/api/event/createEvent', 'POST', values)
-    toast({
-      title: 'Succès !',
-      description: `L'évènement ${values.name} a été créé avec succès`,
-      variant: 'default'
-    })
+    isLoading.value = true
+    const response = await httpBackend<XpAndSuccessResponse>(
+      '/api/event/createEvent',
+      'POST',
+      values
+    )
+
     console.log('modal is opended before :', modalIsOpened.value)
     modalIsOpened.value = false
     console.log('modal is opended after :', modalIsOpened.value)
     emit('created-event')
+
+    const { handleActionResponse } = useActionHandler()
+
+    await handleActionResponse(response, {
+      title: 'Succès',
+      description: `L'évènement ${values.name} a été créé avec succès`
+    })
   } catch (error) {
     console.error('Error while creating ne event : ', error)
     error.toString()
@@ -58,6 +66,8 @@ const onSubmit = handleSubmit(async (values) => {
       description: errorMessage,
       variant: 'destructive'
     })
+  } finally {
+    isLoading.value = false
   }
 })
 
@@ -153,7 +163,9 @@ function handleDateChange(date: DateValue) {
           </FormItem>
         </FormField>
 
-        <Button type="submit" size="form">Créer l'évènement</Button>
+        <Button type="submit" size="form" :disabled="isLoading">
+          {{ isLoading ? 'Création en cours...' : "Créer l'évènement" }}
+        </Button>
       </form>
     </DialogScrollContent>
   </Dialog>

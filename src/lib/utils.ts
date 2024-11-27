@@ -31,7 +31,7 @@ export async function httpBackend<T>(
   body?: any,
   auth: boolean = true
 ): Promise<T> {
-  const token = sessionStorage.getItem('token')
+  const token = localStorage.getItem('token')
 
   const headers: { [name: string]: string } = {
     'Content-Type': 'application/json'
@@ -57,6 +57,47 @@ export async function httpBackend<T>(
   }
 
   return responseBody
+}
+
+/**
+ * @param path The path for the url
+ * @param formData The FormData object
+ * @returns
+ */
+export async function httpBackendWithData<T>(path: string, formData: FormData): Promise<T> {
+  const headers: HeadersInit = {
+    Accept: 'application/json'
+  }
+
+  const token = localStorage.getItem('token')
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`
+  }
+
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_HOST}${path}`, {
+      method: 'POST',
+      credentials: 'include',
+      body: formData,
+      headers
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      console.error('Data message ' + data.message)
+      throw new Error(data.message || `HTTP error! status: ${response.status}`)
+    }
+
+    return data
+  } catch (error) {
+    if (error instanceof TypeError && error.message === 'Failed to fetch') {
+      throw new Error("Le serveur n'est pas disponible. Veuillez réessayer plus tard.")
+    } else {
+      throw error
+    }
+  }
 }
 
 /**

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { defineProps, ref, defineExpose } from 'vue'
+import { defineProps, ref, defineExpose, watch, nextTick } from 'vue'
 import MessageBox from '@/components/ui/message/MessageBox.vue'
 import Skeleton from '@/components/ui/skeleton/Skeleton.vue'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 const props = defineProps({
   messages: {
@@ -24,35 +25,51 @@ const props = defineProps({
   }
 })
 
-const skeletonCount = ref(5) // Nombre de skeletons à afficher
+const scrollAreaRef = ref(null)
+
+watch(
+  () => props.messages,
+  async () => {
+    await nextTick()
+    scrollToBottom()
+  },
+  { deep: true }
+)
+
+const scrollToBottom = () => {
+  if (scrollAreaRef.value) {
+    const scrollContainer = scrollAreaRef.value.$el.querySelector(
+      '[data-radix-scroll-area-viewport]'
+    )
+    if (scrollContainer) {
+      scrollContainer.scrollTop = scrollContainer.scrollHeight
+    }
+  }
+}
+
+const skeletonCount = ref(5)
 const messagesContainerRef = ref(null)
 
-// Expose the reference to the parent component
 defineExpose({
+  scrollToBottom,
   messagesContainerRef
 })
 </script>
 
 <template>
-  <div ref="messagesContainerRef" class="min-h-96 max-h-96 overflow-y-auto">
-    <!-- Skeletons pendant le chargement -->
-    <div v-if="isLoading">
-      <Skeleton
-        v-for="i in skeletonCount"
-        :key="i"
-        class="w-full h-16 mb-2 rounded-lg bg-gray-300"
-      />
-    </div>
+  <div class="border pr-0 rounded-lg">
+    <ScrollArea class="h-96" ref="scrollAreaRef">
+      <div v-if="isLoading">
+        <Skeleton v-for="i in skeletonCount" :key="i" class="w-full h-16 rounded-lg bg-gray-300" />
+      </div>
 
-    <!-- Messages affichés après chargement -->
-    <MessageBox
-      v-for="message in messages"
-      :key="message.id"
-      :message="message"
-      :selectedConversationId="selectedConversationId"
-      :currentUserId="currentUserId"
-    />
+      <MessageBox
+        v-for="message in messages"
+        :key="message.id"
+        :message="message"
+        :selectedConversationId="selectedConversationId"
+        :currentUserId="currentUserId"
+      />
+    </ScrollArea>
   </div>
 </template>
-
-<style scoped></style>

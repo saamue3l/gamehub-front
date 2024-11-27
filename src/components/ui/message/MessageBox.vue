@@ -1,5 +1,8 @@
+<!-- MessageBox.vue -->
 <script setup lang="ts">
 import { defineProps, computed } from 'vue'
+import { format } from 'date-fns'
+import { fr } from 'date-fns/locale'
 
 const props = defineProps({
   message: {
@@ -17,70 +20,34 @@ const props = defineProps({
 })
 
 const isSentByMe = computed(() => props.message.senderId === props.currentUserId)
-const isReceived = computed(() => !isSentByMe.value) // Si ce n'est pas envoyé par moi, c'est reçu
+
+const formattedDate = computed(() => {
+  return format(new Date(props.message.created_at), 'HH:mm', { locale: fr })
+})
 </script>
 
 <template>
-  <div :class="['message-box !py-0.5', { sent: isSentByMe, received: isReceived }]">
-    <div class="message-header">
-      <span>{{ message.from }}</span> -
-      <span>{{ new Date(message.created_at).toLocaleString() }}</span>
-    </div>
-    <div class="message-content">
-      {{ message.content }}
+  <div
+    class="group flex w-full"
+    :class="[isSentByMe ? 'justify-end' : 'justify-start', isSentByMe ? 'pr-2' : 'pl-2', 'mb-2']"
+  >
+    <div class="flex flex-col max-w-[75%]" :class="isSentByMe ? 'items-end' : 'items-start'">
+      <div class="flex items-center gap-2 text-xs text-muted-foreground px-2 mb-1">
+        <span>
+          {{ formattedDate }}
+        </span>
+      </div>
+      <div
+        class="px-4 py-2.5 rounded-2xl text-sm"
+        :class="[
+          isSentByMe
+            ? 'bg-primary text-primary-foreground rounded-br-sm'
+            : 'bg-muted rounded-bl-sm',
+          { 'rounded-tr-sm': message.showTimestamp }
+        ]"
+      >
+        {{ message.content }}
+      </div>
     </div>
   </div>
 </template>
-
-<style scoped>
-.message-box {
-  padding: 0.5rem;
-  border-radius: 10px;
-  margin-bottom: 0.5rem;
-  max-width: 60%;
-  word-wrap: break-word;
-  display: flex;
-  flex-direction: column;
-}
-
-.message-header {
-  font-size: 0.75rem;
-  font-style: italic;
-}
-
-.message-content {
-  margin-top: 0rem;
-}
-
-.message-timestamp {
-  font-size: 0.75rem;
-  font-style: italic;
-  color: #d3d3d3;
-}
-
-.sent {
-  background-color: #3b82f6; /* Shadcn blue */
-  color: black;
-  align-self: flex-end;
-  text-align: right;
-  margin-left: auto; /* Align to the right */
-}
-
-.sent .message-header,
-.sent .message-timestamp {
-  text-align: right;
-}
-
-.received {
-  background-color: white;
-  color: black;
-  align-self: flex-start;
-  text-align: left;
-  margin-right: auto; /* Align to the left */
-}
-
-.received .message-header,
-.received .message-timestamp {
-  text-align: left;
-}
-</style>

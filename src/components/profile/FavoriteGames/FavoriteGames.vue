@@ -1,3 +1,26 @@
+<script setup lang="ts">
+import { watchEffect } from 'vue'
+import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { useProfileStore } from '@/store/profileStore'
+import { useFavoriteGamesStore } from '@/store/favoriteGamesStore'
+import { Separator } from '@/components/ui/separator'
+import AddFavoriteGameDialog from '@/components/profile/FavoriteGames/AddFavoriteGameDialog.vue'
+import FavoriteGameItem from '@/components/profile/FavoriteGames/FavoriteGameItem.vue'
+import LoadingSpinner from '@/components/ui/feedback/spinner/LoadingSpinner.vue'
+
+const route = useRoute()
+const profileStore = useProfileStore()
+const favoriteGamesStore = useFavoriteGamesStore()
+const { favoriteGames, isLoading, error } = storeToRefs(favoriteGamesStore)
+
+watchEffect(() => {
+  if (route.params.username) {
+    favoriteGamesStore.fetchFavoriteGames(route.params.username as string)
+  }
+})
+</script>
+
 <template>
   <div>
     <p class="text-custom-white text-sm font-bold pb-1 pl-2 uppercase">Jeux favoris</p>
@@ -32,26 +55,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { watchEffect } from 'vue'
-import { useRoute } from 'vue-router'
-import { storeToRefs } from 'pinia'
-import { useProfileStore } from '@/store/profileStore'
-import { useFavoriteGamesStore } from '@/store/favoriteGamesStore'
-import { Separator } from '@/components/ui/separator'
-import AddFavoriteGameDialog from '@/components/profile/FavoriteGames/AddFavoriteGameDialog.vue'
-import FavoriteGameItem from '@/components/profile/FavoriteGames/FavoriteGameItem.vue'
-import LoadingSpinner from '@/components/ui/feedback/spinner/LoadingSpinner.vue'
-
-const route = useRoute()
-const profileStore = useProfileStore()
-const favoriteGamesStore = useFavoriteGamesStore()
-const { favoriteGames, isLoading, error } = storeToRefs(favoriteGamesStore)
-
-watchEffect(() => {
-  if (route.params.username) {
-    favoriteGamesStore.fetchFavoriteGames(route.params.username as string)
-  }
-})
-</script>

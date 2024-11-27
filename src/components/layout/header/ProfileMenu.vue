@@ -9,26 +9,31 @@
       >
         <div class="flex items-center">
           <Avatar v-if="isLoggedIn" class="size-8">
-            <AvatarImage src="src/assets/joachim.jpg" alt="@shadcn" />
+            <AvatarImage
+              v-if="userStore.profilePicture"
+              :src="userStore.profilePicture"
+              alt="Profile picture"
+            />
             <AvatarFallback>{{ userStore.username.substring(0, 2).toUpperCase() }}</AvatarFallback>
           </Avatar>
+
           <span class="ml-1 mr-1 text-sm font-medium">{{ userStore.username }}</span>
           <!-- Utilisation de username -->
         </div>
       </div>
     </DropdownMenuTrigger>
-    <DropdownMenuContent class="w-36">
+    <DropdownMenuContent class="w-48">
       <DropdownMenuItem @click="goToProfile">
         <User class="mr-2 h-4 w-4" />
-        <span>Profile</span>
+        <span>Mon profil</span>
       </DropdownMenuItem>
-      <DropdownMenuItem>
+      <DropdownMenuItem @click="editProfile">
         <Settings class="mr-2 h-4 w-4" />
-        <span>Settings</span>
+        <span>Modifier mon profil</span>
       </DropdownMenuItem>
       <DropdownMenuItem @click="logout">
         <LogOut class="mr-2 h-4 w-4" />
-        <span>Log out</span>
+        <span>Déconnexion</span>
       </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
@@ -70,6 +75,10 @@ const logout = () => {
       })
     )
   }
+}
+
+const editProfile = () => {
+  router.push({ name: 'ModificationProfil' })
 }
 
 const isLoggedIn = computed(() => !!userStore.username)

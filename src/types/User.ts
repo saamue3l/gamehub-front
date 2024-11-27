@@ -5,3 +5,8 @@ export type User = {
   picture: string
   xp: number
 }
+
+export type GetUserResponse = {
+  email: string
+  username: string
+}

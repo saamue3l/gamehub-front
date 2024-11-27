@@ -1,6 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { FavoriteGame, FavoriteGameAdd, FavoriteGameUpdate } from '@/types/FavoriteGame'
+import type {
+  AddGameResponse,
+  FavoriteGame,
+  FavoriteGameAdd,
+  FavoriteGameUpdate
+} from '@/types/FavoriteGame'
 import { httpBackend } from '@/lib/utils'
 
 export const useFavoriteGamesStore = defineStore('favoriteGames', () => {
@@ -31,20 +36,22 @@ export const useFavoriteGamesStore = defineStore('favoriteGames', () => {
         description: newGame.description
       }
 
-      const response = await httpBackend<{ id: number }>(
+      const response = await httpBackend<AddGameResponse>(
         '/api/profile/addFavoriteGame',
         'POST',
         gameToAdd
       )
 
       const completeGame: FavoriteGame = {
-        id: response,
+        id: response.favoriteGameId,
         description: newGame.description,
         game: newGame.game,
         skill: newGame.skill
       }
 
       favoriteGames.value = [completeGame, ...favoriteGames.value]
+
+      return response
     } catch (error) {
       throw error
     }

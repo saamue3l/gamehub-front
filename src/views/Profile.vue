@@ -5,6 +5,7 @@ import Availability from '@/components/profile/Availability/Availability.vue'
 import Achievements from '@/components/profile/Achievements/Achievements.vue'
 import BasePage from '@/components/layout/BasePage.vue'
 import UserInfo from '@/components/profile/UserInfo.vue'
+import UserStats from '@/components/profile/UserStats/UserStats.vue'
 import UpcomingEvents from '@/components/profile/UpcomingEvents/UpcomingEvents.vue'
 
 const components = [
@@ -20,6 +21,8 @@ const components = [
   <BasePage title="" class="max-md:w-full max-md:p-2 max-md:flex max-md:justify-center">
     <div class="flex flex-col">
       <UserInfo />
+
+      <UserStats />
 
       <div class="hidden md:flex justify-between">
         <div class="pr-8 flex-1 min-w-72">

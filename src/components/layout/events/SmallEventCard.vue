@@ -20,7 +20,7 @@ defineProps<{
       <GameCover
         :game="event.game"
         :image-size="IGDBImageSizes.MICRO"
-        class="inline-block self-stretch max-h-full flex-shrink"
+        class="inline-block self-stretch max-h-full flex-shrink h-auto object-contain"
       />
     </CardHeader>
     <CardContent>

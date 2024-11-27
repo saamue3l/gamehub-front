@@ -10,7 +10,7 @@
       </div>
 
       <!-- profile et alerts(if not mobile) -->
-      <div class="hidden md:flex items-center justify-end space-x-2">
+      <div v-if="isLoggedIn" class="hidden md:flex items-center justify-end space-x-2">
         <ProfileMenu />
         <AlertMenu />
       </div>
@@ -34,18 +34,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import NavLinks from '@/components/layout/header/NavLinks.vue'
 import ProfileMenu from '@/components/layout/header/ProfileMenu.vue'
 import AlertMenu from '@/components/layout/header/AlertMenu.vue'
 import BurgerMenu from '@/components/layout/header/BurgerMenu.vue'
 import MobileMenu from '@/components/layout/header/MobileMenu.vue'
+import { UserStore } from '@/store/userStore'
 
+const userStore = UserStore()
 const isMenuOpen = ref(false)
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
 }
+
+const isLoggedIn = computed(() => !!userStore.username)
 </script>
 
 <style scoped></style>

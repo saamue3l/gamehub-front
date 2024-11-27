@@ -8,9 +8,11 @@ import { useForm } from 'vee-validate'
 import { useToast } from '@/components/ui/toast'
 import { httpBackend } from '@/lib/utils'
 import ForumChildContainer from '@/components/layout/forums/ForumChildContainer.vue'
-import { type Topic, topicCreateSchema } from '@/types/Forum'
+import { type CreateTopicResponse, type Topic, topicCreateSchema } from '@/types/Forum'
 import { UserStore } from '@/store/userStore'
 import type { User } from '@/types/User'
+import { useActionHandler } from '@/services/actionHandler'
+import { ref, computed } from 'vue'
 
 const props = defineProps<{
   forumId: number
@@ -22,26 +24,38 @@ const emit = defineEmits<{
 
 const userStore = UserStore()
 const user = { username: userStore.username } as User
+const isLoading = ref(false)
 
 const validationSchema = toTypedSchema(topicCreateSchema)
 
-const { handleSubmit } = useForm({
-  validationSchema
+const { handleSubmit, resetForm, values } = useForm({
+  validationSchema,
+  initialValues: {
+    title: '',
+    content: ''
+  }
+})
+
+const isSubmitDisabled = computed(() => {
+  return isLoading.value || !values.title?.trim() || !values.content?.trim()
 })
 
 const { toast } = useToast()
 const onSubmit = handleSubmit(async (values) => {
   try {
+    isLoading.value = true
     values.forumId = props.forumId
-    const response = await httpBackend<{ message: string; topicId: number }>(
+    const response = await httpBackend<CreateTopicResponse>(
       '/api/forums/createTopic',
       'POST',
       values
     )
-    toast({
-      title: 'Succès !',
-      description: `Le sujet ${values.title} a été créé avec succès`,
-      variant: 'default'
+
+    const { handleActionResponse } = useActionHandler()
+
+    await handleActionResponse(response, {
+      title: 'Succès',
+      description: `Le sujet ${values.title} a été créé avec succès`
     })
 
     const newTopic: Topic = {
@@ -59,6 +73,7 @@ const onSubmit = handleSubmit(async (values) => {
       creator: user
     }
     emit('created-topic', newTopic)
+    resetForm()
   } catch (error) {
     console.error('Error while creating new topic : ', error)
     error?.toString()
@@ -69,6 +84,8 @@ const onSubmit = handleSubmit(async (values) => {
       description: errorMessage,
       variant: 'destructive'
     })
+  } finally {
+    isLoading.value = false
   }
 })
 </script>
@@ -106,7 +123,9 @@ const onSubmit = handleSubmit(async (values) => {
         </FormItem>
       </FormField>
 
-      <Button type="submit" size="form">Poster</Button>
+      <Button type="submit" size="form" :disabled="isSubmitDisabled">
+        {{ isLoading ? 'Chargement...' : 'Poster' }}
+      </Button>
     </form>
   </ForumChildContainer>
 </template>

@@ -1,6 +1,7 @@
 import type { User } from '@/types/User'
 import type { Game } from '@/types/Game'
 import * as z from 'zod'
+import type { XpAndSuccessResponse } from '@/types/Success'
 
 export type Event = {
   id: number
@@ -12,6 +13,11 @@ export type Event = {
   creator: User
   game: Game
   userJoined?: boolean
+}
+
+export type JoinEventResponse = {
+  userJoined: boolean
+  xpAndSuccessResponse: XpAndSuccessResponse
 }
 
 /* === CREATE EVENT === */
