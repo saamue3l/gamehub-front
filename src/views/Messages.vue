@@ -84,12 +84,6 @@ function newConversationCreated(user) {
   loadConversationUsers(false)
   selectUser(user)
 }
-
-
-
-watch(selectedUser, (newUser) => {
-  if (newUser) loadMessagesWithUser(newUser.id)
-})
 </script>
 
 <template>
