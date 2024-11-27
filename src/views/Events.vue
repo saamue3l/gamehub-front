@@ -13,6 +13,9 @@ import { ArrowUpDown } from 'lucide-vue-next'
 import ChevronDownIcon from '@/components/icons/chevronDownIcon.vue'
 import SortSwitch from '@/components/ui/sortSwitch/SortSwitch.vue'
 import { Checkbox } from '@/components/ui/checkbox'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 
 const events = ref<Event[]>([])
 const isLoading = ref(true)
@@ -20,7 +23,7 @@ const errorMessage = ref<string | null>(null)
 const selectedGame = ref<Game | null>(null)
 const selectedDates = ref<DateRange | null>(null)
 const descSort = ref<boolean>()
-const joinedFilter = ref<boolean>(false)
+const joinedFilter = ref<boolean>(route.query.joinedFilter === 'true' || false)
 
 function sortEvents(): void {
   events.value.sort((a, b) => {
@@ -94,7 +97,11 @@ watch(joinedFilter, console.log)
         />
         <!--    Filter joined    -->
         <div class="flex items-center space-x-2">
-          <Checkbox id="joinedFilter" @click="joinedFilter = !joinedFilter" />
+          <Checkbox
+            id="joinedFilter"
+            @click="joinedFilter = !joinedFilter"
+            :checked="joinedFilter"
+          />
           <label
             for="joinedFilter"
             class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 select-none cursor-pointer"
@@ -127,22 +134,25 @@ watch(joinedFilter, console.log)
       </div>
 
       <!-- When fetched -->
-      <EventCard
-        v-for="event in events"
-        v-show="!joinedFilter || event.userJoined"
-        :event="event"
-        :key="event.id"
-      ></EventCard>
+      <TransitionGroup name="list">
+        <EventCard
+          v-for="event in events"
+          v-show="!joinedFilter || event.userJoined"
+          :event="event"
+          :key="event.id"
+        ></EventCard>
+      </TransitionGroup>
     </section>
   </BasePage>
 </template>
 
 <style scoped>
-.grid-item {
-  transition: all 500ms ease;
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
 }
-
-.grid-move {
-  transform: scale(0.9);
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
 }
 </style>

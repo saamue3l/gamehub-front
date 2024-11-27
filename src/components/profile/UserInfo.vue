@@ -15,12 +15,7 @@
   </div>
 
   <div v-else class="flex max-md:flex-col max-md:items-center mb-8">
-    <Avatar class="size-16">
-      <AvatarImage v-if="userInfo.picture" :src="userInfo.picture" :alt="userInfo.username" />
-      <AvatarFallback v-else>
-        {{ userInfo.username?.charAt(0).toUpperCase() ?? 'U' }}
-      </AvatarFallback>
-    </Avatar>
+    <UserAvatar :user="userInfo" size="16" />
     <div class="flex flex-col justify-center max-md:flex-col max-md:items-center space-y-1 ml-2">
       <div class="flex items-center space-x-2">
         <span class="font-medium">{{ userInfo.username }}</span>
@@ -53,6 +48,8 @@ import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { httpBackend } from '@/lib/utils'
+import UserAvatar from '@/components/layout/user/UserAvatar.vue'
+import type { User } from '@/types/User'
 
 const isLoading = ref(true)
 const errorMessage = ref<string | null>(null)

@@ -10,7 +10,7 @@
         <div class="flex items-center">
           <Avatar v-if="isLoggedIn" class="size-8">
             <AvatarImage src="src/assets/joachim.jpg" alt="@shadcn" />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarFallback>{{ userStore.username.substring(0, 2).toUpperCase() }}</AvatarFallback>
           </Avatar>
           <span class="ml-1 mr-1 text-sm font-medium">{{ userStore.username }}</span>
           <!-- Utilisation de username -->

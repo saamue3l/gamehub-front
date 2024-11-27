@@ -28,7 +28,7 @@ export function toNativeDate(dateValue: CalendarDate): Date | null {
 export async function httpBackend<T>(
   path: string,
   method: 'GET' | 'POST' = 'GET',
-  body?: any[],
+  body?: any,
   auth: boolean = true
 ): Promise<T> {
   const token = sessionStorage.getItem('token')
@@ -57,4 +57,19 @@ export async function httpBackend<T>(
   }
 
   return responseBody
+}
+
+/**
+ * Highlight the search text in the given text
+ * @param text
+ * @param search
+ */
+export function highlightSearch(text: string, search?: string) {
+  if (!search) {
+    return text
+  }
+  // first escape html characters in the text to prevent xss
+  text = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  const regex = new RegExp(search, 'gi')
+  return text.replace(regex, (match) => `<span class="bg-yellow-100 text-black">${match}</span>`)
 }
