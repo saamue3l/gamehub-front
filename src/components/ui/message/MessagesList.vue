@@ -12,13 +12,15 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  selectedUserId: {
+  selectedConversationId: {
     type: Number,
-    required: true
+    required: true,
+    default: 0
   },
   currentUserId: {
     type: Number,
-    required: true
+    required: true,
+    default: 0
   }
 })
 
@@ -47,7 +49,7 @@ defineExpose({
       v-for="message in messages"
       :key="message.id"
       :message="message"
-      :selectedUserId="selectedUserId"
+      :selectedConversationId="selectedConversationId"
       :currentUserId="currentUserId"
     />
   </div>

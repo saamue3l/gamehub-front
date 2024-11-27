@@ -6,7 +6,7 @@ const props = defineProps({
     type: Object,
     required: true
   },
-  selectedUserId: {
+  selectedConversationId: {
     type: Number,
     required: true
   },

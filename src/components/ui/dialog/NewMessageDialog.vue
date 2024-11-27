@@ -14,22 +14,46 @@ import { httpBackend } from '@/lib/utils'
 
 const emit = defineEmits(['message-sent']);
 
+const { currentUserId } = defineProps({
+  currentUserId: {
+    type: Number,
+    required: true,
+  }
+})
+
 const selectedUser = ref(null)
 const isDialogOpen = ref(false)
 const newMessage = ref('')
 
 async function sendMessage() {
+  // Étape 1 : Créer la conversation si elle n'existe pas
+  const userIds = [currentUserId, selectedUser.value.id]
+  const conversationId = await createConversationWithUsers(userIds)
+  console.log("conversationId : ", conversationId)
+
+  // Étape 2 : Envoyer le message dans la conversation
   try {
-    await httpBackend('/api/sendMessage', 'POST', {
-      recipientId: selectedUser.value.id,
+    await httpBackend(`/api/conversations/${conversationId}/sendMessage`, 'POST', {
       content: newMessage.value
     })
 
-    // Émettre l'utilisateur sélectionné après l'envoi
-    emit('message-sent', selectedUser.value);
+    // Émettre la conversation sélectionnée après l'envoi
+    emit('message-sent', conversationId);
     closeDialog()
   } catch (error) {
     console.error('Erreur lors de l\'envoi du message:', error)
+  }
+}
+
+async function createConversationWithUsers(userIds: number[]) {
+  try {
+    console.log("Création d'une conversation avec les userIds : ", userIds)
+    const response = await httpBackend('/api/conversations/createConversation', 'POST', { user_ids: userIds })
+    console.log("Réponse de la création de la conversation : ", response)
+    return response.conversationId // On retourne l'ID de la conversation créée
+  } catch (error) {
+    console.error('Erreur lors de la création de la conversation:', error)
+    throw error
   }
 }
 

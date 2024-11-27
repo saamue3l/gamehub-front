@@ -6,7 +6,7 @@ const props = defineProps({
     type: Array,
     required: true,
   },
-  selectedUser: {
+  selectedItem: {
     type: Object,
     required: false,
   },
@@ -22,7 +22,7 @@ const emit = defineEmits(['click']);
       :key="item.id"
       :class="[
         'text-custom-white text-sm font-medium rounded-3xl hover:bg-secondary px-2 py-2 transition',
-        { 'bg-secondary': selectedUser && selectedUser.id === item.id }
+        { 'bg-secondary': selectedItem && selectedItem.conversationId === item.conversationId }
       ]"
       @click="() => emit('click', item)"
     >

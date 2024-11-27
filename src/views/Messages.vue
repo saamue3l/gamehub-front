@@ -5,10 +5,10 @@ import MessagesList from '@/components/ui/message/MessagesList.vue'
 import SendMessageInput from '@/components/messages/SendMessageInput.vue'
 import { httpBackend } from '@/lib/utils'
 import NewMessageDialog from '@/components/ui/dialog/NewMessageDialog.vue'
-import UserList from '@/components/messages/UserList.vue'
+import ConversationsList from '@/components/messages/ConversationsList.vue'
 
-const users = ref([])
-const selectedUser = ref(null)
+const conversations = ref([])
+const selectedConversation = ref(null)
 const messages = ref([])
 const currentUserId = ref(null)
 const messagesListRef = ref(null)
@@ -26,28 +26,40 @@ async function fetchCurrentUser() {
 }
 
 onMounted(fetchCurrentUser)
-onMounted(loadConversationUsers)
+onMounted(loadConversations)
 
-async function loadConversationUsers(isFirstLoad = true) {
-  if (isFirstLoad) isLoadingConversations.value = true // Début du chargement
+async function loadConversations(isFirstLoad = true) {
+  if (isFirstLoad) isLoadingConversations.value = true; // Début du chargement
   try {
-    users.value = await httpBackend('/api/userConversations', 'GET')
-    if (users.value.length > 0) selectUser(users.value.at(0));
+    console.log("loadConversations called");
+
+    // Récupérer la liste des conversations de l'utilisateur
+    conversations.value = await httpBackend('/api/conversations/getConversations', 'GET');
+
+    console.log("Conversations : ", conversations.value);
+
+    if (Array.isArray(conversations.value) && conversations.value.length > 0) {
+      selectConversation(conversations.value[0]); // Sélectionner la première conversation
+    } else {
+      console.warn("Aucune conversation disponible.");
+    }
   } catch (error) {
-    console.error('Erreur lors du chargement des utilisateurs:', error)
+    console.error('Erreur lors du chargement des conversations:', error);
   } finally {
-    isLoadingConversations.value = false // Fin du chargement
+    isLoadingConversations.value = false; // Fin du chargement
   }
 }
 
-async function loadMessagesWithUser(receiverId, isFirstLoad = true) {
+
+async function loadMessagesWithConversation(conversationId, isFirstLoad = true) {
   if (isFirstLoad) isLoadingMessages.value = true // Début du chargement
   console.log("isFirstLoad : ", isFirstLoad)
   try {
-    messages.value = await httpBackend(`/api/messages/${receiverId}`, 'GET')
+    // Charger les messages de la conversation
+    messages.value = await httpBackend(`/api/conversations/${conversationId}/getMessages`, 'GET')
   } catch (error) {
     console.error('Erreur lors du chargement des messages:', error)
-  }  finally {
+  } finally {
     isLoadingMessages.value = false // Fin du chargement
     await nextTick();
     if (messagesListRef.value?.messagesContainerRef) {
@@ -57,39 +69,49 @@ async function loadMessagesWithUser(receiverId, isFirstLoad = true) {
   }
 }
 
-async function sendMessageToUser(receiverId, userId, message) {
+async function sendMessageToConversation(conversationId: number, senderId: number, content: string) {
   try {
-    await httpBackend(`/api/sendMessage`, 'POST', {
-      recipientId: receiverId,
-      userId: userId,
-      content: message
+    console.log("sendMessageToConversation called with parameters : ", conversationId, senderId, content)
+    await httpBackend(`/api/conversations/${conversationId}/sendMessage`, 'POST', {
+      senderId,
+      content
     })
-    console.log("sendMessageToUser : Message envoyé avec succès !")
+    console.log("Message envoyé avec succès !")
   } catch (error) {
     console.error('Erreur lors de l’envoi du message:', error)
   }
 }
 
-function handleSendMessage(message) {
-  if (selectedUser.value) {
-    console.log("handleSendMessage : ", message)
-    sendMessageToUser(selectedUser.value.id, 1, message)
-    //loadConversationUsers(false)
-    loadMessagesWithUser(selectedUser.value.id, false)
+async function handleSendMessage(message: string) {
+  console.log("handleSendMessage called with parameter : ", message)
+  if (selectedConversation.value) {
+    try {
+      console.log("selectedConversation QUE JE TRANSFERE : ", selectedConversation.value)
+      console.log("selectedConversation QUE JE TRANSFERE : ", selectedConversation.value.conversationId)
+      await sendMessageToConversation(selectedConversation.value.conversationId, currentUserId.value, message)
+
+      // Charger les messages après l'envoi
+      await loadMessagesWithConversation(selectedConversation.value.conversationId, false)
+    } catch (error) {
+      console.error('Erreur lors de la gestion de l’envoi du message:', error)
+    }
   }
 }
 
-function selectUser(user) {
-  if (user !== selectedUser.value) {
+function selectConversation(conversation) {
+  console.log("selectConversation called with parameter : ", conversation)
+  if (conversation !== selectedConversation.value) {
     messages.value = []
-    selectedUser.value = user
-    loadMessagesWithUser(user.id)
+    selectedConversation.value = conversation
+    console.log("selectedConversation : ", selectedConversation.value)
+    loadMessagesWithConversation(selectedConversation.value.conversationId)
   }
 }
 
-function newConversationCreated(user) {
-  loadConversationUsers(false)
-  selectUser(user) //Implique un appel à loadMessagesWithUser en nouvelle conv
+function newConversationCreated(conversation) {
+  console.log("newConversationCreated called with parameter : ", conversation)
+  loadConversations(false) // Recharger la liste des conversations après la création d'une nouvelle
+  selectConversation(conversation)  // Sélectionner la nouvelle conversation
 }
 
 </script>
@@ -99,33 +121,37 @@ function newConversationCreated(user) {
 
     <div class="flex flex-col md:flex-row w-full">
 
-      <!-- Liste des conversation/utilisateurs -->
+      <!-- Liste des conversations -->
       <div class="w-full md:w-1/3 md:border-r border-gray-300 p-4">
 
         <!-- Bouton de création d'une nouvelle conversation -->
-        <NewMessageDialog @message-sent="newConversationCreated"/>
+        <NewMessageDialog :currentUserId="currentUserId" @message-sent="newConversationCreated"/>
         <div class="mb-4"></div>
 
-        <!-- Liste des utilisateurs avec qui une conv existe -->
-        <UserList :users="users" :selectedUser="selectedUser" :isLoading="isLoadingConversations" @selectUser="selectUser" />
+        <!-- Liste des conversations -->
+        <ConversationsList
+          :conversations="conversations"
+          :selectedConversation="selectedConversation"
+          :isLoading="isLoadingConversations"
+          @selectConversation="selectConversation" />
       </div>
 
       <!-- Liste des messages -->
       <div class="md:flex flex-col w-full md:w-2/3 p-4">
-        <h2 class="text-xl font-bold mb-4" v-if="selectedUser && selectedUser.username">
-          {{ selectedUser.username }}
+        <h2 class="text-xl font-bold mb-4" v-if="selectedConversation && selectedConversation.name">
+          {{ selectedConversation.name }} <!-- Afficher le nom de la conversation -->
         </h2>
         <div class="flex flex-col flex-grow">
           <MessagesList
             ref="messagesListRef"
             :messages="messages"
             :isLoading="isLoadingMessages"
-            :selectedUserId="selectedUser?.id"
+            :selectedConversationId="selectedConversation?.id"
             :currentUserId="currentUserId"
             class="flex-grow pr-2"
           />
         </div>
-        <SendMessageInput @send-message="handleSendMessage" v-if="selectedUser" class="mt-1 mb-1" />
+        <SendMessageInput @send-message="handleSendMessage" v-if="selectedConversation" class="mt-1 mb-1" />
       </div>
     </div>
 
