@@ -26,7 +26,8 @@ const emit = defineEmits(['click']);
       ]"
       @click="() => emit('click', item)"
     >
-      <slot :item="item">{{ item.name }}</slot>
+      <slot :item="item">
+        {{ item.name }}</slot>
     </li>
   </ul>
 </template>

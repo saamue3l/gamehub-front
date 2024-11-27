@@ -30,7 +30,10 @@ function selectUser(user) {
     <!-- Liste des utilisateurs -->
     <List v-else :items="users" :selectedUser="selectedUser" @click="selectUser">
       <template #default="{ item }">
-        <div class="my-0.5" v-if="item && item.username">{{ item.username }}</div>
+        <div class="flex items-center my-0.5" v-if="item && item.username">
+          <img :src="item.picture" alt="User Picture" class="w-8 h-8 rounded-full mr-2" />
+          {{ item.username }}
+        </div>
       </template>
     </List>
   </div>
