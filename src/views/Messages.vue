@@ -1,22 +1,21 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import BasePage from '@/components/layout/BasePage.vue'
-import MessageBox from '@/components/ui/message-box/MessageBox.vue'
+import MessagesList from '@/components/ui/message/MessagesList.vue'
 import SendMessageInput from '@/components/messages/SendMessageInput.vue'
 import { httpBackend } from '@/lib/utils'
 import NewMessageDialog from '@/components/ui/dialog/NewMessageDialog.vue'
 import UserList from '@/components/messages/UserList.vue'
-import Skeleton from '@/components/ui/skeleton/Skeleton.vue'
 
 const users = ref([])
+const usersTempList = ref([])
 const selectedUser = ref(null)
 const messages = ref([])
-//const showConversation = ref(false)
 const currentUserId = ref(null)
 
 // Etats pour gérer les chargements
-const isLoadingConversations = ref(true);
-const isLoadingMessages = ref(false);
+const isLoadingConversations = ref(true)
+const isLoadingMessages = ref(false)
 
 async function fetchCurrentUser() {
   try {
@@ -27,27 +26,28 @@ async function fetchCurrentUser() {
 }
 
 onMounted(fetchCurrentUser)
+onMounted(loadConversationUsers)
 
-async function loadConversationUsers() {
-  isLoadingConversations.value = true; // Début du chargement
+async function loadConversationUsers(isFirstLoad = true) {
+  if (isFirstLoad) isLoadingConversations.value = true // Début du chargement
   try {
-    users.value = await httpBackend('/api/userConversations', 'GET');
-    console.log(users.value);
+    usersTempList.value = await httpBackend('/api/userConversations', 'GET')
+    users.value = usersTempList.value;
   } catch (error) {
-    console.error('Erreur lors du chargement des utilisateurs:', error);
+    console.error('Erreur lors du chargement des utilisateurs:', error)
   } finally {
-    isLoadingConversations.value = false; // Fin du chargement
+    isLoadingConversations.value = false // Fin du chargement
   }
 }
 
 async function loadMessagesWithUser(receiverId) {
-  isLoadingMessages.value = true; // Début du chargement
   try {
-    messages.value = await httpBackend(`/api/messages/${receiverId}`, 'GET');
+    messages.value = await httpBackend(`/api/messages/${receiverId}`, 'GET')
+    //console.log('Messages chargés:', messages.value);
   } catch (error) {
-    console.error('Erreur lors du chargement des messages:', error);
+    console.error('Erreur lors du chargement des messages:', error)
   } finally {
-    isLoadingMessages.value = false; // Fin du chargement
+    isLoadingMessages.value = false // Fin du chargement
   }
 }
 
@@ -59,34 +59,33 @@ async function sendMessageToUser(receiverId, userId, message) {
       content: message
     })
   } catch (error) {
-    console.error('Erreur lors du chargement des messages:', error)
+    console.error('Erreur lors de l’envoi du message:', error)
   }
 }
 
 function handleSendMessage(message) {
   if (selectedUser.value) {
     sendMessageToUser(selectedUser.value.id, 1, message)
-    loadConversationUsers();
-    loadMessagesWithUser(selectedUser.value.id);
+    loadConversationUsers(false)
+    loadMessagesWithUser(selectedUser.value.id)
   }
 }
 
 function selectUser(user) {
   if (user !== selectedUser.value) {
-    messages.value = [];
+    isLoadingMessages.value = true // Début du chargement
+    messages.value = []
     selectedUser.value = user
-    //showConversation.value = window.innerWidth <= 768
     loadMessagesWithUser(user.id)
   }
-
 }
 
 function newConversationCreated(user) {
-  loadConversationUsers();
-  selectUser(user);
+  loadConversationUsers(false)
+  selectUser(user)
 }
 
-onMounted(loadConversationUsers)
+
 
 watch(selectedUser, (newUser) => {
   if (newUser) loadMessagesWithUser(newUser.id)
@@ -102,7 +101,6 @@ watch(selectedUser, (newUser) => {
         <NewMessageDialog @message-sent="newConversationCreated"/>
         <div class="mb-4"></div>
 
-        <!-- Skeleton pendant le chargement des conversations -->
         <UserList :users="users" :selectedUser="selectedUser" :isLoading="isLoadingConversations" @selectUser="selectUser" />
 
       </div>
@@ -115,20 +113,13 @@ watch(selectedUser, (newUser) => {
           </h2>
         </div>
 
-        <!-- Skeleton pendant le chargement des messages -->
-        <div v-show="isLoadingMessages">
-          <Skeleton class="w-full h-6 mb-4" v-for="i in 5" :key="i" />
-        </div>
-
         <!-- Affichage des messages -->
-        <div v-show="!isLoadingMessages" class="max-h-96 overflow-y-auto">
-          <MessageBox
-            v-for="message in messages"
-            :key="message.content"
-            :message="message"
-            :selectedUserId="selectedUser.id"
+        <div class="max-h-96 overflow-y-auto">
+          <MessagesList
+            :messages="messages"
+            :isLoading="isLoadingMessages"
+            :selectedUserId="selectedUser?.id"
             :currentUserId="currentUserId"
-            class="py-2"
           />
         </div>
         <SendMessageInput @send-message="handleSendMessage" />
@@ -139,13 +130,11 @@ watch(selectedUser, (newUser) => {
           {{ selectedUser.username }}
         </h2>
         <div class="max-h-96 overflow-y-auto">
-          <MessageBox
-            v-for="message in messages"
-            :key="message.content"
-            :message="message"
-            :selectedUserId="selectedUser.id"
+          <MessagesList
+            :messages="messages"
+            :isLoading="isLoadingMessages"
+            :selectedUserId="selectedUser?.id"
             :currentUserId="currentUserId"
-            class="py-2"
           />
         </div>
         <SendMessageInput @send-message="handleSendMessage" v-if="selectedUser" />
