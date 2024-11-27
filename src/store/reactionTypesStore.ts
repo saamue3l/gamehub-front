@@ -6,18 +6,18 @@ export const useReactionTypesStore = defineStore('reactionTypes', () => {
   const reactionTypes = ref<string[]>([])
   const isLoading = ref(false)
   const error = ref<string | null>(null)
-  const sessionStorageKey = 'allReactionType'
+  const localStorageKey = 'allReactionType'
 
   const fetchAllPossibleReactions = (): void => {
     const allPossibleReactions = getCachedPossibleReactionsOrCache()
     if (allPossibleReactions) {
-      // Assign if session storage is not empty
+      // Assign if local storage is not empty
       reactionTypes.value = allPossibleReactions
     }
   }
 
   const getCachedPossibleReactionsOrCache = (): string[] | undefined => {
-    let allPossibleReactions: any = window.sessionStorage.getItem(sessionStorageKey)
+    let allPossibleReactions: any = window.localStorage.getItem(localStorageKey)
     if (allPossibleReactions as string) {
       allPossibleReactions = JSON.parse(allPossibleReactions)
       return allPossibleReactions
@@ -35,7 +35,7 @@ export const useReactionTypesStore = defineStore('reactionTypes', () => {
       error.value = null
       httpBackend<string[]>('/api/forums/getAllReactionTypes', 'GET').then((response) => {
         reactionTypes.value = response
-        window.sessionStorage.setItem(sessionStorageKey, JSON.stringify(response))
+        window.localStorage.setItem(localStorageKey, JSON.stringify(response))
         isLoading.value = false
       })
     } catch (err) {

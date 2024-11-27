@@ -12,7 +12,7 @@ import { type CreateTopicResponse, type Topic, topicCreateSchema } from '@/types
 import { UserStore } from '@/store/userStore'
 import type { User } from '@/types/User'
 import { useActionHandler } from '@/services/actionHandler'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 const props = defineProps<{
   forumId: number
@@ -28,8 +28,16 @@ const isLoading = ref(false)
 
 const validationSchema = toTypedSchema(topicCreateSchema)
 
-const { handleSubmit } = useForm({
-  validationSchema
+const { handleSubmit, resetForm, values } = useForm({
+  validationSchema,
+  initialValues: {
+    title: '',
+    content: ''
+  }
+})
+
+const isSubmitDisabled = computed(() => {
+  return isLoading.value || !values.title?.trim() || !values.content?.trim()
 })
 
 const { toast } = useToast()
@@ -65,6 +73,7 @@ const onSubmit = handleSubmit(async (values) => {
       creator: user
     }
     emit('created-topic', newTopic)
+    resetForm()
   } catch (error) {
     console.error('Error while creating new topic : ', error)
     error?.toString()
@@ -114,7 +123,7 @@ const onSubmit = handleSubmit(async (values) => {
         </FormItem>
       </FormField>
 
-      <Button type="submit" size="form" :disabled="isLoading">
+      <Button type="submit" size="form" :disabled="isSubmitDisabled">
         {{ isLoading ? 'Chargement...' : 'Poster' }}
       </Button>
     </form>

@@ -7,7 +7,7 @@ export async function postLogin(values: LoginPost): Promise<LoginResponse> {
 
   try {
     const data = await httpBackend<LoginResponse>('/api/login', 'POST', values, false)
-    storeSessionData(data)
+    storeLocalData(data)
     return data
   } catch (error) {
     console.log(error)
@@ -20,14 +20,13 @@ export async function postLogin(values: LoginPost): Promise<LoginResponse> {
   }
 }
 
-function storeSessionData(data: LoginResponse) {
-  console.log(data)
-  sessionStorage.setItem('token', data.token)
-  sessionStorage.setItem('username', data.user.username)
-  sessionStorage.setItem('roleId', data.user.roleId.toString())
-  sessionStorage.setItem('statusId', data.user.statusId.toString())
-  sessionStorage.setItem('xp', data.user.xp.toString())
+function storeLocalData(data: LoginResponse) {
+  localStorage.setItem('token', data.token)
+  localStorage.setItem('username', data.user.username)
+  localStorage.setItem('roleId', data.user.roleId.toString())
+  localStorage.setItem('statusId', data.user.statusId.toString())
+  localStorage.setItem('xp', data.user.xp.toString())
   if (data.user.picture) {
-    sessionStorage.setItem('picture', data.user.picture.toString())
+    localStorage.setItem('picture', data.user.picture.toString())
   }
 }

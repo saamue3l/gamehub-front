@@ -1,35 +1,57 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import {
   Dialog,
-  DialogTrigger,
-  DialogScrollContent,
+  DialogFooter,
   DialogHeader,
+  DialogScrollContent,
   DialogTitle,
-  DialogFooter
+  DialogTrigger,
+  DialogContent // Ajout de DialogContent
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import UserSearch from '@/components/ui/user-search/UserSearch.vue'
 import { httpBackend } from '@/lib/utils'
 
-const emit = defineEmits(['message-sent']);
+const emit = defineEmits(['message-sent'])
 
-const { currentUserId } = defineProps({
+const props = defineProps({
   currentUserId: {
     type: Number,
-    required: true,
-  }
+    required: true
+  },
+  preselectedUserId: Number,
+  autoOpen: Boolean
 })
 
 const selectedUser = ref(null)
-const isDialogOpen = ref(false)
+const isOpen = ref(false) // Renommé pour plus de clarté
 const newMessage = ref('')
+
+// Modifié pour utiliser isOpen
+onMounted(async () => {
+  console.log('Props:', props) // Debug
+  if (props.preselectedUserId) {
+    try {
+      selectedUser.value = await httpBackend(
+        `/api/utils/getUserById/${props.preselectedUserId}`,
+        'GET'
+      )
+      console.log('Selected user:', selectedUser.value) // Debug
+      if (props.autoOpen) {
+        isOpen.value = true
+        console.log('Setting dialog to open') // Debug
+      }
+    } catch (error) {
+      console.error('Error fetching user:', error)
+    }
+  }
+})
 
 async function sendMessage() {
   // Étape 1 : Créer la conversation si elle n'existe pas
-  const userIds = [currentUserId, selectedUser.value.id]
+  const userIds = [props.currentUserId, selectedUser.value.id]
   const conversationId = await createConversationWithUsers(userIds)
-  console.log("conversationId : ", conversationId)
 
   // Étape 2 : Envoyer le message dans la conversation
   try {
@@ -38,63 +60,66 @@ async function sendMessage() {
     })
 
     // Émettre la conversation sélectionnée après l'envoi
-    emit('message-sent', conversationId);
+    emit('message-sent', conversationId)
     closeDialog()
   } catch (error) {
-    console.error('Erreur lors de l\'envoi du message:', error)
+    console.error("Erreur lors de l'envoi du message:", error)
   }
 }
 
 async function createConversationWithUsers(userIds: number[]) {
   try {
     console.log("Création d'une conversation avec les userIds : ", userIds)
-    const response = await httpBackend('/api/conversations/createConversation', 'POST', { user_ids: userIds })
-    console.log("Réponse de la création de la conversation : ", response)
-    return response.conversationId // On retourne l'ID de la conversation créée
+    const response = await httpBackend('/api/conversations/createConversation', 'POST', {
+      user_ids: userIds
+    })
+    console.log('Réponse de la création de la conversation : ', response)
+    return response.conversationId
   } catch (error) {
     console.error('Erreur lors de la création de la conversation:', error)
     throw error
   }
 }
 
+function onOpenChange(open: boolean) {
+  if (!open) {
+    resetDialog()
+  }
+  isOpen.value = open
+}
+
 function closeDialog() {
-  isDialogOpen.value = false;
-  resetDialog();
+  isOpen.value = false
+  resetDialog()
 }
 
 function resetDialog() {
-  selectedUser.value = null; // Réinitialiser l'utilisateur sélectionné
-  newMessage.value = '';
+  selectedUser.value = null
+  newMessage.value = ''
 }
 
 function handleUserSelect(user) {
   selectedUser.value = user
 }
-
-watch(isDialogOpen, (newVal) => {
-  if (!newVal) {
-    resetDialog();
-  }
-});
 </script>
 
 <template>
-  <Dialog v-model:open="isDialogOpen" @close="closeDialog">
-    <DialogTrigger as-child>
-      <div
-        class="relative border border-white rounded-full p-2 mt-2 flex flex-row items-center justify-center cursor-pointer bg-blue-600 text-white font-bold text-sm"
-      >
-        <span class="mx-1">+</span>
-        <span class="mr-1">Nouveau message</span>
-      </div>
+  <Dialog v-model:open="isOpen" @update:open="onOpenChange">
+    <DialogTrigger asChild>
+      <Button class="w-full rounded-full text-foreground">
+        <span class="mx-1">+</span> <span class="mr-1">Nouveau message</span>
+      </Button>
     </DialogTrigger>
-    <DialogScrollContent class="flex flex-col gap-6">
+    <DialogContent>
+      <!-- Remplacé DialogScrollContent par DialogContent -->
       <form @submit.prevent="sendMessage">
         <DialogHeader>
           <DialogTitle class="pb-6">Nouveau message</DialogTitle>
         </DialogHeader>
 
-        <UserSearch @selected-user="handleUserSelect" />
+        <UserSearch v-if="!selectedUser" @selected-user="handleUserSelect" />
+
+        <div v-else class="mb-4">Destinataire : {{ selectedUser.username }}</div>
 
         <textarea
           v-model="newMessage"
@@ -103,54 +128,10 @@ watch(isDialogOpen, (newVal) => {
         ></textarea>
 
         <DialogFooter class="flex flex-col space-y-4 md:space-y-0 md:flex-row md:space-x-4">
-          <Button type="submit">Envoyer</Button>
-          <Button type="button" @click="closeDialog">Fermer</Button>
+          <Button type="button" variant="outline" @click="closeDialog">Annuler</Button>
+          <Button type="submit" :disabled="!selectedUser || !newMessage.trim()">Envoyer</Button>
         </DialogFooter>
       </form>
-    </DialogScrollContent>
+    </DialogContent>
   </Dialog>
 </template>
-
-<style scoped>
-.dialog-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.dialog {
-  background: white;
-  padding: 2rem;
-  border-radius: 10px;
-  width: 300px;
-  text-align: center;
-}
-
-.dialog input,
-.dialog textarea {
-  width: 100%;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.dialog button {
-  margin: 0.5rem;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.dialog button {
-  background-color: #3b82f6; /* Shadcn blue */
-  color: white;
-}
-</style>

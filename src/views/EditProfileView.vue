@@ -17,9 +17,12 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input'
 import type { GetUserResponse } from '@/types/User'
 import ProfileImageInput from '@/components/ui/ProfileImageInput.vue'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const userStore = UserStore()
 const { toast } = useToast()
+const isLoadingInitialData = ref(true)
+const isLoading = ref(false)
 
 const { handleSubmit, resetForm, setFieldValue } = useForm({
   validationSchema: toTypedSchema(updateProfileSchema),
@@ -30,10 +33,9 @@ const { handleSubmit, resetForm, setFieldValue } = useForm({
   }
 })
 
-const isLoading = ref(false)
-
 onMounted(async () => {
   try {
+    isLoadingInitialData.value = true
     const userData = await httpBackend<GetUserResponse>('/api/user/getUser', 'GET')
 
     resetForm({
@@ -50,6 +52,8 @@ onMounted(async () => {
       description: (error as Error).message,
       variant: 'destructive'
     })
+  } finally {
+    isLoadingInitialData.value = false
   }
 })
 
@@ -71,28 +75,21 @@ const handleProfilePictureError = (error: Error) => {
 const onSubmit = handleSubmit(async (values: UpdateProfilePost) => {
   try {
     isLoading.value = true
-
-    console.log('values', values)
     const formData = new FormData()
 
     if (values.email) formData.append('email', values.email)
     if (values.username) formData.append('username', values.username)
     if (profilePictureFile.value) formData.append('picture', profilePictureFile.value)
 
-    // Pour voir le contenu réel du FormData
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1])
-    }
     const response = await httpBackendWithData<RegisterResponse>('/api/user/update', formData)
 
-    console.log('response', response)
     if (values.username) {
-      sessionStorage.setItem('username', values.username)
+      localStorage.setItem('username', values.username)
       userStore.setUsername(values.username)
     }
 
     if (response.picture) {
-      sessionStorage.setItem('picture', response.picture.toString())
+      localStorage.setItem('picture', response.picture.toString())
       userStore.setProfilePicture(response.picture)
     }
 
@@ -115,11 +112,19 @@ const onSubmit = handleSubmit(async (values: UpdateProfilePost) => {
 <template>
   <main class="max-md:w-full max-md:p-2 pt-10 w-2/5 flex-grow flex items-center justify-center">
     <div class="h-full w-full flex flex-col justify-center items-center z-10">
-      <form @submit="onSubmit" class="w-full">
-        <Card>
-          <CardHeader>
-            <CardTitle>Modifier mon profil</CardTitle>
-          </CardHeader>
+      <Card class="w-full">
+        <CardHeader>
+          <CardTitle>Modifier mon profil</CardTitle>
+        </CardHeader>
+
+        <CardContent v-if="isLoadingInitialData" class="space-y-4">
+          <div v-for="i in 3" :key="i" class="space-y-2">
+            <Skeleton class="h-4 w-24" />
+            <Skeleton class="h-10 w-full" />
+          </div>
+        </CardContent>
+
+        <form v-else @submit="onSubmit" class="w-full">
           <CardContent class="flex flex-col gap-y-4">
             <FormField v-slot="{ componentField }" name="email">
               <FormItem>
@@ -167,8 +172,8 @@ const onSubmit = handleSubmit(async (values: UpdateProfilePost) => {
               {{ isLoading ? 'Enregistrement...' : 'Enregistrer' }}
             </Button>
           </CardFooter>
-        </Card>
-      </form>
+        </form>
+      </Card>
     </div>
   </main>
 </template>

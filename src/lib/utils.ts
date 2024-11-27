@@ -31,7 +31,7 @@ export async function httpBackend<T>(
   body?: any,
   auth: boolean = true
 ): Promise<T> {
-  const token = sessionStorage.getItem('token')
+  const token = localStorage.getItem('token')
 
   const headers: { [name: string]: string } = {
     'Content-Type': 'application/json'
@@ -69,7 +69,7 @@ export async function httpBackendWithData<T>(path: string, formData: FormData): 
     Accept: 'application/json'
   }
 
-  const token = sessionStorage.getItem('token')
+  const token = localStorage.getItem('token')
 
   if (token) {
     headers['Authorization'] = `Bearer ${token}`

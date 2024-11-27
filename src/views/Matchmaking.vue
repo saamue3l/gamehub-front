@@ -36,17 +36,17 @@ function handleSelectLevel(level: any) {
   levelError.value = false
 }
 
-function saveGamesFilterToSessionStorage() {
-  sessionStorage.setItem('selectedGames', JSON.stringify(selectedGames.value))
+function saveGamesFilterToLocalStorage() {
+  localStorage.setItem('selectedGames', JSON.stringify(selectedGames.value))
 }
 
-function saveMatchResultsToSessionStorage() {
-  sessionStorage.setItem('matchResults', JSON.stringify(matchResults.value))
+function saveMatchResultsToLocalStorage() {
+  localStorage.setItem('matchResults', JSON.stringify(matchResults.value))
 }
 
-function loadSavedGamesFromSessionStorage() {
-  const savedGames = sessionStorage.getItem('selectedGames')
-  const savedResults = sessionStorage.getItem('matchResults')
+function loadSavedGamesFromLocalStorage() {
+  const savedGames = localStorage.getItem('selectedGames')
+  const savedResults = localStorage.getItem('matchResults')
   if (savedGames) {
     selectedGames.value = JSON.parse(savedGames)
     matchResults.value = JSON.parse(savedResults)
@@ -79,7 +79,7 @@ function addGame() {
     }
     selectedGames.value.push(gameToAdd)
     sendGamesToApi()
-    saveGamesFilterToSessionStorage()
+    saveGamesFilterToLocalStorage()
   }
 }
 
@@ -92,7 +92,7 @@ function isGameAlreadyAdded(game: any, level: any) {
 function removeGame(index: number) {
   selectedGames.value.splice(index, 1)
   sendGamesToApi()
-  saveGamesFilterToSessionStorage()
+  saveGamesFilterToLocalStorage()
 }
 
 function closeDialog() {
@@ -125,7 +125,7 @@ async function sendGamesToApi() {
       errorMessage.value = "Une erreur s'est produite lors de l'envoi des jeux."
     } else {
       matchResults.value = response.matchResult
-      saveMatchResultsToSessionStorage()
+      saveMatchResultsToLocalStorage()
     }
   } catch (error) {
     errorMessage.value = "Nous n'avons pas réussi à envoyer les jeux. Veuillez réessayer plus tard."
@@ -140,7 +140,7 @@ watch(isDialogOpen, (newVal) => {
   }
 })
 
-onMounted(loadSavedGamesFromSessionStorage)
+onMounted(loadSavedGamesFromLocalStorage)
 </script>
 
 <template>

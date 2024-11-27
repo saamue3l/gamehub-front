@@ -6,7 +6,7 @@ export const useProfileStore = defineStore('profile', () => {
   const route = useRoute()
 
   const isOwnProfile = computed(() => {
-    const loggedInUsername = sessionStorage.getItem('username')
+    const loggedInUsername = localStorage.getItem('username')
     return route.params.username === loggedInUsername
   })
 

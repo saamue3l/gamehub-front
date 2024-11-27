@@ -11,7 +11,7 @@ import { type CreatePostResponse, type Post, postCreateSchema, type Topic } from
 import { UserStore } from '@/store/userStore'
 import type { User } from '@/types/User'
 import { useActionHandler } from '@/services/actionHandler'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 const props = defineProps<{
   topic: Topic
@@ -26,8 +26,11 @@ const user = { username: userStore.username } as User
 const isLoading = ref(false)
 const validationSchema = toTypedSchema(postCreateSchema)
 
-const { handleSubmit } = useForm({
-  validationSchema
+const { handleSubmit, resetForm, values } = useForm({
+  validationSchema,
+  initialValues: {
+    content: ''
+  }
 })
 
 const { toast } = useToast()
@@ -55,6 +58,9 @@ const onSubmit = handleSubmit(async (values) => {
       user: user,
       reactions: []
     }
+
+    resetForm()
+
     console.log('Emitting created-post event with new post : ', newPost)
     emit('created-post', newPost)
   } catch (error) {
@@ -70,6 +76,10 @@ const onSubmit = handleSubmit(async (values) => {
   } finally {
     isLoading.value = false
   }
+})
+
+const isSubmitDisabled = computed(() => {
+  return isLoading.value || !values.content?.trim()
 })
 </script>
 
@@ -91,7 +101,7 @@ const onSubmit = handleSubmit(async (values) => {
         </FormItem>
       </FormField>
 
-      <Button type="submit" size="form" :disabled="isLoading">
+      <Button type="submit" size="form" :disabled="isSubmitDisabled">
         {{ isLoading ? 'Chargement...' : 'Poster' }}
       </Button>
     </form>

@@ -33,6 +33,18 @@ const fetchUserInfo = async () => {
 
 const xpAnimation = ref()
 
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+const sendMessage = (userId) => {
+  router.push({
+    name: 'Mes messages',
+    query: {
+      newMessage: true,
+      userId: userId
+    }
+  })
+}
 watch(
   () => userStore.xp,
   (newXp, oldXp) => {
@@ -103,7 +115,7 @@ watchEffect(() => {
     </div>
     <Button
       v-if="!profileStore.isOwnProfile"
-      @click="profileStore.editProfile"
+      @click="sendMessage(userInfo.id)"
       variant="secondary"
       class="gap-x-2"
       size="xs"

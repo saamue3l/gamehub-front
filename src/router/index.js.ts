@@ -21,7 +21,21 @@ type Route = RouteRecordRaw & {
 
 const routes: Route[] = [
   /* === HEADER NAV === */
-  { path: '/', name: 'Accueil', component: Home, inNav: true },
+  {
+    path: '/',
+    name: 'Accueil',
+    component: Home,
+    inNav: true,
+    beforeEnter: (to, from, next) => {
+      const userStore = UserStore()
+      const username = userStore.username
+      if (username) {
+        next({ name: 'Profil', params: { username } })
+      } else {
+        next()
+      }
+    }
+  },
   {
     path: '/events',
     name: 'Évènements',

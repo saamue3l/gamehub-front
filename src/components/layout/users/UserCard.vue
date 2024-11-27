@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import type { PropType } from 'vue';
+import type { PropType } from 'vue'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 const props = defineProps({
   user: {
-    type: Object as PropType<{ id: number, username: string, picture: string }>,
-    required: true,
+    type: Object as PropType<{ id: number; username: string; picture: string }>,
+    required: true
   },
   isSelected: {
     type: Boolean,
-    default: false,
-  },
-});
+    default: false
+  }
+})
 </script>
 
 <template>
@@ -18,7 +19,12 @@ const props = defineProps({
     class="user-card border border-gray-300 rounded-lg p-4 m-1 text-center cursor-pointer"
     :class="{ 'bg-blue-100': isSelected }"
   >
-    <img :src="user.picture" alt="User Picture" class="profile-image mx-auto mb-2 rounded-full w-12 h-12" />
+    <Avatar class="size-12">
+      <AvatarImage v-if="user.picture" :src="user.picture" :alt="user.username" />
+      <AvatarFallback v-else>
+        {{ user.username?.charAt(0).toUpperCase() ?? 'U' }}
+      </AvatarFallback>
+    </Avatar>
     <p class="username truncate font-bold text-sm mb-2">{{ user.username }}</p>
   </div>
 </template>

@@ -61,9 +61,6 @@ const goToProfile = () => {
   router.push({ name: 'Profil', params: { username: userStore.username } })
 }
 
-console.log(userStore.username)
-
-console.log(userStore.profilePicture)
 const logout = () => {
   try {
     postLogout()
