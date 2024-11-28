@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue'
-import List from '@/components/ui/list/ListItem.vue'
+import ListItem from '@/components/ui/list/ListItem.vue'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { ScrollArea } from '@/components/ui/scroll-area'
 
 const props = defineProps({
   conversations: Array, // Liste des conversations à afficher
@@ -26,7 +25,7 @@ function selectConversation(selectedConversation) {
     </div>
 
     <!-- Liste des conversations -->
-    <List
+    <ListItem
       v-else
       :items="conversations"
       :selectedItem="selectedConversation"
@@ -42,8 +41,14 @@ function selectConversation(selectedConversation) {
           </Avatar>
 
           <div>{{ item.username }}</div>
+
+
+          <div v-if="item.unreadMessages > 0" class="ml-auto bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
+            {{ item.unreadMessages }}
+          </div>
+
         </div>
       </template>
-    </List>
+    </ListItem>
   </div>
 </template>

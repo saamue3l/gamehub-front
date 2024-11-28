@@ -1,149 +1,157 @@
 <script setup lang="ts">
-import { onMounted, ref, nextTick } from 'vue'
-import BasePage from '@/components/layout/BasePage.vue'
-import MessagesList from '@/components/ui/message/MessagesList.vue'
-import SendMessageInput from '@/components/messages/SendMessageInput.vue'
-import { httpBackend } from '@/lib/utils'
-import NewMessageDialog from '@/components/ui/dialog/NewMessageDialog.vue'
-import ConversationsList from '@/components/messages/ConversationsList.vue'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { useRoute } from 'vue-router'
+import { onMounted, ref, nextTick, onUnmounted } from 'vue'
+import BasePage from '@/components/layout/BasePage.vue';
+import MessagesList from '@/components/ui/message/MessagesList.vue';
+import SendMessageInput from '@/components/messages/SendMessageInput.vue';
+import { httpBackend } from '@/lib/utils';
+import NewMessageDialog from '@/components/ui/dialog/NewMessageDialog.vue';
+import ConversationsList from '@/components/messages/ConversationsList.vue';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useRoute } from 'vue-router';
 
-const conversations = ref([])
-const selectedConversation = ref(null)
-const messages = ref([])
-const currentUserId = ref(null)
-const messagesListRef = ref(null)
+const conversations = ref([]);
+const selectedConversation = ref(null);
+const messages = ref([]);
+const currentUserId = ref(null);
+const messagesListRef = ref(null);
 
 // Etats pour gérer les chargements
-const isLoadingConversations = ref(true)
-const isLoadingMessages = ref(false)
+const isLoadingConversations = ref(true);
+const isLoadingMessages = ref(false);
 
 async function fetchCurrentUser() {
   try {
-    currentUserId.value = await httpBackend('/api/currentUser', 'GET')
+    currentUserId.value = await httpBackend('/api/currentUser', 'GET');
+    subscribeToUserChannel();
   } catch (error) {
-    console.error('Erreur lors du chargement de l’utilisateur:', error)
+    console.error('Erreur lors du chargement de l��utilisateur:', error);
   }
 }
 
-onMounted(fetchCurrentUser)
-onMounted(loadConversations)
+onMounted(() => {
+  fetchCurrentUser();
+  loadConversations();
+});
+
+onUnmounted(() => {
+  unsubscribeFromUserChannel();
+});
 
 async function loadConversations(isFirstLoad = true) {
-  if (isFirstLoad) isLoadingConversations.value = true // Début du chargement
+  if (isFirstLoad) isLoadingConversations.value = true;
   try {
-    console.log('loadConversations called')
+    conversations.value = await httpBackend('/api/conversations/getConversations', 'GET');
 
-    // Récupérer la liste des conversations de l'utilisateur
-    conversations.value = await httpBackend('/api/conversations/getConversations', 'GET')
-
-    console.log('Conversations : ', conversations.value)
-
-    if (Array.isArray(conversations.value) && conversations.value.length > 0) {
-      selectConversation(conversations.value[0]) // Sélectionner la première conversation
-    } else {
-      console.warn('Aucune conversation disponible.')
+    //Sélectionne la première conversation à l'arrivée sur la page
+    if (Array.isArray(conversations.value) && conversations.value.length > 0 && isFirstLoad) {
+      selectConversation(conversations.value[0]);
     }
   } catch (error) {
-    console.error('Erreur lors du chargement des conversations:', error)
+    console.error('Erreur lors du chargement des conversations:', error);
   } finally {
-    isLoadingConversations.value = false // Fin du chargement
+    isLoadingConversations.value = false;
   }
 }
 
 async function loadMessagesWithConversation(conversationId, isFirstLoad = true) {
-  if (isFirstLoad) isLoadingMessages.value = true // Début du chargement
-  console.log('isFirstLoad : ', isFirstLoad)
+  if (isFirstLoad) isLoadingMessages.value = true;
   try {
-    // Charger les messages de la conversation
-    messages.value = await httpBackend(`/api/conversations/${conversationId}/getMessages`, 'GET')
+    messages.value = await httpBackend(`/api/conversations/${conversationId}/getMessages`, 'GET');
   } catch (error) {
-    console.error('Erreur lors du chargement des messages:', error)
+    console.error('Erreur lors du chargement des messages:', error);
   } finally {
-    isLoadingMessages.value = false // Fin du chargement
-    await nextTick()
+    isLoadingMessages.value = false;
+    await nextTick();
     if (messagesListRef.value?.messagesContainerRef) {
-      const messagesContainer = messagesListRef.value.messagesContainerRef
-      messagesContainer.scrollTop = messagesContainer.scrollHeight
+      const messagesContainer = messagesListRef.value.messagesContainerRef;
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
   }
 }
 
-async function sendMessageToConversation(
-  conversationId: number,
-  senderId: number,
-  content: string
-) {
+async function sendMessageToConversation(conversationId, senderId, content) {
   try {
-    console.log(
-      'sendMessageToConversation called with parameters : ',
-      conversationId,
-      senderId,
-      content
-    )
     await httpBackend(`/api/conversations/${conversationId}/sendMessage`, 'POST', {
       senderId,
-      content
-    })
-    console.log('Message envoyé avec succès !')
+      content,
+    });
   } catch (error) {
-    console.error('Erreur lors de l’envoi du message:', error)
+    console.error('Erreur lors de l’envoi du message:', error);
   }
 }
 
-async function handleSendMessage(message: string) {
+async function handleSendMessage(message) {
   if (selectedConversation.value) {
-    try {
-      await sendMessageToConversation(
-        selectedConversation.value.conversationId,
-        currentUserId.value,
-        message
-      )
-      await loadMessagesWithConversation(selectedConversation.value.conversationId, false)
-
-      // Scroll vers le bas après l'envoi
-      if (messagesListRef.value) {
-        messagesListRef.value.scrollToBottom()
-      }
-    } catch (error) {
-      console.error("Erreur lors de la gestion de l'envoi du message:", error)
+    await sendMessageToConversation(selectedConversation.value.conversationId, currentUserId.value, message);
+    await loadMessagesWithConversation(selectedConversation.value.conversationId, false);
+    if (messagesListRef.value) {
+      messagesListRef.value.scrollToBottom();
     }
   }
 }
 
 function selectConversation(conversation) {
-  console.log('selectConversation called with parameter : ', conversation)
+  console.log('Cleaning conversation selected:', conversation);
+  conversation.unreadMessages = 0;
   if (conversation !== selectedConversation.value) {
-    messages.value = []
-    selectedConversation.value = conversation
-    console.log('selectedConversation : ', selectedConversation.value)
-    loadMessagesWithConversation(selectedConversation.value.conversationId)
+    messages.value = [];
+    selectedConversation.value = conversation;
+    loadMessagesWithConversation(conversation.conversationId);
   }
 }
 
 function newConversationCreated(conversation) {
-  console.log('newConversationCreated called with parameter : ', conversation)
-  loadConversations(false) // Recharger la liste des conversations après la création d'une nouvelle
-  selectConversation(conversation) // Sélectionner la nouvelle conversation
+  loadConversations(false);
+  selectConversation(conversation);
 }
 
-// Messages.vue
-const route = useRoute()
-
-onMounted(async () => {
-  if (route.query.newMessage && route.query.userId) {
-    const preselectedUserId = parseInt(route.query.userId as string)
+function subscribeToUserChannel() {
+  const pusher = (window as any).pusher;
+  console.log('Pusher instance:', pusher);
+  if (pusher) {
+    pusher.unsubscribe('user.' + currentUserId.value);
+    const channel = pusher.subscribe('user.' + currentUserId.value);
+    channel.bind('App\\Events\\MessageSent', (data) => {
+      handleNewMessageEvent(data);
+    });
+  } else {
+    console.error('Pusher instance not found');
   }
-})
+}
+
+function unsubscribeFromUserChannel() {
+  const pusher = (window as any).pusher;
+  if (pusher) {
+    pusher.unsubscribe('user.' + currentUserId.value);
+    console.log('Unsubscribed from channel: user.' + currentUserId.value);
+  }
+}
+
+function handleNewMessageEvent(data) {
+  //Mettre la conversation concernée par la notification en haut de la liste des conversations. Si elle n'existe pas, l'ajouter en récupérant le , la mettre en haut de la liste et appeler loadMessagesWithConversation(notificationConversationId)
+
+
+  // Si conversation déjà sélectionné, actualisation des messages
+  if (selectedConversation.value?.conversationId === data.conversationId) {
+    console.log("No need to increment...");
+    loadMessagesWithConversation(data.conversationId, false);
+  } else {
+    loadConversations(false);
+    console.log('Conversation selected id : ', selectedConversation.value?.conversationId, "Notification conversation id : ", data.conversationId);
+    //Incrémenter de 1 le nombre de messages non lus (unreadMessages) de la conversation concernée par la notificationConversationId dans la liste des conversations
+    const conversationToUpdate = conversations.value.find((c) => c.conversationId === data.conversationId);
+    conversationToUpdate.unreadMessages++;
+  }
+
+}
+
+const route = useRoute();
 </script>
 
 <template>
   <BasePage title="Mes messages" class="max-md:w-full max-md:p-2">
     <div class="flex flex-col md:flex-row w-full gap-2">
-      <!-- Liste des conversations -->
       <div class="border rounded-lg w-full md:w-1/3">
-        <!-- Bouton de création d'une nouvelle conversation -->
         <div class="p-2 border-b">
           <NewMessageDialog
             :currentUserId="currentUserId"
@@ -152,7 +160,6 @@ onMounted(async () => {
             @message-sent="newConversationCreated"
           />
         </div>
-
         <ScrollArea class="h-96">
           <ConversationsList
             :conversations="conversations"
@@ -162,8 +169,6 @@ onMounted(async () => {
           />
         </ScrollArea>
       </div>
-
-      <!-- Liste des messages -->
       <div class="md:flex flex-col w-full md:w-2/3">
         <div class="flex flex-col flex-grow">
           <MessagesList
@@ -184,5 +189,3 @@ onMounted(async () => {
     </div>
   </BasePage>
 </template>
-
-<style scoped></style>
