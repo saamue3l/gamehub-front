@@ -25,6 +25,8 @@ async function fetchForum() {
     errorMessage.value = null
 
     const response = await httpBackend<Forum>(`/api/forums/getForum/${forumId}`, 'GET')
+
+    console.log('response', response)
     fetchedForum.value = response
 
     // Add firstPostIndex field to each topic

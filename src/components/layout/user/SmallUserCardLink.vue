@@ -13,7 +13,8 @@ defineProps<{
     class="text-primary flex justify-around items-center gap-1.5 w-min hover:bg-secondary rounded-full pr-3 transition"
   >
     <UserAvatar :user="user" />
-    {{ user.username }}
+
+    <div class="truncate">{{ user.username }}</div>
   </router-link>
 </template>
 

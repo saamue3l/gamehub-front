@@ -153,6 +153,7 @@ async function removePost() {
     </CardContent>
     <CardFooter v-if="props.showReactions" class="w-full flex flex-row justify-between flex-wrap">
       <div id="reactionsContainer" class="flex justify-start gap-1.5 flex-wrap">
+        <!-- Afficher les réactions existantes -->
         <PostReaction
           v-for="reaction in allReactions.filter((r) => r.users.length > 0)"
           :key="reaction.emoji"
@@ -160,12 +161,16 @@ async function removePost() {
           @update:reaction="(value) => changeReactionState(value)"
         />
 
+        <!-- Masquer le bouton d'ajout de réaction si c'est notre post -->
         <AddPostReaction
-          v-if="allReactions.filter((r) => r.users.length == 0).length > 0"
+          v-if="
+            post.user.username !== userStore.username &&
+            allReactions.filter((r) => r.users.length == 0).length > 0
+          "
           :reactions="allReactions.filter((r) => r.users.length == 0)"
           @update:reaction="
             (value) => {
-              props.post.reactions.push(value) // Add it to the post reactions
+              props.post.reactions.push(value)
               changeReactionState(value)
             }
           "

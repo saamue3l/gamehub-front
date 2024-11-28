@@ -17,7 +17,9 @@
             <AvatarFallback>{{ userStore.username.substring(0, 2).toUpperCase() }}</AvatarFallback>
           </Avatar>
 
-          <span class="ml-1 mr-1 text-sm font-medium">{{ userStore.username }}</span>
+          <span class="ml-1 mr-1 text-sm font-medium truncate max-w-20">{{
+            userStore.username
+          }}</span>
           <!-- Utilisation de username -->
         </div>
       </div>
