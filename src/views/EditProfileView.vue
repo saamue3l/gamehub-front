@@ -110,7 +110,9 @@ const onSubmit = handleSubmit(async (values: UpdateProfilePost) => {
 </script>
 
 <template>
-  <main class="max-md:w-full max-md:p-2 pt-10 w-2/5 flex-grow flex items-center justify-center">
+  <main
+    class="max-md:w-full max-md:p-2 max-md:mt-20 pt-10 w-2/5 flex-grow flex items-center justify-center"
+  >
     <div class="h-full w-full flex flex-col justify-center items-center z-10">
       <Card class="w-full">
         <CardHeader>

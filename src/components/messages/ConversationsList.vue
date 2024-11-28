@@ -3,7 +3,6 @@ import { defineProps, defineEmits } from 'vue'
 import List from '@/components/ui/list/ListItem.vue'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { ScrollArea } from '@/components/ui/scroll-area'
 
 const props = defineProps({
   conversations: Array, // Liste des conversations à afficher
@@ -22,7 +21,7 @@ function selectConversation(selectedConversation) {
 <template>
   <div class="p-2">
     <div v-if="isLoading">
-      <Skeleton class="w-full h-10 mb-2 rounded-full" v-for="i in 5" :key="i" />
+      <Skeleton class="w-full h-12 mb-2 rounded-full" v-for="i in 5" :key="i" />
     </div>
 
     <!-- Liste des conversations -->
@@ -41,7 +40,7 @@ function selectConversation(selectedConversation) {
             </AvatarFallback>
           </Avatar>
 
-          <div>{{ item.username }}</div>
+          <div class="truncate">{{ item.username }}</div>
         </div>
       </template>
     </List>

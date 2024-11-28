@@ -16,19 +16,18 @@
       </div>
 
       <!-- if mobile, display a burger -->
-      <div class="md:hidden">
-        <button @click="toggleMenu" class="focus:outline-none">
-          <BurgerMenu />
-        </button>
+      <div v-if="isLoggedIn" class="md:hidden">
+        <Sheet v-model:open="isSheetOpen">
+          <SheetTrigger><BurgerMenu /></SheetTrigger>
+          <SheetContent>
+            <SheetHeader>
+              <SheetDescription>
+                <MobileMenu @close-sheet="isSheetOpen = false" />
+              </SheetDescription>
+            </SheetHeader>
+          </SheetContent>
+        </Sheet>
       </div>
-    </div>
-
-    <!-- if the menu is open (burger button cliqued) on affiche le composant -->
-    <div
-      v-if="isMenuOpen"
-      class="absolute right-0 top-16 w-48 bg-background text-white rounded-lg shadow-lg p-4 md:hidden z-50"
-    >
-      <MobileMenu />
     </div>
   </header>
 </template>
@@ -41,6 +40,13 @@ import AlertMenu from '@/components/layout/header/AlertMenu.vue'
 import BurgerMenu from '@/components/layout/header/BurgerMenu.vue'
 import MobileMenu from '@/components/layout/header/MobileMenu.vue'
 import { UserStore } from '@/store/userStore'
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTrigger
+} from '@/components/ui/sheet'
 
 const userStore = UserStore()
 const isMenuOpen = ref(false)
@@ -48,6 +54,7 @@ const isMenuOpen = ref(false)
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
 }
+const isSheetOpen = ref(false)
 
 const isLoggedIn = computed(() => !!userStore.username)
 </script>

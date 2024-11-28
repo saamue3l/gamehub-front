@@ -1,7 +1,6 @@
-<!-- MessageBox.vue -->
 <script setup lang="ts">
 import { defineProps, computed } from 'vue'
-import { format } from 'date-fns'
+import { format, isToday, isYesterday } from 'date-fns'
 import { fr } from 'date-fns/locale'
 
 const props = defineProps({
@@ -22,7 +21,17 @@ const props = defineProps({
 const isSentByMe = computed(() => props.message.senderId === props.currentUserId)
 
 const formattedDate = computed(() => {
-  return format(new Date(props.message.created_at), 'HH:mm', { locale: fr })
+  const messageDate = new Date(props.message.created_at)
+
+  if (isToday(messageDate)) {
+    return `Aujourd'hui, ${format(messageDate, 'HH:mm')}`
+  }
+
+  if (isYesterday(messageDate)) {
+    return `Hier, ${format(messageDate, 'HH:mm')}`
+  }
+
+  return format(messageDate, 'dd-MM-yy HH:mm')
 })
 </script>
 

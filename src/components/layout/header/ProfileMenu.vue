@@ -22,14 +22,14 @@
         </div>
       </div>
     </DropdownMenuTrigger>
-    <DropdownMenuContent class="w-48">
+    <DropdownMenuContent class="w-36">
       <DropdownMenuItem @click="goToProfile">
         <User class="mr-2 h-4 w-4" />
         <span>Mon profil</span>
       </DropdownMenuItem>
       <DropdownMenuItem @click="editProfile">
         <Settings class="mr-2 h-4 w-4" />
-        <span>Modifier mon profil</span>
+        <span>Paramètres</span>
       </DropdownMenuItem>
       <DropdownMenuItem @click="logout">
         <LogOut class="mr-2 h-4 w-4" />

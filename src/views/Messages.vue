@@ -8,7 +8,12 @@ import NewMessageDialog from '@/components/ui/dialog/NewMessageDialog.vue'
 import ConversationsList from '@/components/messages/ConversationsList.vue'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useRoute } from 'vue-router'
+import { ChevronLeft } from 'lucide-vue-next'
+import { useMediaQuery } from '@vueuse/core'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
+const isMobile = useMediaQuery('(max-width: 768px)')
+const showMessages = ref(false)
 const conversations = ref([])
 const selectedConversation = ref(null)
 const messages = ref([])
@@ -113,11 +118,12 @@ async function handleSendMessage(message: string) {
 }
 
 function selectConversation(conversation) {
-  console.log('selectConversation called with parameter : ', conversation)
   if (conversation !== selectedConversation.value) {
     messages.value = []
     selectedConversation.value = conversation
-    console.log('selectedConversation : ', selectedConversation.value)
+    if (isMobile.value) {
+      showMessages.value = true
+    }
     loadMessagesWithConversation(selectedConversation.value.conversationId)
   }
 }
@@ -126,6 +132,10 @@ function newConversationCreated(conversation) {
   console.log('newConversationCreated called with parameter : ', conversation)
   loadConversations(false) // Recharger la liste des conversations après la création d'une nouvelle
   selectConversation(conversation) // Sélectionner la nouvelle conversation
+}
+
+function goBackToConversations() {
+  showMessages.value = false
 }
 
 // Messages.vue
@@ -140,10 +150,13 @@ onMounted(async () => {
 
 <template>
   <BasePage title="Mes messages" class="max-md:w-full max-md:p-2">
-    <div class="flex flex-col md:flex-row w-full gap-2">
+    <div class="flex flex-col md:flex-row w-full gap-2 h-full">
       <!-- Liste des conversations -->
-      <div class="border rounded-lg w-full md:w-1/3">
-        <!-- Bouton de création d'une nouvelle conversation -->
+      <div
+        class="border rounded-lg w-full md:w-1/3 flex flex-col"
+        :class="{ 'max-md:hidden': showMessages }"
+      >
+        <!-- Bouton de création -->
         <div class="p-2 border-b">
           <NewMessageDialog
             :currentUserId="currentUserId"
@@ -153,7 +166,8 @@ onMounted(async () => {
           />
         </div>
 
-        <ScrollArea class="h-96">
+        <!-- Liste scrollable -->
+        <ScrollArea class="flex-1">
           <ConversationsList
             :conversations="conversations"
             :selectedConversation="selectedConversation"
@@ -164,25 +178,53 @@ onMounted(async () => {
       </div>
 
       <!-- Liste des messages -->
-      <div class="md:flex flex-col w-full md:w-2/3">
-        <div class="flex flex-col flex-grow">
+      <div
+        class="md:flex flex-col w-full md:w-2/3 h-full"
+        :class="{ 'max-md:hidden': !showMessages }"
+      >
+        <!-- Header mobile pour les messages -->
+        <div v-if="isMobile && selectedConversation" class="flex items-center gap-2 p-4 md:hidden">
+          <Button variant="ghost" size="icon" @click="goBackToConversations">
+            <ChevronLeft class="h-6 w-6" />
+          </Button>
+          <Avatar class="size-8 bg-primary">
+            <AvatarImage
+              v-if="selectedConversation.picture"
+              :src="selectedConversation.picture"
+              :alt="selectedConversation.username"
+            />
+            <AvatarFallback v-else>
+              {{ selectedConversation.username?.charAt(0).toUpperCase() ?? 'U' }}
+            </AvatarFallback>
+          </Avatar>
+          <h2 class="font-medium">
+            {{ selectedConversation.username }}
+          </h2>
+        </div>
+
+        <!-- Messages et input -->
+
+        <div class="flex flex-col h-full">
           <MessagesList
             ref="messagesListRef"
             :messages="messages"
             :isLoading="isLoadingMessages"
             :selectedConversationId="selectedConversation?.id"
             :currentUserId="currentUserId"
-            class="flex-grow"
+            class="flex-1"
           />
+
+          <div class="mt-2">
+            <SendMessageInput v-if="selectedConversation" @send-message="handleSendMessage" />
+          </div>
         </div>
-        <SendMessageInput
-          @send-message="handleSendMessage"
-          v-if="selectedConversation"
-          class="mt-2"
-        />
       </div>
     </div>
   </BasePage>
 </template>
 
-<style scoped></style>
+<style scoped>
+.max-md\:hidden {
+  transition: all 0.3s ease-in-out;
+}
+</style>
