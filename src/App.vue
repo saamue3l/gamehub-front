@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import MainLayout from '@/components/layout/MainLayout.vue'
 import Toaster from '@/components/ui/toast/Toaster.vue'
-import { onMounted, onBeforeUnmount, ref, watch, provide } from 'vue'
+import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import XpGainAnimation from '@/components/XpGainAnimation.vue'
 import { useXpAnimationStore } from '@/store/xpAnimationStore'
 import LevelUpAnimation from '@/components/LevelUpAnimation.vue'
@@ -23,6 +23,7 @@ onMounted(async () => {
   xpAnimationStore.setLevelPopupRef(levelPopup.value)
 
   await fetchUserId()
+  await pusherStore.fetchUnreadConversationsCount()
 })
 
 onBeforeUnmount(() => {
@@ -52,9 +53,13 @@ const fetchUserId = async () => {
   }
 };
 
-const handleNewMessageEvent = (data) => {
-  console.log('New message event:', data)
-  // Add your notification logic here
+const handleNewMessageEvent = async (data) => {
+  console.log('Nouveau message reçu sur toutes pages:', data)
+
+  // Appel API pour mettre à jour le nombre de conversations non lues
+  await pusherStore.fetchUnreadConversationsCount();
+
+  console.log('Conversations non lues:', pusherStore.unreadConversationsCount)
 }
 
 </script>

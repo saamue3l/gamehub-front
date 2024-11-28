@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import Pusher from 'pusher-js';
+import { httpBackend } from '@/lib/utils'
 
 let pusherInstance: Pusher | null = null;
 
@@ -48,6 +49,7 @@ export const PusherStore = defineStore('pusherStore', () => {
   const registerEventHandler = (eventName: string, handler: (data: any) => void) => {
     if (!eventHandlers.value.has(eventName)) {
       eventHandlers.value.set(eventName, []);
+      fetchUnreadConversationsCount()
     }
 
     const existingHandlers = eventHandlers.value.get(eventName) || [];
@@ -68,9 +70,23 @@ export const PusherStore = defineStore('pusherStore', () => {
     });
   };
 
+  const unreadConversationsCount = ref(0)
+
+  // Méthode pour récupérer le nombre de conversations non lues
+  async function fetchUnreadConversationsCount() {
+    try {
+      unreadConversationsCount.value = await httpBackend('/api/conversations/getUnreadConversations', 'GET')
+    } catch (error) {
+      console.error('Erreur lors de la récupération des conversations non lues:', error)
+      unreadConversationsCount.value = 0
+    }
+  }
+
   return {
     pusherInstance,
     subscribeToUserChannel,
     registerEventHandler,
+    unreadConversationsCount,
+    fetchUnreadConversationsCount
   };
 });

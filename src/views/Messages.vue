@@ -60,6 +60,7 @@ async function loadMessagesWithConversation(conversationId, isFirstLoad = true) 
   } catch (error) {
     console.error('Erreur lors du chargement des messages de la convId : ', conversationId, error)
   } finally {
+    pusherStore.fetchUnreadConversationsCount();
     isLoadingMessages.value = false
     await nextTick()
     if (messagesListRef.value?.messagesContainerRef) {
