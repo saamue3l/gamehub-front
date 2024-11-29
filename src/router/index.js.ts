@@ -85,7 +85,7 @@ const routes: Route[] = [
   },
   {
     path: '/messages',
-    name: 'Mes messages',
+    name: 'messages',
     component: Messages,
     inNav: true,
     beforeEnter: requireAuth
