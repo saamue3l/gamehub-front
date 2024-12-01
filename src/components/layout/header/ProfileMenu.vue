@@ -71,7 +71,7 @@ const logout = () => {
   } catch (error) {
     toast(
       toast({
-        title: "Quelques chose n'a pas fonctionné.",
+        title: "Quelque chose n'a pas fonctionné.",
         description: error.message,
         variant: 'destructive'
       })

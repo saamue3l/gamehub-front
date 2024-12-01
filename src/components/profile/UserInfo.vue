@@ -25,7 +25,7 @@ const fetchUserInfo = async () => {
     userInfo.value = await httpBackend<UserInfo>(`/api/profile/${route.params.username}/userInfo`)
   } catch (err) {
     errorMessage.value =
-      "Erreur lors de la récupération des infos de l'utilisateur. Veuillez réessayer plus tard."
+      "Erreur lors de la récupération des informations de l'utilisateur. Veuillez réessayer plus tard."
   } finally {
     isLoading.value = false
   }

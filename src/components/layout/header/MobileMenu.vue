@@ -29,7 +29,7 @@ const logout = () => {
   } catch (error) {
     toast(
       toast({
-        title: "Quelques chose n'a pas fonctionné.",
+        title: "Quelque chose n'a pas fonctionné.",
         description: error.message,
         variant: 'destructive'
       })
@@ -81,7 +81,7 @@ const editProfile = () => {
 
       <div class="flex justify-between items-center w-full bg-secondary p-2 rounded-lg">
         <CalendarDays class="h-6 w-6 text-primary" />
-        <a href="/events" class="text-lg">Événements</a>
+        <a href="/events" class="text-lg">Évènements</a>
         <ChevronRight class="h-6 w-6 text-foreground" />
       </div>
 

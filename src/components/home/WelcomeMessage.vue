@@ -6,8 +6,8 @@
       <span class="text-blue-500">HUB</span>
     </h1>
     <p class="text-foreground text-xl pb-6 w-3/4">
-      Rejoins une comunauté de joueurs passionés. Accède a des évenements et partages tes
-      competences !
+      Rejoins une communauté de joueurs passionnés. Accède a des évènements et partage tes
+      compétences !
     </p>
   </div>
 </template>

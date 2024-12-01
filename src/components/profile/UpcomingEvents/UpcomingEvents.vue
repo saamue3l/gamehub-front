@@ -44,7 +44,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <TitleContainer title="Vos événements à venir" v-if="profileStore.isOwnProfile">
+  <TitleContainer title="Vos évènements à venir" v-if="profileStore.isOwnProfile">
     <div v-if="isLoading" class="w-full flex justify-center">
       <LoadingSpinner size="xl"></LoadingSpinner>
     </div>
@@ -58,7 +58,7 @@ onMounted(() => {
       </div>
 
       <Button class="w-full" variant="secondary" @click="goToEvents"
-        >Parcourir les événements</Button
+        >Parcourir les évènements</Button
       >
     </div>
 
@@ -84,7 +84,7 @@ onMounted(() => {
           évènement{{ userSubrscibedEvents.length - MAX_EVENTS_TO_SHOW > 1 ? 's' : '' }}
         </p>
         <Button variant="secondary" class="w-full mt-1">
-          <span>Voir tous mes événements</span>
+          <span>Voir tous mes évènements</span>
         </Button>
       </router-link>
     </div>

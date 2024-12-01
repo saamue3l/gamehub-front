@@ -30,7 +30,7 @@ const onSubmit = handleSubmit(async (values) => {
     toast({
       title: 'Succès !',
       description:
-        'Le forum a été créé avec succès. Il se peut que les utilisateurs ne le vois pas tout de suite.',
+        'Le forum a été créé avec succès. Il se peut que les utilisateurs ne le voient pas tout de suite.',
       variant: 'default'
     })
 

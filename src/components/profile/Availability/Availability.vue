@@ -14,10 +14,10 @@ const route = useRoute()
 const profileStore = useProfileStore()
 
 const periodHeaders = [
-  { key: 'morning', label: 'matin' },
-  { key: 'afternoon', label: 'aprèm' },
-  { key: 'evening', label: 'soir' },
-  { key: 'night', label: 'nuit' }
+  { key: 'morning', label: 'Matin' },
+  { key: 'afternoon', label: 'Journée' },
+  { key: 'evening', label: 'Soir' },
+  { key: 'night', label: 'Nuit' }
 ]
 
 const availabilities = ref<Availability[]>([])

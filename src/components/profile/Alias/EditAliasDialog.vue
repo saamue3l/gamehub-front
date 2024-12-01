@@ -112,7 +112,7 @@ const saveAliases = async () => {
       <DialogHeader>
         <DialogTitle>Modifier vos alias</DialogTitle>
         <DialogDescription>
-          Ajoutez ou modifiez vos pseudos pour différentes plateforme et laissez vide pour
+          Ajoutez ou modifiez vos pseudos pour différentes plateformes et laissez vide pour
           supprimer. Appuyez sur "Valider" pour enregistrer les modifications.
         </DialogDescription>
       </DialogHeader>

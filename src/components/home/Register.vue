@@ -38,8 +38,8 @@ const onSubmit = handleSubmit(async (values) => {
     await router.push({ name: 'Profil', params: { username: userStore.username } })
   } catch (error) {
     toast({
-      title: "Quelques chose n'a pas fonctionné.",
-      description: 'Une erreur est survenue, veuiller re-essayer plus tard',
+      title: "Quelque chose n'a pas fonctionné.",
+      description: 'Une erreur est survenue, veuiller réessayer plus tard',
       variant: 'destructive'
     })
   } finally {
@@ -56,7 +56,7 @@ const onSubmit = handleSubmit(async (values) => {
         <FormControl>
           <Input
             type="text"
-            placeholder="Votre addresse email"
+            placeholder="Votre adresse email"
             v-bind="componentField"
             :validate-on-blur="false"
           />

@@ -18,7 +18,7 @@ const props = defineProps<{
         <img
           :class="props.class"
           :src="getImageSize(game.coverUrl, imageSize)"
-          :alt="'Jackette du jeu ' + game.name"
+          :alt="'Jaquette du jeu ' + game.name"
         />
       </TooltipTrigger>
       <TooltipContent align="center"

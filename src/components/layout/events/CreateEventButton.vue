@@ -123,7 +123,7 @@ function handleDateChange(date: DateValue) {
             <FormControl>
               <Textarea
                 type="text"
-                placeholder="Description de l'évènement. Qu'est-ce qui s'y passera ? Quelle est l'organisation ?"
+                placeholder="Description de l'évènement. Qu'est-ce qu'il s'y passera ? Quelle est l'organisation ?"
                 v-bind="componentField"
                 :validate-on-blur="false"
               />

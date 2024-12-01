@@ -34,7 +34,7 @@ const onSubmit = handleSubmit(async (values) => {
     await router.push({ name: 'Profil', params: { username: userStore.username } })
   } catch (error) {
     toast({
-      title: "Quelques chose n'a pas fonctionné.",
+      title: "Quelque chose n'a pas fonctionné.",
       description: error.message,
       variant: 'destructive'
     })
@@ -81,7 +81,7 @@ const onSubmit = handleSubmit(async (values) => {
     </FormField>
 
     <Button type="submit" size="form" :disabled="isLoading">
-      {{ isLoading ? 'Connexion en cours...' : 'Se connecter ' }}
+      {{ isLoading ? 'Connexion en cours...' : 'Se connecter' }}
     </Button>
   </form>
 </template>
