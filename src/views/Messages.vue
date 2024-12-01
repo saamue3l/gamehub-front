@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, nextTick, onMounted } from 'vue'
+import { ref, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import BasePage from '@/components/layout/BasePage.vue'
 import MessagesList from '@/components/ui/message/MessagesList.vue'
 import SendMessageInput from '@/components/messages/SendMessageInput.vue'
@@ -36,7 +36,9 @@ onMounted(() => {
   loadConversations()
 })
 
-
+onBeforeUnmount(() => {
+  pusherStore.unregisterEventHandler('App\\Events\\MessageSent', handleNewMessageEvent);
+});
 
 async function loadConversations(isFirstLoad = true) {
   if (isFirstLoad) isLoadingConversations.value = true

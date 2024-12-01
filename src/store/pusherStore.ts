@@ -70,6 +70,25 @@ export const PusherStore = defineStore('pusherStore', () => {
     });
   };
 
+  const unregisterEventHandler = (eventName: string, handler: (data: any) => void) => {
+    const existingHandlers = eventHandlers.value.get(eventName);
+    if (existingHandlers) {
+      const handlerIndex = existingHandlers.indexOf(handler);
+      if (handlerIndex !== -1) {
+        existingHandlers.splice(handlerIndex, 1);
+        eventHandlers.value.set(eventName, existingHandlers);
+      }
+
+      subscribedChannels.value.forEach(channelName => {
+        const channel = pusherInstance?.channel(channelName);
+        if (channel) {
+          channel.unbind(eventName, handler);
+          console.log(`Event ${eventName} unbound from channel: ${channelName}`);
+        }
+      });
+    }
+  };
+
   const unreadConversationsCount = ref(0)
 
   // Méthode pour récupérer le nombre de conversations non lues
@@ -86,6 +105,7 @@ export const PusherStore = defineStore('pusherStore', () => {
     pusherInstance,
     subscribeToUserChannel,
     registerEventHandler,
+    unregisterEventHandler,
     unreadConversationsCount,
     fetchUnreadConversationsCount
   };
