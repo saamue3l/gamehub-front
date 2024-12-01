@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { highlightSearch, httpBackend } from '@/lib/utils'
+import { highlightSearch } from '@/lib/utils'
+import { httpBackend } from '@/lib/utils'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import SmallUserCardLink from '@/components/layout/user/SmallUserCardLink.vue'

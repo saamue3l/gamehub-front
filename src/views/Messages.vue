@@ -9,7 +9,12 @@ import ConversationsList from '@/components/messages/ConversationsList.vue'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useRoute } from 'vue-router'
 import { PusherStore } from '@/store/pusherStore'
+import { ChevronLeft } from 'lucide-vue-next'
+import { useMediaQuery } from '@vueuse/core'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
+const isMobile = useMediaQuery('(max-width: 768px)')
+const showMessages = ref(false)
 const conversations = ref([])
 const selectedConversation = ref(null)
 const messages = ref([])
@@ -99,7 +104,10 @@ function selectConversation(conversation) {
   if (conversation !== selectedConversation.value) {
     messages.value = []
     selectedConversation.value = conversation
-    loadMessagesWithConversation(conversation.conversationId)
+    if (isMobile.value) {
+      showMessages.value = true
+    }
+    loadMessagesWithConversation(selectedConversation.value.conversationId)
   }
 }
 
@@ -119,17 +127,35 @@ function handleNewMessageEvent(data) {
     }
     loadConversations(false)
   }
-  console.log("Message reçu... Voici l'id de la conversation sélectionneé : ", selectedConversation.value?.conversationId);
 }
 
+function goBackToConversations() {
+  showMessages.value = false
+}
 
+// Messages.vue
 const route = useRoute()
+
+onMounted(async () => {
+  if (route.query.newMessage && route.query.userId) {
+    const preselectedUserId = parseInt(route.query.userId as string)
+  }
+  console.log("Message reçu... Voici l'id de la conversation sélectionneé : ", selectedConversation.value?.conversationId);
+})
+
+
+
 </script>
 
 <template>
   <BasePage title="Mes messages" class="max-md:w-full max-md:p-2">
-    <div class="flex flex-col md:flex-row w-full gap-2">
-      <div class="border rounded-lg w-full md:w-1/3">
+    <div class="flex flex-col md:flex-row w-full gap-2 h-full">
+      <!-- Liste des conversations -->
+      <div
+        class="border rounded-lg w-full md:w-1/3 flex flex-col"
+        :class="{ 'max-md:hidden': showMessages }"
+      >
+        <!-- Bouton de création -->
         <div class="p-2 border-b">
           <NewMessageDialog
             :currentUserId="currentUserId"
@@ -138,7 +164,9 @@ const route = useRoute()
             @message-sent="newConversationCreated"
           />
         </div>
-        <ScrollArea class="h-96">
+
+        <!-- Liste scrollable -->
+        <ScrollArea class="flex-1">
           <ConversationsList
             :conversations="conversations"
             :selectedConversation="selectedConversation"
@@ -147,23 +175,55 @@ const route = useRoute()
           />
         </ScrollArea>
       </div>
-      <div class="md:flex flex-col w-full md:w-2/3">
-        <div class="flex flex-col flex-grow">
+
+      <!-- Liste des messages -->
+      <div
+        class="md:flex flex-col w-full md:w-2/3 h-full"
+        :class="{ 'max-md:hidden': !showMessages }"
+      >
+        <!-- Header mobile pour les messages -->
+        <div v-if="isMobile && selectedConversation" class="flex items-center gap-2 p-4 md:hidden">
+          <Button variant="ghost" size="icon" @click="goBackToConversations">
+            <ChevronLeft class="h-6 w-6" />
+          </Button>
+          <Avatar class="size-8 bg-primary">
+            <AvatarImage
+              v-if="selectedConversation.picture"
+              :src="selectedConversation.picture"
+              :alt="selectedConversation.username"
+            />
+            <AvatarFallback v-else>
+              {{ selectedConversation.username?.charAt(0).toUpperCase() ?? 'U' }}
+            </AvatarFallback>
+          </Avatar>
+          <h2 class="font-medium">
+            {{ selectedConversation.username }}
+          </h2>
+        </div>
+
+        <!-- Messages et input -->
+
+        <div class="flex flex-col h-full">
           <MessagesList
             ref="messagesListRef"
             :messages="messages"
             :isLoading="isLoadingMessages"
             :selectedConversationId="selectedConversation?.id"
             :currentUserId="currentUserId"
-            class="flex-grow"
+            class="flex-1"
           />
+
+          <div class="mt-2">
+            <SendMessageInput v-if="selectedConversation" @send-message="handleSendMessage" />
+          </div>
         </div>
-        <SendMessageInput
-          @send-message="handleSendMessage"
-          v-if="selectedConversation"
-          class="mt-2"
-        />
       </div>
     </div>
   </BasePage>
 </template>
+
+<style scoped>
+.max-md\:hidden {
+  transition: all 0.3s ease-in-out;
+}
+</style>

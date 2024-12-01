@@ -21,7 +21,7 @@ function selectConversation(selectedConversation) {
 <template>
   <div class="p-2">
     <div v-if="isLoading">
-      <Skeleton class="w-full h-10 mb-2 rounded-full" v-for="i in 5" :key="i" />
+      <Skeleton class="w-full h-12 mb-2 rounded-full" v-for="i in 5" :key="i" />
     </div>
 
     <!-- Liste des conversations -->
@@ -40,13 +40,11 @@ function selectConversation(selectedConversation) {
             </AvatarFallback>
           </Avatar>
 
-          <div>{{ item.username }}</div>
-
+          <div class="truncate">{{ item.username }}</div>
 
           <div v-if="item.unreadMessages > 0" class="ml-auto bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
             {{ item.unreadMessages }}
           </div>
-
         </div>
       </template>
     </ListItem>

@@ -22,8 +22,8 @@ const isLoggedIn = computed(() => !!userStore.username)
 
           <!-- Afficher le badge de notifications uniquement pour les messages -->
           <span
-            v-if="route.name.toUpperCase() === 'MES MESSAGES' && pusherStore.unreadConversationsCount > 0"
-            class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 py-0.5"
+            v-if="route.name.toUpperCase() === 'MESSAGES' && pusherStore.unreadConversationsCount > 0"
+            class="absolute -top-2 -right-4 ml-auto bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
           >
             {{ pusherStore.unreadConversationsCount }}
           </span>

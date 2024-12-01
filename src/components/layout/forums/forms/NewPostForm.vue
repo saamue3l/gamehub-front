@@ -22,7 +22,10 @@ const emit = defineEmits<{
 }>()
 
 const userStore = UserStore()
-const user = { username: userStore.username } as User
+const user = {
+  username: userStore.username,
+  picture: userStore.profilePicture
+} as User
 const isLoading = ref(false)
 const validationSchema = toTypedSchema(postCreateSchema)
 
