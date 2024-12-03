@@ -73,4 +73,4 @@ COPY --from=build /usr/src/app/dist ./dist
 EXPOSE 80
 
 # Run the application.
-CMD npx -y http-server dist -p 80 -c-1 --log-ip --proxy http://localhost?
+CMD npx -y http-server dist -p 80 -c-1 --log-ip --proxy http://localhost:80
