@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button'
+import EditButton from '@/components/ui/button/EditButton.vue'
 import {
   Dialog,
   DialogHeader,
@@ -9,59 +9,64 @@ import {
 } from '@/components/ui/dialog'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { toTypedSchema } from '@vee-validate/zod'
-import { useForm } from 'vee-validate'
-import { useToast } from '@/components/ui/toast'
-import { eventCreateSchema } from '@/types/Event'
-import { httpBackend } from '@/lib/utils'
 import { Textarea } from '@/components/ui/textarea'
-import SearchGame from '@/components/layout/games/SearchGame.vue'
 import DatePicker from '@/components/ui/inputs/datePicker/DatePicker.vue'
-import type { DateValue } from '@internationalized/date'
-import { ref } from 'vue'
-import { useActionHandler } from '@/services/actionHandler'
+import SearchGame from '@/components/layout/games/SearchGame.vue'
+import { Button } from '@/components/ui/button'
+import { type Event, eventCreateSchema } from '@/types/Event'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/zod'
+import { CalendarDate, type DateValue } from '@internationalized/date'
+import type { Game } from '@/types/Game'
+import { UserStore } from '@/store/userStore'
+import { useToast } from '@/components/ui/toast'
+import { httpBackend } from '@/lib/utils'
 import type { XpAndSuccessResponse } from '@/types/Success'
 
-const modalIsOpened = ref<boolean>()
+const modalIsOpened = ref(false)
 const isLoading = ref(false)
+const { toast } = useToast()
 
-const emit = defineEmits<{
-  (e: 'created-event'): void
+const props = defineProps<{
+  event: Event
 }>()
 
-const validationSchema = toTypedSchema(eventCreateSchema)
+const emit = defineEmits<{
+  (e: 'modified-event', event: Event): void
+}>()
 
-const { handleSubmit, setFieldValue } = useForm({
-  validationSchema
+const { handleSubmit, resetForm, setFieldValue, values } = useForm({
+  validationSchema: toTypedSchema(eventCreateSchema),
+  initialValues: props.event
 })
 
-const { toast } = useToast()
 const onSubmit = handleSubmit(async (values) => {
+  isLoading.value = true
   try {
-    isLoading.value = true
-    const response = await httpBackend<XpAndSuccessResponse>(
-      '/api/event/createEvent',
+    const response = await httpBackend<null>(
+      `/api/event/modifyEvent/${props.event.id}`,
       'POST',
       values
     )
 
     modalIsOpened.value = false
-    emit('created-event')
 
-    const { handleActionResponse } = useActionHandler()
+    const modifiedEvent = {
+      ...props.event,
+      ...values
+    }
 
-    await handleActionResponse(response, {
-      title: 'Succès',
-      description: `L'évènement ${values.name} a été créé avec succès`
-    })
-  } catch (error) {
-    console.error('Error while creating ne event : ', error)
-    error.toString()
-    const errorMessage =
-      error.response?.data?.message || "Il y a eu un problème lors de la création de l'évènement."
     toast({
-      title: 'Oups !',
-      description: errorMessage,
+      title: 'Succès',
+      description: `L'évènement ${values.name} a été modifié avec succès`
+    })
+
+    emit('modified-event', modifiedEvent)
+  } catch (error) {
+    toast({
+      title: "Erreur lors de la modification de l'évènement",
+      description: error.message,
       variant: 'destructive'
     })
   } finally {
@@ -72,22 +77,67 @@ const onSubmit = handleSubmit(async (values) => {
 // Methods to handle custom component values
 function handleSelectGame(game) {
   if (game == null) return null
+
   setFieldValue('gameId', game.id)
 }
 
-function handleDateChange(date: DateValue) {
-  setFieldValue('eventDate', date.toDate())
+const game = ref<Game>(props.event.game)
+const selectedGame = computed<Game>({
+  get: () => game.value,
+  set: (val) => val
+})
+
+function handleDateChange(eventDate: DateValue) {
+  setFieldValue('eventDate', eventDate.toDate())
 }
+
+const eventDate = computed({
+  get: () => {
+    let date = new Date(Date.parse(values.eventDate))
+    return values.eventDate
+      ? new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate())
+      : undefined
+  },
+  set: (val) => val
+})
+
+watch(
+  () => modalIsOpened.value,
+  (isOpened: boolean) => {
+    if (isOpened) {
+      resetForm({
+        values: {
+          name: props.event.name,
+          gameId: props.event.game.id,
+          description: props.event.description,
+          maxPlayers: props.event.maxPlayers,
+          eventDate: props.event.eventDate
+        }
+      })
+    }
+  }
+)
+
+watch(
+  () => values,
+  (newValues) => {
+    console.log('Values changed : ', newValues)
+  }
+)
+
+onMounted(() => {
+  props.event.eventDate = new Date(Date.parse(props.event.eventDate)) // Setting the date as a Date object
+})
 </script>
 
 <template>
   <Dialog v-model:open="modalIsOpened">
-    <DialogTrigger as-child>
-      <Button>{{ 'Créer un évènement'.toUpperCase() }}</Button>
+    <DialogTrigger>
+      <EditButton />
     </DialogTrigger>
     <DialogScrollContent class="flex flex-col gap-3">
       <DialogHeader>
-        <DialogTitle>Créer un évènement</DialogTitle>
+        <DialogTitle>Modifier l'évènement "{{ event.name }}"</DialogTitle>
       </DialogHeader>
 
       <form class="space-y-6" @submit="onSubmit">
@@ -110,7 +160,7 @@ function handleDateChange(date: DateValue) {
           <FormItem>
             <FormLabel>Jeu de l'évènement</FormLabel>
             <FormControl>
-              <SearchGame @select-game="handleSelectGame"></SearchGame>
+              <SearchGame @select-game="handleSelectGame" v-model="game" />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -155,6 +205,7 @@ function handleDateChange(date: DateValue) {
                   type="date"
                   placeholder="Date de l'évènement"
                   @update:model-value="handleDateChange"
+                  v-model="eventDate"
                 />
               </section>
             </FormControl>
@@ -163,9 +214,11 @@ function handleDateChange(date: DateValue) {
         </FormField>
 
         <Button type="submit" size="form" :disabled="isLoading">
-          {{ isLoading ? 'Création en cours...' : "Créer l'évènement" }}
+          {{ isLoading ? 'Modification en cours...' : "Modifier l'évènement" }}
         </Button>
       </form>
     </DialogScrollContent>
   </Dialog>
 </template>
+
+<style scoped></style>

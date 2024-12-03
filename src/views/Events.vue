@@ -9,12 +9,11 @@ import type { Game } from '@/types/Game'
 import DateRangePicker from '@/components/ui/inputs/datePicker/DateRangePicker.vue'
 import CreateEventButton from '@/components/layout/events/CreateEventButton.vue'
 import type { DateRange } from 'radix-vue'
-import { ArrowUpDown } from 'lucide-vue-next'
-import ChevronDownIcon from '@/components/icons/chevronDownIcon.vue'
 import SortSwitch from '@/components/ui/sortSwitch/SortSwitch.vue'
 import { Checkbox } from '@/components/ui/checkbox'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
+const router = useRouter()
 const route = useRoute()
 
 const events = ref<Event[]>([])
@@ -70,7 +69,15 @@ async function fetchEvents() {
 
 onMounted(fetchEvents)
 watch(descSort, sortEvents)
-watch(joinedFilter, console.log)
+watch(joinedFilter, () => {
+  router.push({
+    query: {
+      ...route.query,
+      joinedFilter: joinedFilter.value.toString()
+    },
+    replace: true
+  })
+})
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import LoadingSpinner from '@/components/ui/feedback/spinner/LoadingSpinner.vue'
 import { Save } from 'lucide-vue-next'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button/index'
 
 withDefaults(
   defineProps<{

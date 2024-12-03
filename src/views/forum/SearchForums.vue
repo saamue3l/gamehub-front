@@ -7,6 +7,7 @@ import { array } from 'zod'
 import ForumTopicsTable from '@/components/layout/forums/ForumTopicsTable.vue'
 import { Button } from '@/components/ui/button'
 import ForumChildContainer from '@/components/layout/forums/ForumChildContainer.vue'
+import BackButton from '@/components/ui/button/BackButton.vue'
 
 const route = useRoute()
 const search = ref<string>(route.params.search as string)
@@ -96,9 +97,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <Button variant="secondary" class="w-min">
-    <router-link :to="route.query.ref as string" as-child>← Retour</router-link>
-  </Button>
+  <BackButton :to="route.query.ref as string" />
   <ForumChildContainer :title="`Recherche &quot;${search}&quot;`" :is-loading="isLoading">
     <ForumTopicsTable
       :topics="searchResultsTopics"

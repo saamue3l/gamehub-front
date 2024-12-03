@@ -3,7 +3,12 @@ import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
-import { DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date'
+import {
+  CalendarDate,
+  DateFormatter,
+  type DateValue,
+  getLocalTimeZone
+} from '@internationalized/date'
 import { Calendar as CalendarIcon } from 'lucide-vue-next'
 
 const df = new DateFormatter('fr-FR', {

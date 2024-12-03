@@ -17,7 +17,7 @@ export const UserStore = defineStore('userStore', () => {
   }
 
   function setXp() {
-    xp.value = parseInt(localStorage.getItem('xp'))
+    xp.value = parseInt(localStorage.getItem('xp')!) || 0
   }
 
   function setProfilePicture() {

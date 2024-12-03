@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { highlightSearch } from '@/lib/utils'
-import { httpBackend } from '@/lib/utils'
+import { highlightSearch, httpBackend } from '@/lib/utils'
 import { TableCell, TableRow } from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
 import SmallUserCardLink from '@/components/layout/user/SmallUserCardLink.vue'
 import TextLink from '@/components/ui/link/TextLink.vue'
 import PostCard from '@/components/layout/forums/PostCard.vue'
@@ -11,11 +9,10 @@ import { UserStore } from '@/store/userStore'
 import { ref } from 'vue'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/toast'
-import { Save, Pencil, Trash2 } from 'lucide-vue-next'
-import LoadingSpinner from '@/components/ui/feedback/spinner/LoadingSpinner.vue'
-import ForumSaveButton from '@/components/layout/forums/forms/buttons/ForumSaveButton.vue'
-import ForumEditButton from '@/components/layout/forums/forms/buttons/ForumEditButton.vue'
-import ForumDeleteButton from '@/components/layout/forums/forms/buttons/ForumDeleteButton.vue'
+import ForumSaveButton from '@/components/ui/button/SaveButton.vue'
+import ForumEditButton from '@/components/ui/button/EditButton.vue'
+import ForumDeleteButton from '@/components/ui/button/DeleteButton.vue'
+import ConfirmationDialog from '@/components/ui/dialog/ConfirmationDialog.vue'
 
 const { toast } = useToast()
 
@@ -126,11 +123,17 @@ async function removeTopic() {
     <TableCell v-if="search == undefined">{{ getLastPostDate(topic.posts) }}</TableCell>
     <TableCell class="flex flex-row justify-center gap-1.5">
       <ForumEditButton v-if="isAdmin || topic.creator.username == userName" @click="editTopic" />
-      <ForumDeleteButton
+      <ConfirmationDialog
         v-if="isAdmin || topic.creator.username == userName"
-        @click="removeTopic"
+        title="Suppression du sujet de discussion"
+        :on-confirm="removeTopic"
+        :message="`Êtes-vous certains de vouloir supprimer le sujet de discussion &quot;${topic.title}&quot; ?`"
+        confirm-button-text="Supprimer"
+        confirm-button-variant="destructive"
         :is-loading="removingLoading"
-      />
+      >
+        <ForumDeleteButton :is-loading="removingLoading" />
+      </ConfirmationDialog>
     </TableCell>
   </TableRow>
   <TableRow v-if="showPosts && topic.posts.length > 0" class="bg-muted">

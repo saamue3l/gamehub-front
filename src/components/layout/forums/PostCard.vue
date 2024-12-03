@@ -5,18 +5,20 @@ import SmallUserCardLink from '@/components/layout/user/SmallUserCardLink.vue'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import PostReaction from '@/components/layout/forums/PostReaction.vue'
 import AddPostReaction from '@/components/layout/forums/AddPostReaction.vue'
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { useReactionTypesStore } from '@/store/reactionTypesStore'
 import { reactionToPost } from '@/components/layout/forums/reactToPost'
 import { UserStore } from '@/store/userStore'
 import type { User } from '@/types/User'
 import { highlightSearch, httpBackend } from '@/lib/utils'
-import ForumEditButton from '@/components/layout/forums/forms/buttons/ForumEditButton.vue'
-import ForumDeleteButton from '@/components/layout/forums/forms/buttons/ForumDeleteButton.vue'
+import ForumEditButton from '@/components/ui/button/EditButton.vue'
+import ForumDeleteButton from '@/components/ui/button/DeleteButton.vue'
 import { toast } from '@/components/ui/toast'
-import { Input } from '@/components/ui/input'
-import ForumSaveButton from '@/components/layout/forums/forms/buttons/ForumSaveButton.vue'
 import { Textarea } from '@/components/ui/textarea'
+import SaveButton from '@/components/ui/button/SaveButton.vue'
+import EditButton from '@/components/ui/button/EditButton.vue'
+import DeleteButton from '@/components/ui/button/DeleteButton.vue'
+import ConfirmationDialog from '@/components/ui/dialog/ConfirmationDialog.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -149,7 +151,7 @@ async function removePost() {
     <CardContent v-else class="flex flex-row justify-start gap-3">
       <!-- Edit content -->
       <Textarea v-model="post.content" @keydown.enter.prevent="sendPostModifcation" />
-      <ForumSaveButton :is-loading="editingLoading" @click="sendPostModifcation" />
+      <SaveButton :is-loading="editingLoading" @click="sendPostModifcation" />
     </CardContent>
     <CardFooter v-if="props.showReactions" class="w-full flex flex-row justify-between flex-wrap">
       <div id="reactionsContainer" class="flex justify-start gap-1.5 flex-wrap">
@@ -180,8 +182,17 @@ async function removePost() {
         v-if="isAdmin || props.post.user.username == user.username"
         class="flex flex-row justify-end gap-1.5"
       >
-        <ForumEditButton @click="editPost" />
-        <ForumDeleteButton @click="removePost" />
+        <EditButton @click="editPost" />
+        <ConfirmationDialog
+          title="Suppression du post"
+          :on-confirm="removePost"
+          :message="`Êtes-vous certains de vouloir supprimer le post de ${post.user.username} ?`"
+          confirm-button-text="Supprimer"
+          confirm-button-variant="destructive"
+          :is-loading="removingLoading"
+        >
+          <DeleteButton />
+        </ConfirmationDialog>
       </div>
     </CardFooter>
   </Card>
