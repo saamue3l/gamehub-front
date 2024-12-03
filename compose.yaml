@@ -21,11 +21,9 @@ services:
   #    ports:
 #      - 21000:80
   proxy:
-    image: nginx
-    volumes:
-      - type: bind
-        source: 'nginx.conf'
-        target: '/etc/nginx/nginx.conf'
+    build:
+      context: .
+      dockerfile: Dockerfile-nginx
     ports:
       - "21000:80"
     environment:
