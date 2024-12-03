@@ -13,6 +13,7 @@ import ViewTopic from '@/views/forum/ViewTopic.vue'
 import ForumsList from '@/views/forum/ForumsList.vue'
 import SearchForums from '@/views/forum/SearchForums.vue'
 import EditProfileView from '@/views/EditProfileView.vue'
+import EventDetails from '@/views/EventDetails.vue'
 
 type Route = RouteRecordRaw & {
   inNav?: boolean
@@ -41,6 +42,12 @@ const routes: Route[] = [
     name: 'Évènements',
     component: Events,
     inNav: true,
+    beforeEnter: requireAuth
+  },
+  {
+    path: '/events/:eventId',
+    name: 'Détails évènement',
+    component: EventDetails,
     beforeEnter: requireAuth
   },
   {

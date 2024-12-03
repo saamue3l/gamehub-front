@@ -3,13 +3,14 @@
 <script setup lang="ts">
 import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import type { Forum } from '@/types/Forum'
-import ForumEditButton from '@/components/layout/forums/forms/buttons/ForumEditButton.vue'
-import ForumDeleteButton from '@/components/layout/forums/forms/buttons/ForumDeleteButton.vue'
 import { httpBackend } from '@/lib/utils'
 import { toast } from '@/components/ui/toast'
 import { ref } from 'vue'
 import { Input } from '@/components/ui/input'
-import ForumSaveButton from '@/components/layout/forums/forms/buttons/ForumSaveButton.vue'
+import ForumSaveButton from '@/components/ui/button/SaveButton.vue'
+import EditButton from '@/components/ui/button/EditButton.vue'
+import DeleteButton from '@/components/ui/button/DeleteButton.vue'
+import ConfirmationDialog from '@/components/ui/dialog/ConfirmationDialog.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -98,8 +99,17 @@ async function removeForum() {
       </div>
     </CardHeader>
     <CardFooter v-if="isAdmin" class="flex flex-row justify-end gap-1.5">
-      <ForumEditButton @click.prevent="editForum" />
-      <ForumDeleteButton @click.prevent="removeForum" :is-loading="removingLoading" />
+      <EditButton @click.prevent="editForum" />
+      <ConfirmationDialog
+        title="Suppression du forum"
+        :on-confirm="removeForum"
+        :message="`Êtes-vous certains de vouloir supprimer le forum &quot;${forum.name}&quot; ?`"
+        confirm-button-text="Supprimer"
+        confirm-button-variant="destructive"
+        :is-loading="removingLoading"
+      >
+        <DeleteButton @click.prevent :is-loading="removingLoading" />
+      </ConfirmationDialog>
     </CardFooter>
   </Card>
 </template>

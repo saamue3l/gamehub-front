@@ -9,9 +9,13 @@ import LoadingSpinner from '@/components/ui/feedback/spinner/LoadingSpinner.vue'
 import type { User } from '@/types/User'
 import { useActionHandler } from '@/services/actionHandler'
 import type { XpAndSuccessResponse } from '@/types/Success'
+import { UserStore } from '@/store/userStore'
+
+const userStore = UserStore()
+const currentUser: User = { username: userStore.username } as User
 
 const emit = defineEmits<{
-  (e: 'joined-event', event: Event): void
+  (e: 'joined-event', event: Event, userJoined: boolean): void
 }>()
 
 const isLoading = ref(false)
@@ -46,7 +50,6 @@ async function onClick() {
       'POST'
     )) as any
 
-    console.log('response :', response)
     const userJoined: boolean = response.userJoined
     let toastMessage
     if (userJoined) {
@@ -63,9 +66,8 @@ async function onClick() {
     })
 
     props.event.userJoined = userJoined
-    userJoined ? props.event.participants.push({} as User) : props.event.participants.pop() // TODO utiliser le vrai objet utilisateur
 
-    emit('joined-event', props.event)
+    emit('joined-event', props.event, userJoined)
   } catch (error) {
     console.error('Error while joining event : ', error.toString())
     const errorMessage =
@@ -82,7 +84,7 @@ async function onClick() {
 </script>
 
 <template>
-  <Button :variant="buttonVariant" @click="onClick" :disabled="buttonDisabled">
+  <Button :variant="buttonVariant" @click.prevent="onClick" :disabled="buttonDisabled">
     {{ buttonText.toUpperCase() }}
     <LoadingSpinner v-if="isLoading" size="md" class="ml-1.5" />
   </Button>
