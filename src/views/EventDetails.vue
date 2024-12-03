@@ -34,7 +34,7 @@ const { toast } = useToast()
 async function fethEventDetails() {
   isLoading.value = true
   try {
-    event.value = await httpBackend(`/api/event/${eventId}`, 'GET')
+    event.value = await httpBackend(`/api/event/eventDetails/${eventId}`, 'GET')
   } catch (error) {
     console.error('Error while retrieving event details : ', error.toString())
     const errorMessage =
