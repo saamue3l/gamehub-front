@@ -86,10 +86,37 @@ async function sendMessageToConversation(conversationId, senderId, content) {
   } catch (error) {
     console.error('Erreur lors de l’envoi du message:', error)
   }
-  loadConversations(false);
+  //loadConversations(false);
 }
 
 async function handleSendMessage(message) {
+  if (selectedConversation.value) {
+    // Ajouter le message directement à la liste des messages affichés
+    messages.value.push({
+      id: Date.now(), // Utiliser un ID temporaire
+      conversationId: selectedConversation.value.conversationId,
+      senderId: currentUserId.value,
+      content: message,
+      created_at: new Date().toISOString(),
+      isRead: 0,
+      updated_at: new Date().toISOString(),
+    });
+
+    // Mettre à jour la conversation en cours pour la remettre à l'indice 0
+    const conversationIndex = conversations.value.findIndex(
+      (c) => c.conversationId === selectedConversation.value.conversationId
+    );
+    if (conversationIndex !== -1) {
+      const [conversation] = conversations.value.splice(conversationIndex, 1);
+      conversations.value.unshift(conversation);
+    }
+
+    // Envoyer le message via l'appel API sans attendre le retour
+    sendMessageToConversation(selectedConversation.value.conversationId, currentUserId.value, message);
+  }
+}
+
+/*async function handleSendMessage(message) {
   if (selectedConversation.value) {
     await sendMessageToConversation(selectedConversation.value.conversationId, currentUserId.value, message)
     await loadMessagesWithConversation(selectedConversation.value.conversationId, false)
@@ -98,6 +125,7 @@ async function handleSendMessage(message) {
     }
   }
 }
+ */
 
 function selectConversation(conversation) {
   conversation.unreadMessages = 0
@@ -111,9 +139,8 @@ function selectConversation(conversation) {
   }
 }
 
-function newConversationCreated(conversation) {
-  loadConversations(false)
-  selectConversation(conversation)
+function newConversationCreated() {
+  loadConversations(true)
 }
 
 function handleNewMessageEvent(data) {
@@ -126,6 +153,7 @@ function handleNewMessageEvent(data) {
       conversationToUpdate.unreadMessages++
     }
     loadConversations(false)
+
   }
 }
 
