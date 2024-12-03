@@ -15,9 +15,12 @@ import {
 import { postLogout } from '@/api/postLogout'
 import { toast } from '@/components/ui/toast'
 import { useRouter } from 'vue-router'
+import { PusherStore } from '@/store/pusherStore'
 const router = useRouter()
 
 const userStore = UserStore()
+const pusherStore = PusherStore()
+
 const emit = defineEmits(['close-sheet'])
 
 const logout = () => {
@@ -94,7 +97,14 @@ const editProfile = () => {
       <div class="flex justify-between items-center w-full bg-secondary p-2 rounded-lg">
         <MessageSquare class="h-6 w-6 text-primary" />
         <a href="/messages" class="text-lg">Messages</a>
+        <span
+          v-if="pusherStore.unreadConversationsCount > 0"
+          class="absolute right-16 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+        >
+          {{ pusherStore.unreadConversationsCount }}
+        </span>
         <ChevronRight class="h-6 w-6 text-foreground" />
+
       </div>
     </div>
 
