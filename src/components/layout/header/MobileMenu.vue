@@ -59,12 +59,13 @@ const editProfile = () => {
         <a @click="goToProfile" class="text-lg">Mon Profil</a>
         <ChevronRight class="h-6 w-6 text-foreground" />
       </div>
-
+      <!--
       <div class="flex justify-between items-center w-full bg-secondary p-2 rounded-lg">
         <Bell class="h-6 w-6 text-primary" />
         <a href="/notifications" class="text-lg">Notifications</a>
         <ChevronRight class="h-6 w-6 text-foreground" />
       </div>
+      -->
 
       <div class="flex justify-between items-center w-full bg-secondary p-2 rounded-lg">
         <Settings class="h-6 w-6 text-primary" />

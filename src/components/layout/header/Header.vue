@@ -36,7 +36,7 @@
 import { computed, ref } from 'vue'
 import NavLinks from '@/components/layout/header/NavLinks.vue'
 import ProfileMenu from '@/components/layout/header/ProfileMenu.vue'
-import AlertMenu from '@/components/layout/header/AlertMenu.vue'
+//import AlertMenu from '@/components/layout/header/AlertMenu.vue'
 import BurgerMenu from '@/components/layout/header/BurgerMenu.vue'
 import MobileMenu from '@/components/layout/header/MobileMenu.vue'
 import { UserStore } from '@/store/userStore'
