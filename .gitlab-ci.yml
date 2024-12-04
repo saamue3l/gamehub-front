@@ -18,7 +18,7 @@ deploy-job:
     GIT_STRATEGY: none
     GIT_CHECKOUT: "false"
   script:
-    - wget --post-data "" https://portainer.matthiasg.dev/api/stacks/webhooks/9e324f48-1b37-4d58-9b98-1a15b547dcda
+    - wget --post-data "" https://127.0.0.1:20000/api/stacks/webhooks/9e324f48-1b37-4d58-9b98-1a15b547dcda
   retry:
     max: 2
     when: always
