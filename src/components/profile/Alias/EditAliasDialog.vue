@@ -20,6 +20,17 @@ import { storeToRefs } from 'pinia'
 import { useToast } from '@/components/ui/toast'
 const { toast } = useToast()
 import { useActionHandler } from '@/services/actionHandler'
+import battlenetIcon from '@/assets/platformIcons/battlenetIcon.png'
+import discordIcon from '@/assets/platformIcons/discordIcon.png'
+import eaIcon from '@/assets/platformIcons/eaIcon.png'
+import pcIcon from '@/assets/platformIcons/pcIcon.png'
+import playstationIcon from '@/assets/platformIcons/playstationIcon.png'
+import riotIcon from '@/assets/platformIcons/riotIcon.png'
+import steamIcon from '@/assets/platformIcons/steamIcon.png'
+import switchIcon from '@/assets/platformIcons/switchIcon.png'
+import twitchIcon from '@/assets/platformIcons/twitchIcon.png'
+import ubisoftIcon from '@/assets/platformIcons/ubisoftIcon.png'
+import xboxIcon from '@/assets/platformIcons/xboxIcon.png'
 
 const platformStore = usePlatformStore()
 const { platforms } = storeToRefs(platformStore)
@@ -53,6 +64,20 @@ const updateFormData = () => {
       }
     })
   }
+}
+
+const platformIcons = {
+  battlenet: battlenetIcon,
+  discord: discordIcon,
+  ea: eaIcon,
+  pc: pcIcon,
+  playstation: playstationIcon,
+  riot: riotIcon,
+  steam: steamIcon,
+  switch: switchIcon,
+  twitch: twitchIcon,
+  ubisoft: ubisoftIcon,
+  xbox: xboxIcon
 }
 
 onMounted(async () => {
@@ -132,7 +157,11 @@ const saveAliases = async () => {
             :key="platform.id"
             class="flex items-center gap-4"
           >
-            <img :src="platform.logoUrl" :alt="platform.name" class="w-6 h-6 object-contain" />
+            <img
+              :src="platformIcons[platform.name]"
+              :alt="platform.name"
+              class="w-6 h-6 object-contain"
+            />
 
             <div class="relative flex-1">
               <Input
@@ -156,7 +185,11 @@ const saveAliases = async () => {
             :key="platform.id"
             class="flex items-center gap-4"
           >
-            <img :src="platform.logoUrl" :alt="platform.name" class="w-6 h-6 object-contain" />
+            <img
+              :src="platformIcons[platform.name]"
+              :alt="platform.name"
+              class="w-6 h-6 object-contain"
+            />
 
             <div class="relative flex-1">
               <Input
