@@ -23,4 +23,4 @@ deploy-job:
     max: 2
     when: always
   only:
-    - CICDProd
+    - main
