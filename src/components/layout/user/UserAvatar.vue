@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import type { User } from '@/types/User'
 import type { UserInfo } from '@/types/UserInfo'
 import defaultPfp from '@/assets/defaultPfp1.png'
@@ -27,7 +27,7 @@ function normalizeImageUrl(url: string): string {
 
 <template>
   <Avatar :class="`size-${size}`">
-    <AvatarImage v-if="user.picture" :src="normalizeImageUrl(user.picture)" :alt="user.username" />
+    <AvatarImage v-if="user.picture" :src="user.picture" :alt="user.username" />
     <AvatarImage v-else :src="defaultPfp" alt="photo de profil" />
   </Avatar>
 </template>

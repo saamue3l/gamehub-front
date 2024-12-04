@@ -11,6 +11,7 @@ export async function postLogin(values: LoginPost): Promise<LoginResponse> {
     localStorage.setItem('token', data.token)
 
     const userStore = UserStore()
+    userStore.resetStore()
     userStore.username = data.user.username
     userStore.xp = data.user.xp
     if (data.user.picture) {

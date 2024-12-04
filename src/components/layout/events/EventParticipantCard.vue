@@ -3,6 +3,7 @@ import type { User } from '@/types/User'
 import UserAvatar from '@/components/layout/user/UserAvatar.vue'
 import { Crown } from 'lucide-vue-next'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { onMounted } from 'vue'
 
 withDefaults(
   defineProps<{

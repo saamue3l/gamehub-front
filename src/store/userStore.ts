@@ -8,7 +8,7 @@ export const UserStore = defineStore('userStore', () => {
   const username = ref('')
   const xp = ref(0)
   const profilePicture = ref('')
-  const roleId = ref<string | null>(null)
+  const roleId = ref<number | null>(null)
 
   // Getters calculés
   const level = computed(() => Math.floor(xp.value / 100))
@@ -28,7 +28,7 @@ export const UserStore = defineStore('userStore', () => {
       username.value = response.username
       xp.value = response.xp
       profilePicture.value = response.profilePicture
-      roleId.value = response.roleId
+      roleId.value = Number(response.roleId)
     } catch (error) {
       console.error('Failed to fetch user data:', error)
       resetStore()

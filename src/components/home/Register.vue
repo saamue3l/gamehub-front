@@ -33,13 +33,12 @@ const onSubmit = handleSubmit(async (values) => {
       variant: 'default'
     })
 
-    /*    userStore.setUsername(values.username)
-    userStore.setXp(values.xp)*/
     await router.push({ name: 'Profil', params: { username: userStore.username } })
   } catch (error) {
+    console.error('Error registering:', error)
     toast({
-      title: "Quelque chose n'a pas fonctionné.",
-      description: 'Une erreur est survenue, veuiller réessayer plus tard',
+      title: "Échec de l'inscription",
+      description: error.message,
       variant: 'destructive'
     })
   } finally {

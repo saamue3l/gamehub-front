@@ -27,10 +27,8 @@ const onSubmit = handleSubmit(async (values) => {
     isLoading.value = true
 
     await postLogin(values)
+    await userStore.initializeStore()
 
-    /*    userStore.setUsername()
-    userStore.setProfilePicture()
-    userStore.setXp()*/
     await router.push({ name: 'Profil', params: { username: userStore.username } })
   } catch (error) {
     toast({

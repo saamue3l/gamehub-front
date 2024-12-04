@@ -24,6 +24,7 @@ const props = defineProps({
   autoOpen: Boolean
 })
 
+const isLoading = ref(false)
 const selectedUser = ref(null)
 const isOpen = ref(false) // Renommé pour plus de clarté
 const newMessage = ref('')
@@ -49,6 +50,7 @@ onMounted(async () => {
 })
 
 async function sendMessage() {
+  isLoading.value = true
   // Étape 1 : Créer la conversation si elle n'existe pas
   const userIds = [props.currentUserId, selectedUser.value.id]
   const conversationId = await createConversationWithUsers(userIds)
@@ -64,6 +66,8 @@ async function sendMessage() {
     closeDialog()
   } catch (error) {
     console.error("Erreur lors de l'envoi du message:", error)
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -129,7 +133,9 @@ function handleUserSelect(user) {
 
         <DialogFooter class="flex flex-col space-y-4 md:space-y-0 md:flex-row md:space-x-4">
           <Button type="button" variant="outline" @click="closeDialog">Annuler</Button>
-          <Button type="submit" :disabled="!selectedUser || !newMessage.trim()">Envoyer</Button>
+          <Button type="submit" :disabled="!selectedUser || !newMessage.trim() || isLoading">{{
+            isLoading ? 'Envoi...' : 'Envoyer'
+          }}</Button>
         </DialogFooter>
       </form>
     </DialogContent>
