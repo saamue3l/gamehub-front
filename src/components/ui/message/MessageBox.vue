@@ -47,7 +47,7 @@ const formattedDate = computed(() => {
         </span>
       </div>
       <div
-        class="px-4 py-2.5 rounded-2xl text-sm"
+        class="px-4 py-2.5 rounded-2xl text-sm whitespace-pre-wrap"
         :class="[
           isSentByMe
             ? 'bg-primary text-primary-foreground rounded-br-sm'
