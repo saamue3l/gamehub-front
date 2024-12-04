@@ -22,35 +22,44 @@ onMounted(async () => {
   xpAnimationStore.setPopupRef(xpPopup.value)
   xpAnimationStore.setLevelPopupRef(levelPopup.value)
 
-  await fetchUserId()
-  await pusherStore.fetchUnreadConversationsCount()
+  await fetchNewUser()
+
 })
 
 onBeforeUnmount(() => {
   if (userId.value) {
+    console.log("[APP.VUE] DÉSenregistrement d'un événément pour les nouveaux messages")
     pusherStore.unsubscribeFromUserChannel(userId.value);
   }
 })
 
 watch(() => userStore.username, async (newUsername, oldUsername) => {
   if (oldUsername) {
+    console.log("[APP.VUE] DÉSenregistrement d'un événément pour les nouveaux messages")
     pusherStore.unsubscribeFromUserChannel(userId.value)
   }
   if (newUsername) {
-    await fetchUserId()
+    await fetchNewUser()
   }
 })
 
-const fetchUserId = async () => {
-  try {
-    userId.value = await httpBackend('/api/currentUser', 'GET');
-    if (userId.value) {
-      pusherStore.subscribeToUserChannel(userId.value)
-      pusherStore.registerEventHandler('App\\Events\\MessageSent', handleNewMessageEvent)
+const fetchNewUser = async () => {
+  if (userStore.username) {
+    console.log("Trying to fetch user ID (fetchNewUser) :", userStore.username);
+    try {
+      userId.value = await httpBackend('/api/currentUser', 'GET');
+      if (userId.value) {
+        console.log('User ID:', userId.value)
+        pusherStore.subscribeToUserChannel(userId.value)
+        console.log("[APP.VUE] Enregistrement d'un événément pour les nouveaux messagers")
+        pusherStore.registerEventHandler('App\\Events\\MessageSent', handleNewMessageEvent)
+        await pusherStore.fetchUnreadConversationsCount()
+      }
+    } catch (error) {
+      console.error('Error fetching user ID:', error);
     }
-  } catch (error) {
-    console.error('Error fetching user ID:', error);
   }
+
 };
 
 const handleNewMessageEvent = async (data) => {

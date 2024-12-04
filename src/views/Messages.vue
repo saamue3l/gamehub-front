@@ -30,6 +30,7 @@ const isLoadingMessages = ref(false)
 async function fetchCurrentUser() {
   try {
     currentUserId.value = await httpBackend('/api/currentUser', 'GET')
+    console.log("[MESSAGES.VUE] Enregistrement d'un événément pour les nouveaux messages")
     pusherStore.registerEventHandler('App\\Events\\MessageSent', handleNewMessageEvent)
   } catch (error) {
     console.error('Erreur lors du chargement de l’utilisateur:', error)
@@ -42,6 +43,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  console.log("[MESSAGES.VUE] DÉSenregistrement d'un événément pour les nouveaux messages")
   pusherStore.unregisterEventHandler('App\\Events\\MessageSent', handleNewMessageEvent);
 });
 
@@ -163,15 +165,6 @@ function goBackToConversations() {
 
 // Messages.vue
 const route = useRoute()
-
-onMounted(async () => {
-  if (route.query.newMessage && route.query.userId) {
-    const preselectedUserId = parseInt(route.query.userId as string)
-  }
-  console.log("Message reçu... Voici l'id de la conversation sélectionneé : ", selectedConversation.value?.conversationId);
-})
-
-
 
 </script>
 

@@ -38,16 +38,45 @@ export const PusherStore = defineStore('pusherStore', () => {
     console.log(`Subscribed to channel: ${channelName}`);
 
     // Bind all registered event handlers to the new channel
+    /*
     eventHandlers.value.forEach((handlers, eventName) => {
       handlers.forEach(handler => {
         channel.bind(eventName, handler);
         console.log(`Event ${eventName} bound to channel: ${channelName}`);
       });
     });
+     */
   };
+
+  const unsubscribeFromUserChannel = (userId: string) => {
+    const channelName = `user.${userId}`;
+    if (!subscribedChannels.value.has(channelName)) {
+      console.warn(`Unsubscribe impossible. Not subscribed to channel: ${channelName}`);
+      return;
+    }
+
+    const channel = pusherInstance?.channel(channelName);
+    if (channel) {
+      // Unbind all events for the channel
+      eventHandlers.value.forEach((handlers, eventName) => {
+        handlers.forEach(handler => {
+          channel.unbind(eventName, handler);
+          console.log(`Event ${eventName} UNbound from channel: ${channelName}`);
+        });
+      });
+
+      pusherInstance.unsubscribe(channelName);
+      console.log(`Unsubscribed from channel: ${channelName}`);
+      subscribedChannels.value.delete(channelName);
+    } else {
+      console.error(`Failed to find channel: ${channelName} for unsubscription.`);
+    }
+  };
+
 
   const registerEventHandler = (eventName: string, handler: (data: any) => void) => {
     if (!eventHandlers.value.has(eventName)) {
+      console.log("Event ajouté ! : ", eventName);
       eventHandlers.value.set(eventName, []);
       fetchUnreadConversationsCount()
     }
@@ -104,6 +133,7 @@ export const PusherStore = defineStore('pusherStore', () => {
   return {
     pusherInstance,
     subscribeToUserChannel,
+    unsubscribeFromUserChannel,
     registerEventHandler,
     unregisterEventHandler,
     unreadConversationsCount,
