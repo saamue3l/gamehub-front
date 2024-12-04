@@ -1,0 +1,26 @@
+image: docker:26.0.0
+
+cache:
+  paths:
+    - node_modules/
+
+default:
+  tags:
+    - gamehub
+
+stages:
+  - deploy
+
+deploy-job:
+  stage: deploy
+  interruptible: false
+  variables:
+    GIT_STRATEGY: none
+    GIT_CHECKOUT: "false"
+  script:
+    - wget --post-data "" https://portainer.matthiasg.dev/api/stacks/webhooks/9e324f48-1b37-4d58-9b98-1a15b547dcda
+  retry:
+    max: 2
+    when: always
+  only:
+    - CICDProd
