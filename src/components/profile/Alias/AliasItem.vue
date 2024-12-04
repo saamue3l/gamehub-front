@@ -7,7 +7,7 @@
     ]"
     @click="copyable ? copyToClipboard() : undefined"
   >
-    <img :src="props.iconUrl" :alt="username" class="h-6" />
+    <img :src="platformIcons[props.name]" :alt="username" class="h-6" />
     <p class="whitespace-nowrap text-custom-white text-xs font-medium ml-1 mr-1">{{ username }}</p>
     <span
       v-if="isCopied"
@@ -22,9 +22,34 @@
 <script setup lang="ts">
 import { defineProps, ref } from 'vue'
 import { Badge } from '@/components/ui/badge'
+import battlenetIcon from '@/assets/platformIcons/battlenetIcon.png'
+import discordIcon from '@/assets/platformIcons/discordIcon.png'
+import eaIcon from '@/assets/platformIcons/eaIcon.png'
+import pcIcon from '@/assets/platformIcons/pcIcon.png'
+import playstationIcon from '@/assets/platformIcons/playstationIcon.png'
+import riotIcon from '@/assets/platformIcons/riotIcon.png'
+import steamIcon from '@/assets/platformIcons/steamIcon.png'
+import switchIcon from '@/assets/platformIcons/switchIcon.png'
+import twitchIcon from '@/assets/platformIcons/twitchIcon.png'
+import ubisoftIcon from '@/assets/platformIcons/ubisoftIcon.png'
+import xboxIcon from '@/assets/platformIcons/xboxIcon.png'
+
+const platformIcons = {
+  battlenet: battlenetIcon,
+  discord: discordIcon,
+  ea: eaIcon,
+  pc: pcIcon,
+  playstation: playstationIcon,
+  riot: riotIcon,
+  steam: steamIcon,
+  switch: switchIcon,
+  twitch: twitchIcon,
+  ubisoft: ubisoftIcon,
+  xbox: xboxIcon
+}
 
 const props = defineProps<{
-  iconUrl: string
+  name: string
   username: string
   copyable: boolean
 }>()

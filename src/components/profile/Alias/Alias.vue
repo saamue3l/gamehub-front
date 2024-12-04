@@ -45,11 +45,7 @@ watchEffect(() => {
 
       <template v-else>
         <template v-for="alias in filteredUserAlias" :key="alias.id">
-          <AliasItem
-            :icon-url="alias.platform.logoUrl"
-            :username="alias.username"
-            :copyable="true"
-          />
+          <AliasItem :name="alias.platform.name" :username="alias.username" :copyable="true" />
         </template>
       </template>
 
