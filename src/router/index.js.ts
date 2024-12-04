@@ -14,6 +14,13 @@ import ForumsList from '@/views/forum/ForumsList.vue'
 import SearchForums from '@/views/forum/SearchForums.vue'
 import EditProfileView from '@/views/EditProfileView.vue'
 import EventDetails from '@/views/EventDetails.vue'
+import { httpBackend } from '@/lib/utils'
+import { useToast } from '@/components/ui/toast'
+const { toast } = useToast()
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+
+NProgress.configure({ showSpinner: false })
 
 let storeInitialized = false
 let initializationPromise: Promise<void> | null = null
@@ -34,6 +41,24 @@ async function ensureStoreInitialized() {
     })
   }
   return initializationPromise
+}
+
+async function verifyToken() {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    return false
+  }
+
+  try {
+    await httpBackend('/api/verify-token')
+    return true
+  } catch (error) {
+    // Token invalide ou erreur de vérification
+    const userStore = UserStore()
+    localStorage.removeItem('token')
+    userStore.resetStore()
+    return false
+  }
 }
 
 async function requireAuth(to, from, next) {
@@ -157,9 +182,32 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach(async (to, from, next) => {
-  await ensureStoreInitialized()
-  next()
+router.beforeEach((to, from, next) => {
+  NProgress.start()
+
+  const publicPages = ['/login', '/register', '/']
+  const authRequired = !publicPages.includes(to.path)
+
+  if (authRequired) {
+    next()
+
+    verifyToken().then((isValid) => {
+      if (!isValid) {
+        toast({
+          title: 'Session expirée',
+          description: 'Votre session a expiré. Veuillez vous reconnecter pour continuer.',
+          variant: 'destructive'
+        })
+        router.push('/')
+      }
+    })
+  } else {
+    next()
+  }
+})
+
+router.afterEach(() => {
+  NProgress.done()
 })
 // Exporter une fonction pour initialiser le store
 export function initializeAuthGuard() {

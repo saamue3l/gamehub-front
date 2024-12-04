@@ -2,6 +2,7 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { httpBackend } from '@/lib/utils'
 import type { ConnectedUserInfo } from '@/types/UserInfo'
+import { useRouter } from 'vue-router'
 
 export const UserStore = defineStore('userStore', () => {
   // État de base
@@ -17,21 +18,32 @@ export const UserStore = defineStore('userStore', () => {
 
   // Action pour initialiser le store
   async function initializeStore() {
-    if (!localStorage.getItem('token')) {
+    const token = localStorage.getItem('token')
+
+    // Si pas de token, on ne fait rien
+    if (!token) {
       return
     }
 
     try {
+      // Vérifier si le token est valide via un endpoint dédié
+
       const response = await httpBackend<ConnectedUserInfo>(`/api/me`)
 
-      console.log('User data fetched:', response)
+      // Si on arrive ici, le token est valide
       username.value = response.username
       xp.value = response.xp
       profilePicture.value = response.profilePicture
       roleId.value = Number(response.roleId)
     } catch (error) {
-      console.error('Failed to fetch user data:', error)
+      const router = useRouter()
+
+      // Si le token n'est pas valide, on nettoie tout
+      console.error('Invalid token:', error)
+      localStorage.removeItem('token')
       resetStore()
+
+      await router.push('/')
     }
   }
 
