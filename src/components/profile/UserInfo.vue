@@ -3,7 +3,7 @@ import { ref, watch, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import { UserStore } from '@/store/userStore'
 import type { UserInfo } from '@/types/UserInfo'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
@@ -11,6 +11,7 @@ import { httpBackend } from '@/lib/utils'
 import { useProfileStore } from '@/store/profileStore'
 import { Button } from '@/components/ui/button'
 import { Mail } from 'lucide-vue-next'
+import defaultPfp from '@/assets/defaultPfp1.png'
 
 const profileStore = useProfileStore()
 const isLoading = ref(true)
@@ -38,7 +39,7 @@ const router = useRouter()
 
 const sendMessage = (userId) => {
   router.push({
-    name: 'Mes messages',
+    name: 'messages',
     query: {
       newMessage: true,
       userId: userId
@@ -84,9 +85,7 @@ watchEffect(() => {
     <div class="flex max-md:flex-col max-md:items-center">
       <Avatar class="size-16">
         <AvatarImage v-if="userInfo.picture" :src="userInfo.picture" :alt="userInfo.username" />
-        <AvatarFallback v-else>
-          {{ userInfo.username?.charAt(0).toUpperCase() ?? 'U' }}
-        </AvatarFallback>
+        <AvatarImage v-else :src="defaultPfp" alt="photo de profil" />
       </Avatar>
       <div class="flex flex-col justify-center max-md:flex-col max-md:items-center space-y-1 ml-2">
         <div class="flex items-center space-x-2">
@@ -107,7 +106,13 @@ watchEffect(() => {
               />
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>{{ profileStore.isOwnProfile ? userStore.xpInCurrentLevel : userInfo.xp }}/100</p>
+              <p>
+                {{
+                  profileStore.isOwnProfile
+                    ? `${userStore.xpInCurrentLevel}/100 (Total : ${userStore.xp - 100}xp)`
+                    : `${userInfo.xp}/100 (Total : ${userInfo.totalXp - 100}xp)`
+                }}
+              </p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

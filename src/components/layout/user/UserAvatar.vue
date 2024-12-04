@@ -2,6 +2,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import type { User } from '@/types/User'
 import type { UserInfo } from '@/types/UserInfo'
+import defaultPfp from '@/assets/defaultPfp1.png'
 
 const props = withDefaults(
   defineProps<{
@@ -26,7 +27,7 @@ function normalizeImageUrl(url: string): string {
 
 <template>
   <Avatar :class="`size-${size}`">
-    <AvatarImage :src="normalizeImageUrl(user.picture)" :alt="user.username" />
-    <AvatarFallback>{{ user.username.substring(0, 2).toUpperCase() }}</AvatarFallback>
+    <AvatarImage v-if="user.picture" :src="normalizeImageUrl(user.picture)" :alt="user.username" />
+    <AvatarImage v-else :src="defaultPfp" alt="photo de profil" />
   </Avatar>
 </template>

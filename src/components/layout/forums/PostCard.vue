@@ -39,7 +39,8 @@ const reactionTypesStore = useReactionTypesStore()
 const userStore = UserStore()
 
 const user = { username: userStore.username } as User
-const isAdmin = userStore.isAdmin()
+const isAdmin = userStore.isAdmin
+console.log('isAdmin dans PostCard', isAdmin)
 const isReactionLoading = ref<boolean>(false)
 reactionTypesStore.fetchAllPossibleReactions()
 

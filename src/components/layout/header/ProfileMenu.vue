@@ -10,11 +10,11 @@
         <div class="flex items-center">
           <Avatar v-if="isLoggedIn" class="size-8">
             <AvatarImage
-              v-if="userStore.profilePicture"
+              v-if="userStore.profilePicture && userStore.profilePicture !== 'null'"
               :src="userStore.profilePicture"
               alt="Profile picture"
             />
-            <AvatarFallback>{{ userStore.username.substring(0, 2).toUpperCase() }}</AvatarFallback>
+            <AvatarImage v-else :src="defaultPfp" alt="photo de profil" />
           </Avatar>
 
           <span class="ml-1 mr-1 text-sm font-medium truncate max-w-20">{{
@@ -51,10 +51,11 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { LogOut, Settings, User } from 'lucide-vue-next'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { UserStore } from '@/store/userStore'
 import { postLogout } from '@/api/postLogout'
 import { toast } from '@/components/ui/toast'
+import defaultPfp from '@/assets/defaultPfp1.png'
 
 const router = useRouter()
 const userStore = UserStore()
@@ -66,7 +67,7 @@ const goToProfile = () => {
 const logout = () => {
   try {
     postLogout()
-    userStore.resetUsername()
+    userStore.resetStore()
     router.push({ path: '/' })
   } catch (error) {
     toast(

@@ -84,13 +84,11 @@ const onSubmit = handleSubmit(async (values: UpdateProfilePost) => {
     const response = await httpBackendWithData<RegisterResponse>('/api/user/update', formData)
 
     if (values.username) {
-      localStorage.setItem('username', values.username)
-      userStore.setUsername(values.username)
+      await userStore.updateUsername(values.username)
     }
 
     if (response.picture) {
-      localStorage.setItem('picture', response.picture.toString())
-      userStore.setProfilePicture(response.picture)
+      await userStore.updateProfilePicture(response.picture)
     }
 
     toast({

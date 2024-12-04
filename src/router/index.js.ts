@@ -15,6 +15,37 @@ import SearchForums from '@/views/forum/SearchForums.vue'
 import EditProfileView from '@/views/EditProfileView.vue'
 import EventDetails from '@/views/EventDetails.vue'
 
+let storeInitialized = false
+let initializationPromise: Promise<void> | null = null
+
+async function ensureStoreInitialized() {
+  if (!initializationPromise) {
+    // eslint-disable-next-line no-async-promise-executor
+    initializationPromise = new Promise(async (resolve) => {
+      try {
+        const userStore = UserStore()
+        await userStore.initializeStore()
+        storeInitialized = true
+        resolve()
+      } catch (error) {
+        console.error('Store initialization failed:', error)
+        resolve() // On résout quand même pour ne pas bloquer l'application
+      }
+    })
+  }
+  return initializationPromise
+}
+
+async function requireAuth(to, from, next) {
+  await ensureStoreInitialized()
+
+  const userStore = UserStore()
+  if (!userStore.username) {
+    next({ path: '/' })
+  } else {
+    next()
+  }
+}
 type Route = RouteRecordRaw & {
   inNav?: boolean
   beforeEnter?: (to: any, from: any, next: any) => void
@@ -26,8 +57,12 @@ const routes: Route[] = [
     path: '/',
     name: 'Accueil',
     component: Home,
-    inNav: true,
-    beforeEnter: (to, from, next) => {
+    inNav: false,
+    beforeEnter: async (to, from, next) => {
+      if (!storeInitialized && initializationPromise) {
+        await initializationPromise
+      }
+
       const userStore = UserStore()
       const username = userStore.username
       if (username) {
@@ -122,14 +157,14 @@ const router = createRouter({
   routes
 })
 
-function requireAuth(to, from, next) {
-  const userStore = UserStore()
-  const username = userStore.username
-  if (!username) {
-    next({ path: '/' })
-  } else {
-    next()
-  }
+router.beforeEach(async (to, from, next) => {
+  await ensureStoreInitialized()
+  next()
+})
+// Exporter une fonction pour initialiser le store
+export function initializeAuthGuard() {
+  initializationPromise = ensureStoreInitialized()
+  return initializationPromise
 }
 
 export default router

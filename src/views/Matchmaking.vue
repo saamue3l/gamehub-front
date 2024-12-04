@@ -15,6 +15,8 @@ import {
 import { httpBackend } from '@/lib/utils'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
+import defaultPfp from '@/assets/defaultPfp1.png'
+import { Avatar, AvatarImage } from '@/components/ui/avatar'
 
 const isDialogOpen = ref(false)
 const selectedGames = ref([])
@@ -260,11 +262,10 @@ onMounted(loadSavedGamesFromLocalStorage)
             :to="`/profil/${result.username}`"
             class="profile-card rounded-lg bg-secondary p-3 text-center transition-all duration-300 hover:bg-secondary/80"
           >
-            <img
-              src="@/assets/joachim.jpg"
-              alt="Jojo"
-              class="profile-image mx-auto mb-2 rounded-full w-10 h-10 sm:w-12 sm:h-12"
-            />
+            <Avatar class="size-12">
+              <AvatarImage v-if="result.picture" :src="result.picture" :alt="result.username" />
+              <AvatarImage v-else :src="defaultPfp" alt="photo de profil" />
+            </Avatar>
             <p class="username truncate font-bold mb-1 text-sm sm:text-base">
               {{ result.username }}
             </p>

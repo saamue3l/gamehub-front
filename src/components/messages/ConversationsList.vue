@@ -2,7 +2,8 @@
 import { defineProps, defineEmits } from 'vue'
 import ListItem from '@/components/ui/list/ListItem.vue'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarImage } from '@/components/ui/avatar'
+import defaultPfp from '@/assets/defaultPfp1.png'
 
 const props = defineProps({
   conversations: Array, // Liste des conversations à afficher
@@ -35,14 +36,15 @@ function selectConversation(selectedConversation) {
         <div class="flex items-center gap-x-2">
           <Avatar class="size-8 bg-primary">
             <AvatarImage v-if="item.picture" :src="item.picture" :alt="item.username" />
-            <AvatarFallback v-else>
-              {{ item.username?.charAt(0).toUpperCase() ?? 'U' }}
-            </AvatarFallback>
+            <AvatarImage v-else :src="defaultPfp" alt="photo de profil" />
           </Avatar>
 
           <div class="truncate">{{ item.username }}</div>
 
-          <div v-if="item.unreadMessages > 0" class="ml-auto bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
+          <div
+            v-if="item.unreadMessages > 0"
+            class="ml-auto bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+          >
             {{ item.unreadMessages }}
           </div>
         </div>

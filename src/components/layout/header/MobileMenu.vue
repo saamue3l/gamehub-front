@@ -26,7 +26,7 @@ const emit = defineEmits(['close-sheet'])
 const logout = () => {
   try {
     postLogout()
-    userStore.resetUsername()
+    userStore.resetStore()
     router.push({ path: '/' })
     emit('close-sheet')
   } catch (error) {
@@ -105,7 +105,6 @@ const editProfile = () => {
           {{ pusherStore.unreadConversationsCount }}
         </span>
         <ChevronRight class="h-6 w-6 text-foreground" />
-
       </div>
     </div>
 

@@ -64,6 +64,8 @@ onMounted((): void => {
   fethEventDetails()
 })
 
+console.log('isAdmin dans EventDetails', userStore.isAdmin)
+
 async function onDeleted() {
   deleteIsLoading.value = true
   try {
@@ -140,9 +142,7 @@ async function onDeleted() {
               </div>
             </CardContent>
             <!--   === EDIT / DELETE ===    -->
-            <CardContent
-              v-if="event.creator.username == currentUser.username || userStore.isAdmin()"
-            >
+            <CardContent v-if="event.creator.username == currentUser.username || userStore.isAdmin">
               <CardTitle :level="2">Actions</CardTitle>
               <div class="flex flex-row gap-1.5 py-2">
                 <ModifyEventButton :event="event" @modified-event="fethEventDetails" />

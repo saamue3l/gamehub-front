@@ -17,7 +17,8 @@ const forums = ref<Forum[]>([])
 const isLoading = ref(true)
 const errorMessage = ref<string | null>(null)
 const userStore = UserStore()
-const isAdmin = userStore.isAdmin()
+const isAdmin = userStore.isAdmin
+console.log('isAdmin dans ForumsList', isAdmin)
 
 async function fetchForums() {
   try {

@@ -33,8 +33,8 @@ const onSubmit = handleSubmit(async (values) => {
       variant: 'default'
     })
 
-    userStore.setUsername(values.username)
-    userStore.setXp(values.xp)
+    /*    userStore.setUsername(values.username)
+    userStore.setXp(values.xp)*/
     await router.push({ name: 'Profil', params: { username: userStore.username } })
   } catch (error) {
     toast({

@@ -18,7 +18,7 @@ const { toast } = useToast()
 
 const userStore = UserStore()
 const userName = userStore.username
-const isAdmin = ref<boolean>(userStore.isAdmin())
+const isAdmin = ref<boolean>(userStore.isAdmin)
 const editingTopic = ref<boolean>(false)
 const editingLoading = ref<boolean>(false)
 const removingLoading = ref<boolean>(false)

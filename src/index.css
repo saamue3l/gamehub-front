@@ -36,12 +36,24 @@
     }
 }
 
- 
+
 @layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+body:has(div[role="listbox"]),
+body:has([role="dialog"]) {
+    overflow: auto !important;
+    padding-right: 0 !important;
+}
+
+body,
+body[style*="overflow: hidden"] {
+    overflow-y: scroll !important;
+    padding-right: 0 !important;
 }

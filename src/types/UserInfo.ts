@@ -3,5 +3,13 @@ export type UserInfo = {
   username: string
   picture: string
   level: number
+  totalXp: number
   xp: number
+}
+
+export type ConnectedUserInfo = {
+  username: string
+  xp: number
+  profilePicture: string
+  roleId: number
 }

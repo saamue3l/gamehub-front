@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarImage } from '@/components/ui/avatar'
+import defaultPfp from '@/assets/defaultPfp1.png'
 
 const props = defineProps({
   user: {
@@ -21,9 +22,7 @@ const props = defineProps({
   >
     <Avatar class="size-12">
       <AvatarImage v-if="user.picture" :src="user.picture" :alt="user.username" />
-      <AvatarFallback v-else>
-        {{ user.username?.charAt(0).toUpperCase() ?? 'U' }}
-      </AvatarFallback>
+      <AvatarImage v-else :src="defaultPfp" alt="photo de profil" />
     </Avatar>
     <p class="username truncate font-bold text-sm mb-2">{{ user.username }}</p>
   </div>
