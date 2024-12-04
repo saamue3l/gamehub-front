@@ -56,7 +56,7 @@ async function fetchEvents() {
     events.value = await httpBackend('/api/event/allEvents', 'POST', parameters)
     sortEvents()
     if (events.value.length == 0) {
-      errorMessage.value = "Aucun évènement n'as été trouvé avec les paramètres donnés"
+      errorMessage.value = "Aucun évènement n'a été trouvé avec les paramètres donnés"
     }
   } catch (error) {
     errorMessage.value =

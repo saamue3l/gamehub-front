@@ -26,7 +26,7 @@ async function fetchForums() {
 
     forums.value = await httpBackend('/api/forums/allForums', 'GET')
     if (forums.value.length == 0) {
-      errorMessage.value = "Aucun forum n'as été trouvé"
+      errorMessage.value = "Aucun forum n'a été trouvé"
     }
   } catch (error) {
     errorMessage.value =
