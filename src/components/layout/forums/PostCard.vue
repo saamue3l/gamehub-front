@@ -11,14 +11,13 @@ import { reactionToPost } from '@/components/layout/forums/reactToPost'
 import { UserStore } from '@/store/userStore'
 import type { User } from '@/types/User'
 import { highlightSearch, httpBackend } from '@/lib/utils'
-import ForumEditButton from '@/components/ui/button/EditButton.vue'
-import ForumDeleteButton from '@/components/ui/button/DeleteButton.vue'
+import EditButton from '@/components/ui/button/EditButton.vue'
+import DeleteButton from '@/components/ui/button/DeleteButton.vue'
 import { toast } from '@/components/ui/toast'
 import { Textarea } from '@/components/ui/textarea'
 import SaveButton from '@/components/ui/button/SaveButton.vue'
-import EditButton from '@/components/ui/button/EditButton.vue'
-import DeleteButton from '@/components/ui/button/DeleteButton.vue'
 import ConfirmationDialog from '@/components/ui/dialog/ConfirmationDialog.vue'
+import TextWithMedia from '@/components/layout/forums/TextWithMedia.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -148,10 +147,12 @@ async function removePost() {
       </header>
     </CardHeader>
     <!--  CONTENT  -->
-    <CardContent v-if="!editingPost" v-html="highlightSearch(post.content, search)" />
+    <CardContent v-if="!editingPost">
+      <TextWithMedia :content="highlightSearch(post.content, search)" />
+    </CardContent>
     <CardContent v-else class="flex flex-row justify-start gap-3">
       <!-- Edit content -->
-      <Textarea v-model="post.content" @keydown.enter.prevent="sendPostModifcation" />
+      <Textarea v-model="post.content" :rows="post.content.split(/\r\n|\r|\n/).length + 3" />
       <SaveButton :is-loading="editingLoading" @click="sendPostModifcation" />
     </CardContent>
     <CardFooter v-if="props.showReactions" class="w-full flex flex-row justify-between flex-wrap">

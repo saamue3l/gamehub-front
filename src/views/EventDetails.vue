@@ -101,7 +101,7 @@ async function onDeleted() {
 
       <CardContent>
         <!--   === DESCRIPTION ===    -->
-        <CardDescription>
+        <CardDescription class="whitespace-pre-wrap">
           {{ event.description }}
         </CardDescription>
       </CardContent>
