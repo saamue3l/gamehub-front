@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import Home from '@/views/Home.vue'
 import Events from '@/views/Events.vue'
 import Profile from '@/views/Profile.vue'
+import GoogleConnection from '@/components/home/GoogleConnection.vue'
 import Login from '@/components/home/Login.vue'
 import Register from '@/components/home/Register.vue'
 import Matchmaking from '@/views/Matchmaking.vue'
@@ -160,6 +161,7 @@ const routes: Route[] = [
   /* === AUTH ===*/
   { path: '/login', name: 'Connexion', component: Login },
   { path: '/register', name: 'Register', component: Register },
+  { path: '/google-connection', name :'GoogleConnection', component: GoogleConnection },
   /* === PROFILE === */
   {
     path: '/profil/:username',
@@ -185,7 +187,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   NProgress.start()
 
-  const publicPages = ['/login', '/register', '/']
+  const publicPages = ['/login', '/register', '/', '/google-connection']
   const authRequired = !publicPages.includes(to.path)
 
   if (authRequired) {

@@ -14,6 +14,7 @@ import eventsImage from '@/assets/events.jpg'
 import profileImage from '@/assets/profile.jpg'
 import forumImage from '@/assets/forum.jpg'
 
+
 const images = [
   { src: eventsImage, alt: 'Events Image', title: 'Rejoins des événements' },
   { src: profileImage, alt: 'Profile Image', title: 'Customise ton profil' },

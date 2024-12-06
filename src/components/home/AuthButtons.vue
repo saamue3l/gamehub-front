@@ -25,6 +25,16 @@
         <Register />
       </DialogScrollContent>
     </Dialog>
+
+    <!-- Bouton de connexion Google -->
+    <Button
+      variant="default"
+      size="none"
+      class="text-sm py-1.5 min-w-44"
+      @click="redirectToGoogle"
+    >
+      Connexion avec Google
+    </Button>
   </div>
 </template>
 
@@ -33,6 +43,11 @@ import Button from '@/components/ui/button/Button.vue'
 import { Dialog, DialogScrollContent, DialogTrigger } from '@/components/ui/dialog'
 import Login from '@/components/home/Login.vue'
 import Register from '@/components/home/Register.vue'
+
+const redirectToGoogle = () => {
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  window.location.href = `${apiBaseUrl}/api/auth/google/redirect`;
+}
 </script>
 
 <style scoped></style>
