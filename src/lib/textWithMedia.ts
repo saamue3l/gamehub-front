@@ -1,28 +1,32 @@
+import { httpBackend } from '@/lib/utils'
+
 const BASE_CLASS = 'max-w-full max-h-[500px] my-3 rounded'
-const URL_PLACEHOLDER = 'URL_PLACEHOLDER'
 
-export enum MEDIAS_HTML {
-  VIDEO = `<video controls class="block ${BASE_CLASS}"><source src="${URL_PLACEHOLDER}">Your browser does not support the video tag.</video>`,
-  IMAGE = `<a href="${URL_PLACEHOLDER}" target="_blank" class="inline-block ${BASE_CLASS}"><img src="${URL_PLACEHOLDER}" alt="Image" class="${BASE_CLASS}" /></a>`,
-  LINK = `<a href="${URL_PLACEHOLDER}" class="text-primary hover:text-blue-700 transition ${BASE_CLASS}" target="_blank">${URL_PLACEHOLDER}</a>`
+export const MEDIAS_HTML = {
+  VIDEO: (info: LinkExport) =>
+    `<video controls class="block ${BASE_CLASS}"><source src="${info.url}">Votre navigateur ne supporte pas la vidéo.</video>`,
+  AUDIO: (info: LinkExport) =>
+    `<audio controls class="block ${BASE_CLASS}"><source src="${info.url}">Votre navigateur ne supporte pas l'audio.</audio>`,
+  IMAGE: (info: LinkExport) =>
+    `<a href="${info.url}" target="_blank" class="inline-block ${BASE_CLASS}"><img src="${info.images && info.images[0] ? info.images[0] : info.url}" alt="${info.description ?? 'image'}" class="${BASE_CLASS}" /></a>`,
+  LINK: (info: LinkExport) => {
+    let linkHtml = `<a href="${info.url}" class="group/link text-primary hover:text-blue-700 transition" target="_blank">`
+    const addFavicon = info.favicons?.length > 0
+    if (addFavicon) {
+      linkHtml += `<img src="${info.favicons[0]}" class="inline-block w-4 h-4 rounded-full mr-0.5 group-hover/link:brightness-75" style="vertical-align: sub;"/>`
+    }
+    linkHtml += `${info.title != null && info.title != '' ? info.title : info.url}</a>`
+    return linkHtml
+  }
 }
 
-export enum MEDIA_FORMATS {
-  JPG = MEDIAS_HTML.IMAGE,
-  PNG = MEDIAS_HTML.IMAGE,
-  GIF = MEDIAS_HTML.IMAGE,
-  MP4 = MEDIAS_HTML.VIDEO,
-  WEBM = MEDIAS_HTML.VIDEO,
-  LINK = MEDIAS_HTML.LINK
-}
-
-export const fileFormats = {
-  jpg: MEDIA_FORMATS.JPG,
-  jpeg: MEDIA_FORMATS.JPG,
-  png: MEDIA_FORMATS.PNG,
-  gif: MEDIA_FORMATS.GIF,
-  mp4: MEDIA_FORMATS.MP4,
-  webm: MEDIA_FORMATS.WEBM
+export const MEDIA_TYPES = {
+  'video.other': MEDIAS_HTML.IMAGE, // Can be gif
+  image: MEDIAS_HTML.IMAGE,
+  audio: MEDIAS_HTML.AUDIO,
+  video: MEDIAS_HTML.VIDEO,
+  application: MEDIAS_HTML.LINK,
+  website: MEDIAS_HTML.LINK
 }
 
 /**
@@ -31,33 +35,63 @@ export const fileFormats = {
  */
 export async function textToMedia(text: string) {
   const url = text.trim()
-  // Get the extension of the file
-  let extension = url.match(/\.([a-zA-Z0-9]+)(?:[?#]|$)/)?.[1]?.toLowerCase()
-  if (!extension) {
-    // If the extension is not found in the url, fetch the url to see what format it is
-    extension = await fetchUrlToGetFormat(url)
-  }
-  let media: string
-  if (extension) {
-    media = fileFormats[extension as keyof typeof fileFormats] || MEDIA_FORMATS.LINK
-  } else {
-    media = MEDIA_FORMATS.LINK
-  }
-  return media.replace(new RegExp(URL_PLACEHOLDER, 'g'), url)
-}
-
-/**
- * Fetch the url to get the format of the media (use the content-type header)
- * @param url a url as string
- */
-async function fetchUrlToGetFormat(url: string) {
+  if (!url) return text
+  var linkResponse: LinkExport
+  var media: Function = MEDIAS_HTML.LINK
   try {
-    const response = await fetch(url)
-
-    const contentType = response.headers.get('content-type')
-    const extension = contentType?.split('/')[1]
-    return extension
-  } catch (error) {
-    return undefined
+    linkResponse = await getLinkPreview(url)
+    media = MEDIA_TYPES[linkResponse.mediaType]
+  } catch (_) {
+    return text
   }
+  if (!media) return MEDIAS_HTML.LINK({ url: url } as LinkExport)
+  return media(linkResponse)
 }
+
+async function getLinkPreview(url: string) {
+  return httpBackend<LinkExport>(`/api/link-preview?url=${encodeURIComponent(url)}`)
+}
+
+type LinkExport =
+  | {
+      url: string
+      title: string
+      siteName: string | undefined
+      description: string | undefined
+      mediaType: string
+      contentType: string | undefined
+      images: string[]
+      videos: {
+        url: string | undefined
+        secureUrl: string | null | undefined
+        type: string | null | undefined
+        width: string | undefined
+        height: string | undefined
+      }[]
+      favicons: string[]
+    }
+  | {
+      charset: string | null
+      url: string
+      mediaType: string
+      contentType: string
+      favicons: string[]
+    }
+  | {
+      charset: string | null
+      url: string
+      title: string
+      siteName: string | undefined
+      description: string | undefined
+      mediaType: string
+      contentType: string | undefined
+      images: string[]
+      videos: {
+        url: string | undefined
+        secureUrl: string | null | undefined
+        type: string | null | undefined
+        width: string | undefined
+        height: string | undefined
+      }[]
+      favicons: string[]
+    }

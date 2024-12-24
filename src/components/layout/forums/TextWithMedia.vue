@@ -6,7 +6,7 @@ const props = defineProps<{
   content: string
 }>()
 
-const parsedContent = ref('')
+const parsedContent = ref(props.content)
 
 watch(
   () => props.content,
