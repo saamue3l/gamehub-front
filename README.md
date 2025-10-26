@@ -30,4 +30,5 @@ docker compose up
 ```
 ---
 Le site est normalement accessible à l'adresse http://localhost:5173 ou http://localhost:80 si vous utilisez Docker Compose.
+
 Lien du backend : https://github.com/saamue3l/gamehub-back
